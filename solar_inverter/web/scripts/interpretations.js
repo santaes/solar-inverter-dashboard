@@ -66,9 +66,9 @@
         phrase('Вирівнювальне заряджання', 'Выравнивающая зарядка', 'Equalisation charging stage')
       ];
       const terminalConnection = label => [
-        phrase(`${label}: не підключено`, `${label}: не подключено`, `${label}: not connected`),
-        phrase(`${label}: підключено, стан ненормальний`, `${label}: подключено, состояние ненормальное`, `${label}: connected, abnormal`),
-        phrase(`${label}: підключено, стан нормальний`, `${label}: подключено, состояние нормальное`, `${label}: connected, normal`)
+        phrase(`${label}: відкл`, `${label}: откл`, `${label}: off`),
+        phrase(`${label}: підкл, ненорм`, `${label}: подкл, ненорм`, `${label}: on, abnormal`),
+        phrase(`${label}: підкл, норм`, `${label}: подкл, норм`, `${label}: on, normal`)
       ];
       const outputState = [
         phrase('Вихід зупинено', 'Выход остановлен', 'Output stopped'),
