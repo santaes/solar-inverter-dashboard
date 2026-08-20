@@ -125,6 +125,10 @@
       const displayedValue = absolute ? Math.abs(value) : value;
       return `${Number(displayedValue.toFixed(unit === 'A' || unit === 'V' || unit === '%' ? 1 : 2))}${unit ? ` ${unit}` : ''}`;
     }
+    function truncateText(text, maxLength = 20) {
+      if (!text || text.length <= maxLength) return text;
+      return text.slice(0, maxLength - 1) + '…';
+    }
     function renderFlowCardValues(cardKey, selector, registers, visible = true) {
       const host = document.querySelector(selector);
       if (!host) return;
@@ -146,11 +150,12 @@
         // Pair every decoded enum with its localized register name. For
         // example, R323 is a configured output priority, never evidence of
         // the currently active source of energy.
-        row.textContent = compactAcMode || (interpretation
+        const fullText = compactAcMode || (interpretation
           ? `${name}: ${interpretation}`
           : (register ? formatFlowCardRegister(register, cardKey === 'grid') : t('noData')));
+        row.textContent = truncateText(fullText, 25);
         row.classList.toggle('flow-card-state-value', Boolean(interpretation));
-        row.title = `R${number} · ${name}${register ? ` · ${registerRawExplanation(register)}` : ''}`;
+        row.title = fullText + (register ? ` · ${registerRawExplanation(register)}` : '');
         return row;
       }));
     }
