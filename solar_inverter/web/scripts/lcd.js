@@ -78,7 +78,7 @@
       const apparentLoadPower = numberValue([542, 93]);
       const batteryVoltage = numberValue([137, 129, 404, 342]);
       const batteryCurrent = numberValue([130, 405]);
-      const measuredBatterySoc = numberValue([407]);
+      const measuredBatterySoc = numberValue([407, 139, 133, 339]);
       const batteryPowerReading = numberValue([134]);
       const batteryTemperature = numberValue([140, 406]);
       const inverterTemperature = numberValue([818]);
@@ -307,10 +307,17 @@
         manualContext.dataset.icons = iconSignature;
       }
       const manualLabels = {
-        LCD: ['INPUT', 'OUTPUT'], P1: ['INPUT', 'OUTPUT'], P2: ['BATT', 'OUTPUT'],
-        P3: ['BATT', 'LOAD'], P4: ['BATT', 'LOAD'], P5: ['BATT', 'LOAD'],
-        P6: ['PV1', 'PV1 CHARGE'], P7: ['CHARGER', 'DC DISCHG'],
-        P8: ['PV ENERGY', 'TODAY'], P9: ['PV ENERGY', 'MONTH'], P10: ['PV ENERGY', 'YEAR']
+        LCD: [t('lcdInputShort'), t('lcdOutputShort')],
+        P1: [t('lcdInputShort'), t('lcdOutputShort')],
+        P2: [t('lcdBatteryShort'), t('lcdOutputShort')],
+        P3: [t('lcdBatteryShort'), t('lcdLoadShort')],
+        P4: [t('lcdBatteryShort'), t('lcdLoadShort')],
+        P5: [t('lcdBatteryShort'), t('lcdLoadShort')],
+        P6: ['PV1', t('lcdPvChargeShort')],
+        P7: [t('lcdChargerShort'), t('lcdDcDischargeShort')],
+        P8: [t('lcdPvEnergyShort'), t('today')],
+        P9: [t('lcdPvEnergyShort'), t('periodMonth')],
+        P10: [t('lcdPvEnergyShort'), t('periodYear')]
       };
       const [manualLeftLabel, manualRightLabel] = manualLabels[page.code] || manualLabels.LCD;
       const manualReadouts = document.querySelector('.lcd-manual-readouts');

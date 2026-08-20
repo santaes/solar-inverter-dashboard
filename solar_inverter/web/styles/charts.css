@@ -1,0 +1,93 @@
+    .charts-layout { display: block }
+    .chart-selector { position: sticky; top: 14px; max-height: calc(100vh - 28px) }
+    .chart-selector input[type="search"] { width: 100%; margin: 14px 0 10px }
+    .chart-selector-actions { display: flex; gap: 8px; margin-bottom: 10px }
+    .chart-selector-actions button { flex: 1 1 0; min-height: 34px; padding: 7px 9px }
+    .value-list { overflow-y: auto; max-height: calc(100vh - 229px); padding-right: 4px }
+    .value-option {
+      padding: 9px 5px; border-bottom: 1px solid var(--line);
+    }
+    .value-option:hover { background: rgba(56,189,248,.05) }
+    .value-name { min-width: 0; font-weight: 650 }
+    .value-name small { display: block; color: var(--muted); margin-top: 2px; font-weight: 400 }
+    .value-targets { display: flex; gap: 12px; margin-top: 7px }
+    .value-targets label { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 11px; cursor: pointer }
+    .value-targets input { width: 14px; min-height: 14px; margin: 0; accent-color: var(--cyan) }
+    .custom-values { margin-bottom: 18px }
+    .custom-value-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 12px }
+    .custom-value-card {
+      position: relative; min-width: 0; padding: 15px; border: 1px solid var(--line);
+      border-radius: 16px; background: linear-gradient(145deg, var(--card-start), var(--card-end));
+    }
+    .custom-value-label { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 24px }
+    .custom-value-reading { margin-top: 7px; font-size: 25px; font-weight: 800; font-variant-numeric: tabular-nums }
+    .custom-value-detail { color: var(--muted); font-size: 11px; margin-top: 4px }
+    .remove-value {
+      position: absolute; right: 8px; top: 7px; width: 27px; min-height: 27px; padding: 0;
+      border: 0; background: transparent; color: var(--muted); font-size: 18px;
+    }
+    .charts-main { min-width: 0 }
+    .charts-head { margin-bottom: 14px }
+    .chart-selection-panel { margin: 0 0 14px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel) }
+    .chart-selection-panel h3 { margin: 0; font-size: 14px }
+    .chart-selection-panel input[type="search"] { width: min(360px, 100%); margin: 10px 0 }
+    .chart-selection-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px; max-height: 240px; overflow: auto }
+    .chart-selection-option { display: flex; align-items: flex-start; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 9px; cursor: pointer }
+    .chart-selection-option input { width: 15px; min-height: 15px; margin: 2px 0 0; accent-color: var(--cyan) }
+    .chart-selection-option small { display: block; margin-top: 2px; color: var(--muted); font-size: 11px }
+    .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+    .chart-card {
+      min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 18px;
+      background: linear-gradient(145deg, var(--card-start), var(--card-end));
+      content-visibility: auto; contain-intrinsic-size: auto 300px;
+    }
+    .chart-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px }
+    .chart-card h3 { margin: 0; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+    .chart-latest { color: var(--accent); font-size: 20px; font-weight: 800; white-space: nowrap }
+    .chart-card { cursor: pointer }
+    .chart-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
+    .chart-host { display: block; width: 100%; height: 220px; min-width: 0; margin-top: 8px; overflow: hidden }
+    .chart-host .uplot { font-family: inherit }
+    .chart-point-tooltip {
+      position: absolute; z-index: 5; left: 0; top: 0; max-width: min(280px,80%);
+      padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px;
+      color: var(--text); background: var(--card-start); box-shadow: 0 8px 24px rgba(2,6,23,.32);
+      font-size: 12px; font-weight: 750; line-height: 1.25; pointer-events: none; white-space: nowrap;
+    }
+    dialog.chart-modal {
+      width: 80vw; max-width: none; height: 80vh; max-height: none; margin: auto; padding: 16px;
+      border: 1px solid var(--line); border-radius: 16px; color: var(--text); background: var(--panel);
+      box-shadow: 0 24px 80px rgba(2,6,23,.55); overflow: hidden;
+    }
+    dialog.chart-modal::backdrop { background: rgba(2,6,23,.72) }
+    .chart-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px }
+    .chart-modal-head h2 { margin: 0 0 4px; font-size: clamp(16px,2vw,22px) }
+    .chart-modal-actions { display: flex; align-items: center; gap: 8px }
+    #chart-modal-close { width: 38px; min-height: 38px; padding: 0; font-size: 24px }
+    .chart-modal-help { margin: 8px 0; color: var(--muted); font-size: 12px }
+    .chart-modal-host { width: 100%; height: calc(80vh - 118px); min-height: 320px; overflow: hidden; overscroll-behavior: contain }
+    .chart-modal-host .u-over { touch-action: none }
+    .chart-pagination, .dashboard-pagination {
+      grid-column: 1 / -1; display: flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 4px; color: var(--muted); font-size: 11px; font-weight: 800;
+    }
+    .chart-pagination button, .dashboard-pagination button { min-height: 34px; padding: 6px 12px }
+    .value-list-limit {
+      padding: 10px; color: var(--muted); font-size: 10px; line-height: 1.35; text-align: center;
+    }
+    .updater-history-item {
+      display: grid; gap: 5px; padding: 12px; margin-bottom: 8px;
+      border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+    }
+    .updater-history-item strong { color: var(--accent); font-size: 15px }
+    .updater-history-item span { color: var(--text); font-size: 12px }
+    .updater-history-item small { color: var(--muted); overflow-wrap: anywhere }
+    .updater-history-download {
+      justify-self: start; margin-top: 3px; padding: 6px 10px; border: 1px solid var(--ui-border);
+      border-radius: 8px; color: var(--accent); background: var(--control); text-decoration: none; font-size: 12px;
+    }
+    .updater-history-download[aria-disabled="true"] { color: var(--muted); opacity: .65; pointer-events: none }
+    .chart-empty {
+      display: grid; place-items: center; min-height: 340px; color: var(--muted);
+      border: 1px dashed rgba(148,163,184,.22); border-radius: 18px; text-align: center; padding: 24px;
+    }

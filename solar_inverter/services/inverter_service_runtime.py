@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-import io
-import sys
-import threading
+from . import inverter_service_core as _core
 from .inverter_service_core import *
 from .chart_history import get_chart_history, initialise_chart_history, record_chart_history
+from .server_logging import get_server_logs
 
-# Log buffer for UI display
-log_buffer = io.StringIO()
-log_buffer_lock = threading.Lock()
 UPDATER_RECEIPT_PATH = PROJECT_ROOT / "updater_history.json"
 UPDATER_ARCHIVE_DIR = PROJECT_ROOT / "updater_archives"
 
@@ -26,53 +22,21 @@ def ensure_updater_history_schema(connection: sqlite3.Connection) -> None:
     connection.execute("UPDATE updater_versions SET created_at = datetime('now') WHERE created_at IS NULL")
     connection.commit()
 
-class LogCapture:
-    """Capture print() output to a buffer for UI display."""
-    def __init__(self, original_stdout):
-        self.original_stdout = original_stdout
-    
-    def write(self, text):
-        self.original_stdout.write(text)
-        self.original_stdout.flush()
-        with log_buffer_lock:
-            log_buffer.write(text)
-            # Keep last 100KB of logs
-            if log_buffer.tell() > 100000:
-                log_buffer.seek(0)
-                content = log_buffer.read()
-                log_buffer.seek(0)
-                log_buffer.truncate()
-                log_buffer.write(content[-100000:])
-    
-    def flush(self):
-        self.original_stdout.flush()
-
-# Redirect stdout to capture logs
-sys.stdout = LogCapture(sys.stdout)
-
-def get_server_logs() -> dict[str, Any]:
-    """Get recent server logs for UI display."""
-    with log_buffer_lock:
-        log_buffer.seek(0)
-        content = log_buffer.read()
-        # Get last 500 lines
-        lines = content.split('\n')[-500:]
-        return {"logs": '\n'.join(lines), "lines": len(lines)}
-
 def set_connection_mode(mode: str) -> dict[str, Any]:
     """Set the connection mode (rtu or tcp) and return status."""
     global CONNECTION_MODE
     if mode not in ("rtu", "tcp"):
         return {"error": "Invalid mode, must be 'rtu' or 'tcp'"}
-    print(f"[Connection Mode] Changing from {CONNECTION_MODE} to {mode}")
+    print(f"[Connection Mode] Changing from {_core.CONNECTION_MODE} to {mode}")
     CONNECTION_MODE = mode
+    _core.CONNECTION_MODE = mode
     print(f"[Connection Mode] Now using {mode.upper()}")
     return {"mode": mode, "success": True}
 
 def get_connection_mode() -> dict[str, Any]:
     """Get the current connection mode."""
-    print(f"[Connection Mode] Current mode: {CONNECTION_MODE}")
-    return {"mode": CONNECTION_MODE}
+    print(f"[Connection Mode] Current mode: {_core.CONNECTION_MODE}")
+    return {"mode": _core.CONNECTION_MODE}
 
 
 def maintain_register_log_storage(force: bool = False) -> bool:

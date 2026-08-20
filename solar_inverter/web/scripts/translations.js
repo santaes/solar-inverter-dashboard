@@ -413,6 +413,24 @@
     Object.assign(UI_TRANSLATIONS.uk, {stopRegisterMapScan: 'Зупинити сканування', registerMapScanStopped: 'Сканування зупинено.', registerMapPollHelp: 'Початковий набір містить 113 регістрів зі швидкого списку TTN; користувач може додавати або вилучати будь-які підтримувані регістри.', modelIdLabel: 'ID моделі', deviceTypeLabel: 'Тип пристрою', serialNumberLabel: 'SN', deviceTypeSingle: 'Один інвертор (код пристрою 72)', unknownDeviceType: 'Невідомий тип пристрою ({code})', registerCount: 'Modbus: отримано {available} · без даних / не підтримується: {waiting} · у каталозі: {catalog} · показано: {shown}'});
     Object.assign(UI_TRANSLATIONS.ru, {stopRegisterMapScan: 'Остановить сканирование', registerMapScanStopped: 'Сканирование остановлено.', registerMapPollHelp: 'Начальный набор содержит 113 регистров из быстрого списка TTN; пользователь может добавлять или удалять любые поддерживаемые регистры.', modelIdLabel: 'ID модели', deviceTypeLabel: 'Тип устройства', serialNumberLabel: 'SN', deviceTypeSingle: 'Один инвертор (код устройства 72)', unknownDeviceType: 'Неизвестный тип устройства ({code})', registerCount: 'Modbus: получено {available} · нет данных / не поддерживается: {waiting} · в каталоге: {catalog} · показано: {shown}'});
     Object.assign(UI_TRANSLATIONS.en, {stopRegisterMapScan: 'Stop scan', registerMapScanStopped: 'Scan stopped.', registerMapPollHelp: 'The initial set contains 113 registers from the TTN fast list; users may add or remove any supported registers.', modelIdLabel: 'Model ID', deviceTypeLabel: 'Device type', serialNumberLabel: 'SN', deviceTypeSingle: 'Single inverter (device code 72)', unknownDeviceType: 'Unknown device type ({code})', registerCount: 'Modbus: {available} received · {waiting} without data / unsupported · {catalog} in catalog · {shown} shown'});
+    Object.assign(UI_TRANSLATIONS.uk, {
+      lcdDisplayAria: 'Живий дисплей LCD інвертора', lcdAcInputShort: 'ВХІД AC', lcdAcOutputShort: 'ВИХІД AC',
+      lcdInputShort: 'ВХІД', lcdOutputShort: 'ВИХІД', lcdBatteryShort: 'БАТ', lcdLoadShort: 'НАВАНТ',
+      lcdPvChargeShort: 'ЗАРЯД PV1', lcdChargerShort: 'ЗАРЯД', lcdDcDischargeShort: 'РОЗРЯД DC',
+      lcdPvEnergyShort: 'ЕНЕРГІЯ PV', lcdDayShort: 'ДЕНЬ'
+    });
+    Object.assign(UI_TRANSLATIONS.ru, {
+      lcdDisplayAria: 'Текущий дисплей LCD инвертора', lcdAcInputShort: 'ВХОД AC', lcdAcOutputShort: 'ВЫХОД AC',
+      lcdInputShort: 'ВХОД', lcdOutputShort: 'ВЫХОД', lcdBatteryShort: 'АКБ', lcdLoadShort: 'НАГРУЗКА',
+      lcdPvChargeShort: 'ЗАРЯД PV1', lcdChargerShort: 'ЗАРЯД', lcdDcDischargeShort: 'РАЗРЯД DC',
+      lcdPvEnergyShort: 'ЭНЕРГИЯ PV', lcdDayShort: 'ДЕНЬ'
+    });
+    Object.assign(UI_TRANSLATIONS.en, {
+      lcdDisplayAria: 'Live inverter LCD display', lcdAcInputShort: 'AC INPUT', lcdAcOutputShort: 'AC OUTPUT',
+      lcdInputShort: 'INPUT', lcdOutputShort: 'OUTPUT', lcdBatteryShort: 'BATT', lcdLoadShort: 'LOAD',
+      lcdPvChargeShort: 'PV1 CHARGE', lcdChargerShort: 'CHARGER', lcdDcDischargeShort: 'DC DISCHG',
+      lcdPvEnergyShort: 'PV ENERGY', lcdDayShort: 'DAY'
+    });
     const DATA_TRANSLATIONS = {
       'AC': {ru:'AC', en:'AC'},
       'BMS': {ru:'BMS', en:'BMS'},

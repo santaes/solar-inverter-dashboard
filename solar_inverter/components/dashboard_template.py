@@ -8,7 +8,7 @@ WEB_ROOT = Path(__file__).resolve().parents[1] / "web"
 _STYLE_MARKER = "/*__DASHBOARD_CSS__*/"
 _VERSION_MARKER = "__ASSET_VERSION__"
 _HTML_TEMPLATE = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
-_STYLE_FILES = ("dashboard.css", "dashboard-responsive.css")
+_STYLE_FILES = ("dashboard.css", "charts.css", "dashboard-responsive.css")
 _DASHBOARD_CSS = "\n".join(
     (WEB_ROOT / "styles" / name).read_text(encoding="utf-8")
     for name in _STYLE_FILES

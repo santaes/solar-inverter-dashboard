@@ -10,12 +10,15 @@
   <script defer src="/static/scripts/translations.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/interpretations.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/renderers.js?v=__ASSET_VERSION__"></script>
+  <script defer src="/static/scripts/chart-demo-capture.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/charts.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/chart-demo-history.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/chart-rendering.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/gauges.js?v=__ASSET_VERSION__"></script>
+  <script defer src="/static/scripts/energy-flow-cards.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/energy-flow.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/lcd.js?v=__ASSET_VERSION__"></script>
+  <script defer src="/static/scripts/browser-storage.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/app.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/register-map.js?v=__ASSET_VERSION__"></script>
   <script defer src="/static/scripts/app-events.js?v=__ASSET_VERSION__"></script>
@@ -250,7 +253,7 @@
     <section id="lcd-view" role="tabpanel" aria-labelledby="lcd-tab" tabindex="0" hidden>
       <div class="panel lcd-panel">
         <div class="lcd-screen">
-          <div class="lcd-device-display" id="lcd-device-display" role="img" aria-label="Inverter LCD live display">
+          <div class="lcd-device-display" id="lcd-device-display" role="img" aria-label="Живий дисплей LCD інвертора" data-i18n-aria="lcdDisplayAria">
             <svg class="lcd-icon-definitions" aria-hidden="true" focusable="false">
               <defs>
                 <symbol id="lcd-icon-source-square" viewBox="0 0 64 64">
@@ -302,15 +305,15 @@
 
             <div class="lcd-power-path" aria-hidden="true"><svg class="lcd-icon lcd-path-left"><use href="#lcd-icon-arrow-compact"></use></svg><svg class="lcd-icon lcd-path-mid"><use href="#lcd-icon-arrow-compact"></use></svg></div>
             <div class="lcd-column lcd-column-input" id="lcd-grid-node">
-              <svg class="lcd-icon lcd-column-icon lcd-ac-icon" aria-hidden="true"><use href="#lcd-icon-grid"></use></svg><strong>AC INPUT</strong>
+              <svg class="lcd-icon lcd-column-icon lcd-ac-icon" aria-hidden="true"><use href="#lcd-icon-grid"></use></svg><strong data-i18n="lcdAcInputShort">ВХІД AC</strong>
               <span class="lcd-measure lcd-measure-large"><span class="lcd-digits" id="lcd-grid-voltage">—</span><span class="lcd-unit">V</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-frequency">—</span><span class="lcd-unit">Hz</span></span>
-              <strong>BATT</strong>
+              <strong data-i18n="lcdBatteryShort">БАТ</strong>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-ac2-voltage">—</span><span class="lcd-unit">V</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-ac2-frequency">—</span><span class="lcd-unit">A</span></span>
             </div>
             <div class="lcd-column lcd-column-output" id="lcd-inverter-node">
-              <strong>AC OUTPUT</strong>
+              <strong data-i18n="lcdAcOutputShort">ВИХІД AC</strong>
               <span class="lcd-measure lcd-measure-large"><span class="lcd-digits" id="lcd-output-voltage">—</span><span class="lcd-unit">V</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-output-frequency">—</span><span class="lcd-unit">Hz</span></span>
               <svg class="lcd-icon lcd-output-arrow" id="lcd-grid-arrow" aria-hidden="true"><use href="#lcd-icon-arrow-compact"></use></svg>
@@ -321,7 +324,7 @@
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-pv-current">—</span><span class="lcd-unit">A</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-pv-power">—</span><span class="lcd-unit">W</span></span>
             </div>
-            <div class="lcd-day-energy"><span>DAY</span><span class="lcd-measure"><span class="lcd-digits" id="lcd-pv-day-energy">—</span><span class="lcd-unit">kWh</span></span></div>
+            <div class="lcd-day-energy"><span data-i18n="lcdDayShort">ДЕНЬ</span><span class="lcd-measure"><span class="lcd-digits" id="lcd-pv-day-energy">—</span><span class="lcd-unit">kWh</span></span></div>
             <div class="lcd-hidden-values" aria-hidden="true">
               <span id="lcd-grid"></span><span id="lcd-power"></span><span id="lcd-load"></span><span id="lcd-grid-current"></span><span id="lcd-grid-power"></span>
               <span id="lcd-ac-output-current"></span><span id="lcd-inverter-load"></span><span id="lcd-inverter-fan-speed"></span><span id="lcd-load-power"></span>
@@ -374,7 +377,7 @@
               <span class="muted" id="chart-selection-count" aria-live="polite" data-i18n="noValuesSelected">Значення не вибрано</span>
             </div>
             <div style="display: flex; gap: 8px; align-items: center;">
-              <button id="chart-demo-button" class="all-data-demo-button" type="button">Запустити реалістичне демо на 120 с</button>
+              <button id="chart-demo-button" class="all-data-demo-button" type="button" data-i18n="runDemo">Відтворити записані дані за 120 с</button>
             </div>
           </div>
           <section class="chart-selection-panel" aria-label="Графіки для відображення" data-i18n-aria="graphsToDisplay">

@@ -13,57 +13,57 @@
       const enumMeaning = (values, value) => text(values[value]) || unknownCode(value);
 
       const stateMachine = [
-        phrase('Увімкнення', 'Включение', 'Power-on'),
-        phrase('Ініціалізація', 'Инициализация', 'Init'),
-        phrase('Очікування', 'Ожидание', 'Standby'),
-        phrase('Мережа', 'Сеть', 'Grid'),
-        phrase('PV', 'PV', 'PV'),
-        phrase('Батарея', 'Батарея', 'Battery'),
-        phrase('Генератор', 'Генератор', 'Generator'),
-        phrase('Аварія', 'Авария', 'Fault'),
-        phrase('Вимкнення', 'Отключение', 'Shutdown'),
-        phrase('Тест', 'Тест', 'Test'),
-        phrase('Оновлення ПЗ', 'Обновление ПО', 'Firmware')
+        phrase('Увімкнення живлення', 'Включение питания', 'Power-on mode'),
+        phrase('Ініціалізація системи', 'Инициализация системы', 'System initialisation'),
+        phrase('Очікування без активного джерела', 'Ожидание без активного источника', 'Standby; no active source'),
+        phrase('Робота від мережі', 'Работа от сети', 'Grid (mains) mode'),
+        phrase('Робота від PV', 'Работа от PV', 'PV mode'),
+        phrase('Робота від батареї', 'Работа от батареи', 'Battery mode'),
+        phrase('Робота від генератора', 'Работа от генератора', 'Generator mode'),
+        phrase('Аварійний стан; перевірте коди несправностей', 'Аварийное состояние; проверьте коды неисправностей', 'Fault mode; inspect the fault codes'),
+        phrase('Вимкнення інвертора', 'Отключение инвертора', 'Shutdown mode'),
+        phrase('Заводський тестовий режим', 'Заводской тестовый режим', 'Factory test mode'),
+        phrase('Оновлення програмного забезпечення', 'Обновление программного обеспечения', 'Firmware upgrade mode')
       ];
       const bmsConnection = [
-        phrase('Пошук ID', 'Поиск ID', 'Searching'),
-        phrase('ID CAN', 'ID CAN', 'ID CAN'),
-        phrase('ID порт', 'ID порт', 'ID serial'),
-        phrase('ID віддалено', 'ID удалённо', 'ID remote')
+        phrase('Пошук ID BMS', 'Поиск ID BMS', 'Searching for a BMS ID'),
+        phrase('ID зафіксовано через CAN', 'ID зафиксирован через CAN', 'ID locked through CAN'),
+        phrase('ID зафіксовано через послідовний порт', 'ID зафиксирован через последовательный порт', 'ID locked through the serial port'),
+        phrase('ID зафіксовано віддалено', 'ID зафиксирован удалённо', 'ID locked remotely')
       ];
       const bmsDebugConnection = [
-        phrase('Пошук ID', 'Поиск ID', 'Searching'),
-        phrase('ID віддалено', 'ID удалённо', 'ID remote'),
-        phrase('ID зафіксовано', 'ID зафиксирован', 'ID locked')
+        phrase('Пошук ID BMS', 'Поиск ID BMS', 'Searching for a BMS ID'),
+        phrase('ID BMS зафіксовано віддалено', 'ID BMS зафиксирован удалённо', 'BMS ID locked remotely'),
+        phrase('ID BMS зафіксовано', 'ID BMS зафиксирован', 'BMS ID locked')
       ];
       const parallelMode = [
-        phrase('Один', 'Один', 'Single'),
-        phrase('1-фаза', '1-фаза', '1-phase'),
-        phrase('3-фаза A/R', '3-фаза A/R', '3-phase A/R'),
-        phrase('3-фаза B/S', '3-фаза B/S', '3-phase B/S'),
-        phrase('3-фаза C/T', '3-фаза C/T', '3-phase C/T')
+        phrase('Один інвертор', 'Один инвертор', 'Single unit'),
+        phrase('Однофазна паралельна робота', 'Однофазная параллельная работа', 'Single-phase parallel operation'),
+        phrase('Трифазна паралельна робота, фаза A/R', 'Трёхфазная параллельная работа, фаза A/R', 'Three-phase parallel, phase A/R'),
+        phrase('Трифазна паралельна робота, фаза B/S', 'Трёхфазная параллельная работа, фаза B/S', 'Three-phase parallel, phase B/S'),
+        phrase('Трифазна паралельна робота, фаза C/T', 'Трёхфазная параллельная работа, фаза C/T', 'Three-phase parallel, phase C/T')
       ];
       const outputMode = [
-        phrase('APP', 'APP', 'APP'),
-        phrase('UPS', 'UPS', 'UPS'),
-        phrase('GEN', 'GEN', 'GEN')
+        phrase('APP — широкий допустимий діапазон AC', 'APP — широкий допустимый диапазон AC', 'APP — wide accepted AC range'),
+        phrase('UPS — стабільний вузький діапазон AC', 'UPS — стабильный узкий диапазон AC', 'UPS — stable, narrow AC range'),
+        phrase('GEN — вхід генератора; підтримується окремими моделями', 'GEN — вход генератора; поддерживается отдельными моделями', 'GEN — generator input; supported by selected models')
       ];
       const outputPriority = [
-        phrase('GPB', 'GPB', 'GPB'),
-        phrase('PGB', 'PGB', 'PGB'),
-        phrase('PBG', 'PBG', 'PBG'),
-        phrase('MKS/MKP', 'MKS/MKP', 'MKS/MKP')
+        phrase('GPB — мережа першою, батарея в резерві', 'GPB — сеть первой, батарея в резерве', 'GPB — grid first, battery held in reserve'),
+        phrase('PGB — PV → мережа → батарея', 'PGB — PV → сеть → батарея', 'PGB — PV → grid → battery'),
+        phrase('PBG — PV → батарея → мережа', 'PBG — PV → батарея → сеть', 'PBG — PV → battery → grid'),
+        phrase('MKS/MKP — пріоритет генератора; залежить від моделі', 'MKS/MKP — приоритет генератора; зависит от модели', 'MKS/MKP — generator priority; model dependent')
       ];
       const chargePriority = [
-        phrase('PNG', 'PNG', 'PNG'),
-        phrase('OPV', 'OPV', 'OPV'),
-        phrase('PVF', 'PVF', 'PVF')
+        phrase('PNG — заряджання від PV і мережі', 'PNG — зарядка от PV и сети', 'PNG — charge from PV and grid'),
+        phrase('OPV — заряджання лише від PV', 'OPV — зарядка только от PV', 'OPV — charge from PV only'),
+        phrase('PVF — PV першим, мережа резервна; залежить від моделі', 'PVF — PV первым, сеть резервная; зависит от модели', 'PVF — PV first with grid backup; model dependent')
       ];
       const chargingState = [
-        phrase('Не вказано', 'Не указано', 'Not specified'),
-        phrase('CC/CV', 'CC/CV', 'CC/CV'),
-        phrase('Float', 'Float', 'Float'),
-        phrase('Вирівнювання', 'Выравнивание', 'Equalisation')
+        phrase('Активну стадію заряджання не вказано; фактичний напрямок визначається за струмом', 'Активная стадия зарядки не указана; фактическое направление определяется по току', 'No active charging stage is reported; actual direction is determined from current'),
+        phrase('Основне заряджання CC/CV', 'Основная зарядка CC/CV', 'Main CC/CV charging stage'),
+        phrase('Підтримувальне (float) заряджання', 'Поддерживающая (float) зарядка', 'Float charging stage'),
+        phrase('Вирівнювальне заряджання', 'Выравнивающая зарядка', 'Equalisation charging stage')
       ];
       const terminalConnection = label => [
         phrase(`${label}: відкл`, `${label}: откл`, `${label}: off`),
@@ -71,110 +71,110 @@
         phrase(`${label}: підкл, норм`, `${label}: подкл, норм`, `${label}: on, normal`)
       ];
       const outputState = [
-        phrase('Зупинено', 'Остановлен', 'Stopped'),
-        phrase('Норма', 'Норма', 'Normal'),
-        phrase('Перевантаження', 'Перегрузка', 'Overload'),
-        phrase('КЗ', 'КЗ', 'Short')
+        phrase('Вихід зупинено', 'Выход остановлен', 'Output stopped'),
+        phrase('Нормальний вихід', 'Нормальный выход', 'Output normal'),
+        phrase('Перевантаження виходу', 'Перегрузка выхода', 'Output overloaded'),
+        phrase('Коротке замикання виходу', 'Короткое замыкание выхода', 'Output short circuit')
       ];
       const batteryState = [
-        phrase('Відкл/КЗ', 'Откл/КЗ', 'Disc/Short'),
-        phrase('Низька напруга', 'Низкое напряжение', 'Low voltage'),
-        phrase('Розряджається', 'Разряжается', 'Discharging'),
-        phrase('Заряджається', 'Заряжается', 'Charging'),
-        phrase('Повністю заряджена', 'Полностью заряжена', 'Full')
+        phrase('Батарея не підключена або коротке замикання', 'Батарея не подключена или короткое замыкание', 'Battery disconnected or short-circuited'),
+        phrase('Низька напруга батареї', 'Низкое напряжение батареи', 'Battery voltage low'),
+        phrase('Батарея розряджається', 'Батарея разряжается', 'Battery discharging'),
+        phrase('Батарея заряджається', 'Батарея заряжается', 'Battery charging'),
+        phrase('Батарея повністю заряджена', 'Батарея полностью заряжена', 'Battery fully charged')
       ];
       const terminalChargingState = [
-        phrase('Не заряджається', 'Не заряжается', 'Not charging'),
-        phrase('CC', 'CC', 'CC'),
-        phrase('CV', 'CV', 'CV'),
-        phrase('Float', 'Float', 'Float'),
-        phrase('Вирівнювання', 'Выравнивание', 'Equalisation')
+        phrase('Заряджання не виконується', 'Зарядка не выполняется', 'Not charging'),
+        phrase('Заряджання постійним струмом', 'Зарядка постоянным током', 'Constant-current charging'),
+        phrase('Заряджання постійною напругою', 'Зарядка постоянным напряжением', 'Constant-voltage charging'),
+        phrase('Підтримувальне заряджання', 'Поддерживающая зарядка', 'Float charging'),
+        phrase('Вирівнювальне заряджання', 'Выравнивающая зарядка', 'Equalisation charging')
       ];
 
       const flowBits = [
-        phrase('Мережа→випр', 'Сеть→выпр', 'Grid→rect'),
-        phrase('Мережа→нав', 'Сеть→нагр', 'Grid→load'),
-        phrase('Ген→випр', 'Ген→выпр', 'Gen→rect'),
-        phrase('Ген→нав', 'Ген→нагр', 'Gen→load'),
-        phrase('PV→випр', 'PV→выпр', 'PV→rect'),
-        phrase('Випр→бат', 'Выпр→бат', 'Rect→bat'),
-        phrase('Випр→інв', 'Выпр→инв', 'Rect→inv'),
-        phrase('Випр→мережа', 'Выпр→сеть', 'Rect→grid'),
-        phrase('Бат→інв', 'Бат→инв', 'Bat→inv'),
-        phrase('Інв→вих1', 'Инв→вых1', 'Inv→out1'),
-        phrase('Інв→вих2', 'Инв→вых2', 'Inv→out2'),
-        phrase('BIT11 рез', 'BIT11 рез', 'BIT11 res'),
-        phrase('Wi-Fi', 'Wi-Fi', 'Wi-Fi'),
-        phrase('Енергозбереж', 'Энергосбереж', 'Eco'),
-        phrase('BIT14 рез', 'BIT14 рез', 'BIT14 res'),
-        phrase('Тихий', 'Тихий', 'Silent')
+        phrase('Мережа → випрямляч', 'Сеть → выпрямитель', 'Grid → rectifier'),
+        phrase('Мережа → навантаження', 'Сеть → нагрузка', 'Grid → load'),
+        phrase('Генератор → випрямляч', 'Генератор → выпрямитель', 'Generator → rectifier'),
+        phrase('Генератор → навантаження', 'Генератор → нагрузка', 'Generator → load'),
+        phrase('PV → випрямляч', 'PV → выпрямитель', 'PV → rectifier'),
+        phrase('Випрямляч → батарея', 'Выпрямитель → батарея', 'Rectifier → battery'),
+        phrase('Випрямляч → інвертор', 'Выпрямитель → инвертор', 'Rectifier → inverter'),
+        phrase('Випрямляч → мережа', 'Выпрямитель → сеть', 'Rectifier → grid'),
+        phrase('Батарея → інвертор', 'Батарея → инвертор', 'Battery → inverter'),
+        phrase('Інвертор → основний вихід', 'Инвертор → основной выход', 'Inverter → main output'),
+        phrase('Інвертор → другий вихід', 'Инвертор → второй выход', 'Inverter → secondary output'),
+        phrase('BIT11 зарезервовано', 'BIT11 зарезервирован', 'BIT11 is reserved'),
+        phrase('Wi-Fi підключено', 'Wi-Fi подключён', 'Wi-Fi connected'),
+        phrase('Енергозберігальний режим', 'Энергосберегающий режим', 'Energy-saving mode'),
+        phrase('BIT14 зарезервовано', 'BIT14 зарезервирован', 'BIT14 is reserved'),
+        phrase('Тихий режим', 'Тихий режим', 'Silent mode')
       ];
       const fault1Bits = [
-        phrase('Помилка мережі', 'Ошибка сети', 'Grid fault'),
-        phrase('Перенапруга DC', 'Перенапряжение DC', 'DC overvolt'),
-        phrase('Занижена напруга DC', 'Пониженное напряжение DC', 'DC undervolt'),
-        phrase('Надструм батареї', 'Сверхток батареи', 'Bat overcurrent'),
-        phrase('Перегрів', 'Перегрев', 'Overtemp'),
-        phrase('Перенапруга батареї', 'Перенапряжение батареи', 'Bat overvolt'),
-        phrase('Помилка батареї', 'Ошибка батареи', 'Bat fault'),
-        phrase('КЗ DC', 'КЗ DC', 'DC short'),
-        phrase('Помилка інвертора', 'Ошибка инвертора', 'Inv fault'),
-        phrase('Перенапруга інвертора', 'Перенапряжение инвертора', 'Inv overvolt'),
-        phrase('Занижена напруга інвертора', 'Пониженное напряжение инвертора', 'Inv undervolt'),
-        phrase('КЗ інвертора', 'КЗ инвертора', 'Inv short'),
-        phrase('Захист від’ємної потужності', 'Защита отриц. мощности', 'Neg power'),
-        phrase('Перевантаження', 'Перегрузка', 'Overload'),
-        phrase('Невідповідність моделі', 'Несоответствие модели', 'Model mismatch'),
-        phrase('Завантажувач відсутній', 'Загрузчик отсутствует', 'No bootloader')
+        phrase('Помилка плавного запуску мережі', 'Ошибка плавного запуска сети', 'Grid soft-start failure'),
+        phrase('Перенапруга DC-шини', 'Перенапряжение DC-шины', 'Bus overvoltage'),
+        phrase('Занижена напруга DC-шини', 'Пониженное напряжение DC-шины', 'Bus undervoltage'),
+        phrase('Надструм батареї', 'Сверхток батареи', 'Battery overcurrent'),
+        phrase('Перегрів', 'Перегрев', 'Overtemperature'),
+        phrase('Перенапруга батареї', 'Перенапряжение батареи', 'Battery overvoltage'),
+        phrase('Помилка плавного запуску батареї', 'Ошибка плавного запуска батареи', 'Battery soft-start failure'),
+        phrase('Коротке замикання DC-шини', 'Короткое замыкание DC-шины', 'Bus short circuit'),
+        phrase('Помилка плавного запуску інвертора', 'Ошибка плавного запуска инвертора', 'Inverter soft-start failure'),
+        phrase('Перенапруга інвертора', 'Перенапряжение инвертора', 'Inverter overvoltage'),
+        phrase('Занижена напруга інвертора', 'Пониженное напряжение инвертора', 'Inverter undervoltage'),
+        phrase('Коротке замикання інвертора', 'Короткое замыкание инвертора', 'Inverter short circuit'),
+        phrase('Захист від від’ємної потужності', 'Защита от отрицательной мощности', 'Negative-power protection'),
+        phrase('Аварія перевантаження', 'Авария перегрузки', 'Overload fault'),
+        phrase('Невідповідність моделі та обладнання', 'Несоответствие модели и оборудования', 'Model and hardware mismatch'),
+        phrase('Завантажувач відсутній', 'Загрузчик отсутствует', 'Bootloader missing')
       ];
       const fault2Bits = [
-        phrase('Запис ПЗ', 'Запись ПО', 'Flash'),
-        phrase('Полярність PV', 'Полярность PV', 'PV polarity'),
-        phrase('SN паралелі', 'SN параллели', 'Parallel SN'),
-        phrase('Зв\'язок паралелі', 'Связь параллели', 'Parallel comm'),
-        phrase('Різниця напруг батарей', 'Разница напряжений батарей', 'Bat voltage diff'),
-        phrase('Різниця напруг мережі', 'Разница напряжений сети', 'Grid voltage diff'),
-        phrase('Різниця частоти мережі', 'Разница частоты сети', 'Grid freq diff'),
-        phrase('Відсутня фаза', 'Отсутствует фаза', 'Phase missing'),
-        phrase('Втрата синхронізації', 'Потеря синхронизации', 'Sync lost'),
-        phrase('Помилка BMS', 'Ошибка BMS', 'BMS fault'),
-        phrase('Помилка MCU', 'Ошибка MCU', 'MCU fault'),
-        phrase('BIT11 рез', 'BIT11 рез', 'BIT11 res'),
-        phrase('Ненормальне навантаження', 'Ненормальная нагрузка', 'Load anomaly'),
-        phrase('Перенапруга PV', 'Перенапряжение PV', 'PV overvolt')
+        phrase('Запис програми', 'Запись программы', 'Program flashing'),
+        phrase('Зворотна полярність PV', 'Обратная полярность PV', 'PV reverse connection'),
+        phrase('Помилка серійного номера паралельної системи', 'Ошибка серийного номера параллельной системы', 'Parallel serial-number anomaly'),
+        phrase('Помилка зв’язку паралельної системи', 'Ошибка связи параллельной системы', 'Parallel communication anomaly'),
+        phrase('Велика різниця напруг батарей у паралелі', 'Большая разница напряжений батарей в параллели', 'Large parallel battery-voltage difference'),
+        phrase('Велика різниця напруг мережі у паралелі', 'Большая разница напряжений сети в параллели', 'Large parallel grid-voltage difference'),
+        phrase('Велика різниця частоти мережі у паралелі', 'Большая разница частоты сети в параллели', 'Large parallel grid-frequency difference'),
+        phrase('Відсутня фаза у паралельній системі', 'Отсутствует фаза в параллельной системе', 'Parallel phase missing'),
+        phrase('Втрачено синхронізацію паралельного виходу', 'Потеряна синхронизация параллельного выхода', 'Parallel output synchronisation lost'),
+        phrase('Несправність BMS', 'Неисправность BMS', 'BMS fault'),
+        phrase('Несправність MCU', 'Неисправность MCU', 'MCU fault'),
+        phrase('BIT11 зарезервовано', 'BIT11 зарезервирован', 'BIT11 is reserved'),
+        phrase('Ненормальне навантаження інвертора', 'Ненормальная нагрузка инвертора', 'Inverter load anomaly'),
+        phrase('Перенапруга PV', 'Перенапряжение PV', 'PV overvoltage')
       ];
       const alarm1Bits = [
-        phrase('Батарея відкл', 'Батарея откл', 'Bat disc'),
-        phrase('Занижена напруга батареї', 'Пониженное напряжение батареи', 'Bat undervolt'),
-        phrase('Низька напруга батареї', 'Низкое напряжение батареи', 'Bat low'),
-        phrase('КЗ зарядного', 'КЗ зарядного', 'Charger short'),
-        phrase('BIT04 рез', 'BIT04 рез', 'BIT04 res'),
-        phrase('Перезаряд батареї', 'Перезаряд батареи', 'Bat overcharge'),
-        phrase('Втрата BMS', 'Потеря BMS', 'BMS lost'),
-        phrase('Перегрів (рез)', 'Перегрев (рез)', 'Overtemp (res)'),
+        phrase('Батарея не підключена', 'Батарея не подключена', 'Battery not connected'),
+        phrase('Занижена напруга батареї', 'Пониженное напряжение батареи', 'Battery undervoltage'),
+        phrase('Низька напруга батареї', 'Низкое напряжение батареи', 'Battery voltage low'),
+        phrase('Коротке замикання зарядного пристрою', 'Короткое замыкание зарядного устройства', 'Charger short circuit'),
+        phrase('BIT04 зарезервовано', 'BIT04 зарезервирован', 'BIT04 is reserved'),
+        phrase('Перезаряд батареї', 'Перезаряд батареи', 'Battery overcharge'),
+        phrase('Втрачено BMS', 'Потеряна BMS', 'BMS connection lost'),
+        phrase('Перегрів (зарезервовано)', 'Перегрев (зарезервировано)', 'Overtemperature (reserved)'),
         phrase('Вентилятор заблоковано', 'Вентилятор заблокирован', 'Fan stalled'),
         phrase('Помилка EEPROM', 'Ошибка EEPROM', 'EEPROM fault'),
         phrase('Перевантаження', 'Перегрузка', 'Overload'),
-        phrase('Сигнал генератора (рез)', 'Сигнал генератора (рез)', 'Gen signal (res)'),
-        phrase('Слабка PV', 'Слабая PV', 'Weak PV'),
-        phrase('Втрата синхронізації', 'Потеря синхронизации', 'Sync lost'),
-        phrase('Відсутня фаза', 'Отсутствует фаза', 'Phase missing'),
-        phrase('Версія несумісна (рез)', 'Версия несовместима (рез)', 'Version incompatible (res)')
+        phrase('Аномальна форма сигналу генератора (зарезервовано)', 'Аномальная форма сигнала генератора (зарезервировано)', 'Generator waveform anomaly (reserved)'),
+        phrase('Недостатня енергія PV', 'Недостаточная энергия PV', 'Weak PV energy'),
+        phrase('Втрачено сигнал синхронізації паралельної системи', 'Потерян сигнал синхронизации параллельной системы', 'Parallel synchronisation signal lost'),
+        phrase('Відсутня фаза у паралельній системі', 'Отсутствует фаза в параллельной системе', 'Parallel phase missing'),
+        phrase('Несумісна версія паралельної системи (зарезервовано)', 'Несовместимая версия параллельной системы (зарезервировано)', 'Parallel version incompatible (reserved)')
       ];
       const alarm2Bits = [
-        phrase('Зв\'язок паралелі', 'Связь параллели', 'Parallel comm'),
-        phrase('Різниця напруги/частоти', 'Разница напряжения/частоты', 'Volt/freq diff'),
-        phrase('Вимкнення низький SOC', 'Отключение низкий SOC', 'Low SOC shutdown'),
-        phrase('Попередження низький SOC', 'Предупреждение низкий SOC', 'Low SOC warning'),
-        phrase('Різниця напруг батарей/відкл', 'Разница напряжений батарей/откл', 'Bat diff/disc'),
-        phrase('КЗ батареї', 'КЗ батареи', 'Bat short'),
-        phrase('Батарея нижче запуску', 'Батарея ниже запуска', 'Bat below start'),
-        phrase('Перевантаження генератора', 'Перегрузка генератора', 'Gen overload'),
-        phrase('Занижена напруга генератора', 'Пониженное напряжение генератора', 'Gen undervolt'),
-        phrase('Перенапруга генератора', 'Перенапряжение генератора', 'Gen overvolt'),
-        phrase('Помилка CT/лічильника', 'Ошибка CT/счётчика', 'CT/meter fault'),
+        phrase('Помилка зв’язку паралельної системи', 'Ошибка связи параллельной системы', 'Parallel communication anomaly'),
+        phrase('Велика різниця напруги або частоти мережі у паралелі', 'Большая разница напряжения или частоты сети в параллели', 'Large parallel grid voltage/frequency difference'),
+        phrase('Вимкнення через низький SOC', 'Отключение из-за низкого SOC', 'Shutdown due to low SOC'),
+        phrase('Попередження про низький SOC', 'Предупреждение о низком SOC', 'Low-SOC warning'),
+        phrase('Велика різниця напруг батарей або батарея не підключена', 'Большая разница напряжений батарей или батарея не подключена', 'Large parallel battery-voltage difference or disconnected battery'),
+        phrase('Коротке замикання батареї', 'Короткое замыкание батареи', 'Battery short circuit'),
+        phrase('Батарея нижче напруги запуску', 'Батарея ниже напряжения запуска', 'Battery below startup voltage'),
+        phrase('Перевантаження генератора', 'Перегрузка генератора', 'Generator overload'),
+        phrase('Занижена напруга генератора', 'Пониженное напряжение генератора', 'Generator undervoltage'),
+        phrase('Перенапруга генератора', 'Перенапряжение генератора', 'Generator overvoltage'),
+        phrase('Помилка підключення зовнішнього CT/лічильника', 'Ошибка подключения внешнего CT/счётчика', 'External CT/meter connection anomaly'),
         phrase('Нестабільна мережа', 'Нестабильная сеть', 'Unstable grid'),
-        phrase('Помилка лічильника', 'Ошибка счётчика', 'Meter fault')
+        phrase('Помилка зв’язку з лічильником', 'Ошибка связи со счётчиком', 'Meter communication failure')
       ];
 
       function decodeBits(raw, definitions, clearPhrase) {

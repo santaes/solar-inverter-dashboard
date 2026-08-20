@@ -17,12 +17,15 @@ SCRIPT_NAMES = (
     "translations.js",
     "interpretations.js",
     "renderers.js",
+    "chart-demo-capture.js",
     "charts.js",
     "chart-demo-history.js",
     "chart-rendering.js",
     "gauges.js",
+    "energy-flow-cards.js",
     "energy-flow.js",
     "lcd.js",
+    "browser-storage.js",
     "app.js",
     "register-map.js",
     "app-events.js",
@@ -32,7 +35,7 @@ SCRIPT_NAMES = (
 def dashboard_css() -> str:
     return "\n".join(
         (WEB_ROOT / "styles" / name).read_text(encoding="utf-8")
-        for name in ("dashboard.css", "dashboard-responsive.css")
+        for name in ("dashboard.css", "charts.css", "dashboard-responsive.css")
     )
 
 
@@ -47,7 +50,29 @@ def inverter_service_source() -> str:
     services = ROOT / "solar_inverter" / "services"
     return "\n".join(
         (services / name).read_text(encoding="utf-8")
-        for name in ("inverter_service_core.py", "inverter_service_runtime.py")
+        for name in (
+            "config.py", "register_overrides.py", "inverter_service_core.py",
+            "server_logging.py", "inverter_service_runtime.py",
+        )
+    )
+
+
+def web_dashboard_source() -> str:
+    components = ROOT / "solar_inverter" / "components"
+    return "\n".join(
+        (components / name).read_text(encoding="utf-8")
+        for name in ("state_payload.py", "github_updates.py", "web_dashboard.py")
+    )
+
+
+def energy_flow_source() -> str:
+    return script_source("energy-flow-cards.js", "energy-flow.js")
+
+
+def dashboard_chart_source() -> str:
+    return script_source(
+        "chart-demo-capture.js", "charts.js", "chart-demo-history.js",
+        "chart-rendering.js",
     )
 
 
@@ -60,8 +85,16 @@ class DashboardAssetTests(unittest.TestCase):
             "\u0420\u0435\u0433\u0456\u0441\u0442\u0440",
         )
         self.assertEqual(repair_legacy_text("\u00e2\u20ac\u201d"), "\u2014")
-        for manifest in (ROOT / "deploy" / "build_update_bundle.py", ROOT / "deploy" / "update_bundle_src" / "__main__.py"):
-            self.assertIn("solar_inverter/services/chart_history.py", manifest.read_text(encoding="utf-8"))
+        builder = runpy.run_path(str(ROOT / "deploy" / "build_update_bundle.py"))
+        self.assertIn(
+            "solar_inverter/services/chart_history.py",
+            builder["project_payload_files"](),
+        )
+        installer = ROOT / "deploy" / "update_bundle_src" / "__main__.py"
+        self.assertIn(
+            "solar_inverter/services/chart_history.py",
+            installer.read_text(encoding="utf-8"),
+        )
 
     def test_poll_worker_reads_before_using_fresh_and_updater_logs_modbus_access(self) -> None:
         runtime = (ROOT / "solar_inverter" / "services" / "inverter_service_runtime.py").read_text(encoding="utf-8")
@@ -79,6 +112,19 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertIn('"/dev/ttyUSB0"', updater)
         self.assertGreaterEqual(updater.count("log_modbus_prerequisites()"), 3)
         self.assertIn("no physical RTU adapter is available to this host", updater)
+
+    def test_connection_mode_updates_the_core_modbus_reader(self) -> None:
+        from solar_inverter.services import inverter_service_core as core
+        from solar_inverter.services import inverter_service_runtime as runtime
+
+        original_mode = core.CONNECTION_MODE
+        try:
+            target_mode = "tcp" if original_mode == "rtu" else "rtu"
+            self.assertTrue(runtime.set_connection_mode(target_mode)["success"])
+            self.assertEqual(core.CONNECTION_MODE, target_mode)
+            self.assertEqual(runtime.get_connection_mode()["mode"], target_mode)
+        finally:
+            runtime.set_connection_mode(original_mode)
 
     def test_light_theme_is_dimmed_and_keeps_readable_contrast(self) -> None:
         css = dashboard_css()
@@ -117,7 +163,7 @@ class DashboardAssetTests(unittest.TestCase):
 
     def test_interaction_work_is_deferred_until_after_next_paint(self) -> None:
         css = dashboard_css()
-        charts = script_source("charts.js", "chart-demo-history.js", "chart-rendering.js")
+        charts = dashboard_chart_source()
         app = script_source("app.js", "app-events.js")
         self.assertNotIn("backdrop-filter: blur(18px)", css)
         self.assertIn("scrollbar-gutter: stable", css)
@@ -331,7 +377,7 @@ class DashboardAssetTests(unittest.TestCase):
 
     def test_timeline_charts_use_local_uplot_and_interactive_modal(self) -> None:
         html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
-        charts = script_source("charts.js", "chart-rendering.js", "chart-demo-history.js", "app.js")
+        charts = dashboard_chart_source() + script_source("app.js")
         css = dashboard_css()
         self.assertIn('/static/vendor/uPlot.iife.min.js', html)
         self.assertNotIn('rel="stylesheet" href="/static/vendor/uPlot.min.css', html)
@@ -396,7 +442,7 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertNotIn("chart-select-all", html)
 
     def test_energy_flow_uses_physical_live_grid_and_generator_registers(self) -> None:
-        flow = (WEB_ROOT / "scripts" / "energy-flow.js").read_text(encoding="utf-8")
+        flow = energy_flow_source()
         html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("firstRegister([81, 433])", flow)
         self.assertIn("firstRegister([85])", flow)
@@ -465,9 +511,11 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertIn("classList.toggle('disconnected', !generatorSourceAvailable)", flow)
         self.assertIn("liveMeasurementsFresh && measuredGridConnected", flow)
         self.assertIn("liveMeasurementsFresh && measuredBatteryConnected", flow)
-        self.assertIn("const compactAcMode = [321, 530, 16644].includes(number)", flow)
-        self.assertIn("? ['APP', 'UPS', 'GEN'][raw] || '' : ''", flow)
-        self.assertIn("row.textContent = compactAcMode || (interpretation", flow)
+        self.assertIn("function compactFlowCardState(registerNumber, raw)", flow)
+        self.assertIn("case 325: return enumCode(['POWER', 'INIT', 'STANDBY', 'GRID', 'PV', 'BAT', 'GEN'", flow)
+        self.assertIn("? compactFlowCardState(number, raw)", flow)
+        self.assertNotIn("`${name}: ${interpretation}`", flow)
+        self.assertIn("row.title = fullText +", flow)
         self.assertIn(".flow-connector.disconnected { visibility: hidden; opacity: 0 }", dashboard_css())
         for connector in ("pv", "generator", "grid", "battery"):
             self.assertIn(f'class="flow-connector flow-{connector} disconnected"', html)
@@ -487,7 +535,7 @@ class DashboardAssetTests(unittest.TestCase):
 
     def test_each_energy_flow_card_has_a_limited_register_picker(self) -> None:
         html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
-        flow = (WEB_ROOT / "scripts" / "energy-flow.js").read_text(encoding="utf-8")
+        flow = energy_flow_source()
         events = (WEB_ROOT / "scripts" / "app-events.js").read_text(encoding="utf-8")
         for card in ("solar", "inverter", "generator", "home", "grid", "battery"):
             self.assertIn(f'data-flow-card-settings="{card}"', html)
@@ -518,7 +566,7 @@ class DashboardAssetTests(unittest.TestCase):
 
     def test_poll_timing_reports_real_cycles_and_accounts_for_postprocessing(self) -> None:
         service = inverter_service_source()
-        server = (ROOT / "solar_inverter" / "components" / "web_dashboard.py").read_text(encoding="utf-8")
+        server = web_dashboard_source()
         html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn('"read_seconds": 0.0', service)
         self.assertIn("POLL_RATES = [0.5, 1.0, 2.0, 5.0, 10.0]", service)
@@ -555,6 +603,8 @@ class DashboardAssetTests(unittest.TestCase):
             self.assertIn(f"      {language}: {{", source)
         self.assertIn("function localizeDataText", source)
         self.assertIn("function localizeApiField", source)
+        for key in ("lcdDisplayAria", "lcdAcInputShort", "lcdPvEnergyShort", "lcdDayShort"):
+            self.assertEqual(source.count(f"{key}:"), 3)
         for obsolete in (
             "ÐšÐ¾Ð´ ÐºÐ¾Ð½Ñ„Ñ–Ð³ÑƒÑ€Ð°Ñ†Ñ–Ñ— 66",
             "ÐšÐ¾Ð´ ÐºÐ¾Ð½Ñ„Ñ–Ð³ÑƒÑ€Ð°Ñ†Ñ–Ñ— 67",
@@ -740,7 +790,7 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertIn("Initial identity read", runtime)
         self.assertNotIn("DEVICE_MODEL_NAME", runtime)
 
-    def test_updater_four_records_local_installations_without_github_ui(self) -> None:
+    def test_updater_records_local_installations_without_github_ui(self) -> None:
         html = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
         events = (WEB_ROOT / "scripts" / "app-events.js").read_text(encoding="utf-8")
         installer = (ROOT / "deploy" / "update_bundle_src" / "__main__.py").read_text(encoding="utf-8")
@@ -750,10 +800,10 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertIn('id="updater-history-picker"', html)
         self.assertNotIn("github.com", html.lower())
         self.assertIn("fetch('/api/updater-history'", events)
-        self.assertIn('UPDATER_VERSION = "4"', installer)
+        self.assertIn('UPDATER_VERSION = "5"', installer)
         self.assertIn("'installer'", installer)
         self.assertIn('STATS_DATABASE_PATH = Path("/var/lib/solar-inverter-dashboard/stats.sqlite3")', installer)
-        self.assertIn('LEGACY_STATS_DATABASE_PATH = APPLICATION_ROOT / "solar_invertor_web_stats.sqlite3"', installer)
+        self.assertIn('LEGACY_STATS_DATABASE_PATH = LEGACY_APPLICATION_ROOT / "solar_invertor_web_stats.sqlite3"', installer)
         self.assertIn('UPDATER_RECEIPT_PATH = APPLICATION_ROOT / "updater_history.json"', installer)
         self.assertIn('UPDATER_ARCHIVE_DIR = APPLICATION_ROOT / "updater_archives"', installer)
         self.assertIn("def next_updater_version() -> int:", installer)
@@ -761,7 +811,7 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertIn("legacy_rows", installer)
         self.assertIn("WHERE NOT EXISTS", installer)
         self.assertIn('UPDATER_RECEIPT_PATH = PROJECT_ROOT / "updater_history.json"', runtime)
-        self.assertIn('VERSION_URL = "http://127.0.0.1:8080/api/version"', installer)
+        self.assertIn('version_url = f"http://127.0.0.1:{port}/api/version"', installer)
         self.assertIn("def dashboard_asset_version(payload_root: Path) -> str:", installer)
         self.assertIn("def verify_installed_payload(payload_root: Path, payload_files: tuple[str, ...]) -> None:", installer)
         self.assertIn("def wait_for_health(expected_version: str) -> None:", installer)
@@ -852,15 +902,15 @@ class DashboardAssetTests(unittest.TestCase):
                     "SELECT commit_hash, source, build_output FROM updater_versions ORDER BY id"
                 ).fetchall()
             receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
-            archive_exists = (archive_dir / "solar-dashboard-updater-4-abc123def456.pyz").is_file()
+            archive_exists = (archive_dir / "solar-dashboard-updater-5-abc123def456.pyz").is_file()
         self.assertIn("build_output", columns)
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[0], ("old-local-build", "local", None))
         self.assertEqual(rows[1], ("updater-4", "installer", "SHA-256 OLD"))
-        self.assertEqual(rows[2][0:2], ("updater-4-abc123def456", "installer"))
+        self.assertEqual(rows[2][0:2], ("updater-5-abc123def456", "installer"))
         self.assertRegex(rows[2][2], r"^SHA-256 [0-9A-F]{64}$")
         self.assertEqual(receipt["schema"], 1)
-        self.assertEqual(receipt["installations"][0]["version"], "4")
+        self.assertEqual(receipt["installations"][0]["version"], "5")
         self.assertEqual(receipt["installations"][0]["dashboard_version"], "abc123def456")
         self.assertEqual(receipt["installations"][0]["checksum"], rows[2][2])
         self.assertTrue(archive_exists)
@@ -1060,7 +1110,7 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertEqual(output_voltage[1], [89])
         self.assertEqual(output_load[1], [94])
         lcd = (WEB_ROOT / "scripts" / "lcd.js").read_text(encoding="utf-8")
-        flow = (WEB_ROOT / "scripts" / "energy-flow.js").read_text(encoding="utf-8")
+        flow = energy_flow_source()
         self.assertIn("numberValue([537, 89])", lcd)
         self.assertIn("firstRegister([537, 89])", flow)
         self.assertIn("firstRegister([545, 94])", flow)
@@ -1148,51 +1198,58 @@ class DashboardRendererTests(unittest.TestCase):
             {"raw": 5, "value": 5, "display": "5", "available": True},
             {"raw": 249, "value": 24.9, "display": "24.9", "available": True},
         ])
-        browser_source = script_source("app.js", "charts.js", "energy-flow.js", "lcd.js")
+        browser_source = script_source("app.js", "charts.js", "energy-flow-cards.js", "energy-flow.js", "lcd.js")
         self.assertIn("function registerNumericValue(register)", browser_source)
         self.assertGreaterEqual(browser_source.count("registerNumericValue("), 18)
 
     def test_demo_r67_to_r70_words_describe_each_energy_route(self) -> None:
         chart_path = WEB_ROOT / "scripts" / "charts.js"
+        capture_path = WEB_ROOT / "scripts" / "chart-demo-capture.js"
         probe = textwrap.dedent(
             """
             const fs = require('fs');
             const source = fs.readFileSync(process.argv[1], 'utf8');
+            const captureSource = fs.readFileSync(process.argv[2], 'utf8');
             const start = source.indexOf('function interpolate');
             const end = source.indexOf('function demoSolarEnergySummary', start);
-            eval(source.slice(start, end));
+            eval(captureSource + '\\n' + source.slice(start, end));
             console.log(JSON.stringify([10, 30, 50, 70, 90, 110].map(second => {
               const values = realisticDemoScenario(second).values;
-              return [values.get(67), values.get(68), values.get(69), values.get(70), values.get(322), values.get(325), values.get(133), values.get(139), values.get(339)];
+              return [values.get(67), values.get(68), values.get(69), values.get(70), values.get(322), values.get(325), values.get(133), values.get(139), values.get(339), values.get(407)];
             })));
             """
         )
         result = subprocess.run(
-            [shutil.which("node") or "node", "-e", probe, str(chart_path)],
+            [shutil.which("node") or "node", "-e", probe, str(chart_path), str(capture_path)],
             check=True, capture_output=True, text=True,
         )
         frames = json.loads(result.stdout)
         self.assertEqual([frame[0] for frame in frames], [4, 3, 5, 4, 6, 4])
-        self.assertEqual([frame[3] for frame in frames], [0, 1, 2, 3, 4, 0])
-        self.assertEqual([frame[4] for frame in frames], [0, 1, 2, 3, 4, 0])
+        self.assertEqual([frame[3] for frame in frames], [0, 0, 0, 0, 0, 0])
+        self.assertEqual([frame[4] for frame in frames], [0, 0, 0, 0, 0, 0])
         self.assertEqual([frame[5] for frame in frames], [4, 3, 5, 4, 6, 4])
-        expected_r69 = [624, 611, 768, 592, 588, 848]
+        expected_r69 = [624, 611, 768, 720, 620, 1360]
         self.assertEqual([frame[2] for frame in frames], expected_r69)
         # Every frame has a normal main output in R68; source terminals vary by route.
         self.assertTrue(all(((frame[1] >> 6) & 3) == 1 for frame in frames))
         self.assertEqual([frame[1] & 3 for frame in frames], [0, 2, 0, 0, 0, 0])
         self.assertEqual([(frame[1] >> 2) & 3 for frame in frames], [0, 0, 0, 0, 2, 0])
-        self.assertEqual([frames[index][6:] for index in (3, 4)], [[100, 100, 100], [100, 100, 100]])
+        self.assertEqual(
+            [frames[index][6:] for index in (3, 4)],
+            [[None, None, None, 71], [None, None, None, 71]],
+        )
 
     def test_captured_demo_grid_charge_has_a_matching_grid_route(self) -> None:
         chart_path = WEB_ROOT / "scripts" / "charts.js"
+        capture_path = WEB_ROOT / "scripts" / "chart-demo-capture.js"
         probe = textwrap.dedent(
             """
             const fs = require('fs');
             const source = fs.readFileSync(process.argv[1], 'utf8');
+            const captureSource = fs.readFileSync(process.argv[2], 'utf8');
             const start = source.indexOf('function interpolate');
             const end = source.indexOf('function realisticDemoScenario', start);
-            eval(source.slice(start, end));
+            eval(captureSource + '\\n' + source.slice(start, end));
             const discharge = capturedRegisterLogDemoScenario(46).values;
             const charge = capturedRegisterLogDemoScenario(26).values;
             console.log(JSON.stringify({
@@ -1202,7 +1259,7 @@ class DashboardRendererTests(unittest.TestCase):
             """
         )
         result = subprocess.run(
-            [shutil.which("node") or "node", "-e", probe, str(chart_path)],
+            [shutil.which("node") or "node", "-e", probe, str(chart_path), str(capture_path)],
             check=True, capture_output=True, text=True,
         )
         demo = json.loads(result.stdout)
@@ -1215,14 +1272,14 @@ class DashboardRendererTests(unittest.TestCase):
         self.assertEqual(demo["charge"][3] & ((1 << 0) | (1 << 5)), (1 << 0) | (1 << 5))
 
     def test_full_r68_battery_state_forces_a_complete_soc_display(self) -> None:
-        flow = (WEB_ROOT / "scripts" / "energy-flow.js").read_text(encoding="utf-8")
+        flow = energy_flow_source()
         lcd = (WEB_ROOT / "scripts" / "lcd.js").read_text(encoding="utf-8")
         self.assertIn("firstRegister([407, 139, 133, 339])", flow)
         self.assertIn("function effectiveBatterySoc(measuredSoc, terminalState)", flow)
         self.assertIn("if (terminalState?.battery === 4) return 100", flow)
         self.assertIn("const effectiveSoc = effectiveBatterySoc(batterySoc, terminalState)", flow)
         self.assertIn("batteryLevelKnown ? `${Math.round(batteryLevel)}%` : '—'", flow)
-        self.assertIn("numberValue([133, 139, 339, 407])", lcd)
+        self.assertIn("numberValue([407, 139, 133, 339])", lcd)
         self.assertIn("const batterySoc = effectiveBatterySoc(measuredBatterySoc, terminalState)", lcd)
 
     def test_api_battery_soc_uses_r68_full_state_without_mutating_raw_data(self) -> None:
@@ -1330,8 +1387,8 @@ class DashboardRendererTests(unittest.TestCase):
 
     def test_demo_populates_fan_for_dashboard_charts_and_lcd_data(self) -> None:
         html_source = (WEB_ROOT / "index.html").read_text(encoding="utf-8")
-        chart_source = script_source("charts.js", "chart-demo-history.js", "chart-rendering.js")
-        flow_source = (WEB_ROOT / "scripts" / "energy-flow.js").read_text(encoding="utf-8")
+        chart_source = dashboard_chart_source()
+        flow_source = energy_flow_source()
         lcd_source = (WEB_ROOT / "scripts" / "lcd.js").read_text(encoding="utf-8")
         css_source = dashboard_css()
         self.assertIn("const fanSpeed =", chart_source)
@@ -1382,10 +1439,10 @@ class DashboardRendererTests(unittest.TestCase):
         self.assertIn("function outputSourceFromPriority(priority, availableSources)", flow_source)
         self.assertIn("const outputPriority = decodeBoundedRegister(inverterPrioritySource, 3)", flow_source)
         self.assertIn("outputSourceFromPriority(outputPriority", flow_source)
-        self.assertIn("The V1.31 interpreter is the single localized source", flow_source)
-        self.assertNotIn("const enumLabels = {", flow_source)
-        self.assertIn("R323 is a configured output priority, never evidence", flow_source)
-        self.assertIn("? `${name}: ${interpretation}`", flow_source)
+        self.assertIn("function compactFlowCardState(registerNumber, raw)", flow_source)
+        self.assertIn("case 530:", flow_source)
+        self.assertIn("case 529: return enumCode(['GPB', 'PGB', 'PBG', 'MKS/MKP'])", flow_source)
+        self.assertNotIn("`${name}: ${interpretation}`", flow_source)
         self.assertIn("row.classList.toggle('flow-card-state-value', Boolean(interpretation))", flow_source)
         self.assertIn("registerRawExplanation(register)", flow_source)
         self.assertIn("function updateInverterFanAnimation(fanRow, normalizedSpeed)", flow_source)
