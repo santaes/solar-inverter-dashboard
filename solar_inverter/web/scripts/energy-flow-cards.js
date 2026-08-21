@@ -149,6 +149,10 @@
         default: return `#${raw}`;
       }
     }
+    function truncateText(text, maxLength = 20) {
+      if (!text || text.length <= maxLength) return text;
+      return text.slice(0, maxLength - 1) + '…';
+    }
     function renderFlowCardValues(cardKey, selector, registers, visible = true) {
       const host = document.querySelector(selector);
       if (!host) return;
@@ -162,9 +166,10 @@
         const interpretation = register ? registerInterpretation(register) : '';
         const raw = Number(register?.raw);
         const fullText = interpretation || (register ? formatFlowCardRegister(register, cardKey === 'grid') : t('noData'));
-        row.textContent = interpretation && Number.isInteger(raw)
+        const displayText = interpretation && Number.isInteger(raw)
           ? compactFlowCardState(number, raw)
           : fullText;
+        row.textContent = truncateText(displayText, 25);
         row.classList.toggle('flow-card-state-value', Boolean(interpretation));
         row.title = fullText + (register ? ` · ${registerRawExplanation(register)}` : '');
         return row;

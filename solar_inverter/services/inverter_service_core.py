@@ -232,7 +232,7 @@ REGISTER_CONFIG: dict[int, tuple[str, float, str, bool, str]] = {
     131: ("Напруга від’ємної клеми батареї", 0.1, "V", True, "Батарея"),
     132: ("Струм від’ємної клеми батареї", 0.1, "A", True, "Батарея"),
     133: ("SOC акумулятора", 0.1, "%", False, "Батарея"),
-    134: ("Потужність акумулятора", 1.0, "W", False, "Потужність"),
+    134: ("Потужність акумулятора", 1.0, "W", True, "Потужність"),
     135: ("Резерв", 1.0, "", False, "Батарея"),
     136: ("Резерв", 1.0, "", False, "Батарея"),
 
@@ -701,6 +701,10 @@ def decode_identifier(values: dict[int, int]) -> str:
         serial = ""
     serial = serial.strip()
 
+    # Return only SN if available
+    if serial:
+        return f"SN {serial}"
+
     def valid_word(register: int) -> int | None:
         value = values.get(register)
         return value if value is not None and 0 <= value < 65534 else None
@@ -713,8 +717,6 @@ def decode_identifier(values: dict[int, int]) -> str:
         identity_parts.append(f"Model ID {model_id}")
     if device_type_high is not None and device_type_low is not None:
         identity_parts.append(f"Device type {(device_type_high << 16) | device_type_low}")
-    if serial:
-        identity_parts.append(f"SN {serial}")
     return " · ".join(identity_parts)
 
 

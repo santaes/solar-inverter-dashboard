@@ -29,7 +29,7 @@
     let lastLoggedSiteVisits = null;
     let flowAlertText = '';
     let flowAlertTimer = null;
-    const DEMO_DEVICE_IDENTITY = 'Model ID 64 · Device type 0 · SN J25110266-1H00028';
+    const DEMO_DEVICE_IDENTITY = 'SN J25110266-1H00028';
     const requestIntervals = [500, 1000, 2000, 5000, 10000];
     const hiddenRefreshInterval = 30000;
     const flowAnimationStates = new Map();
