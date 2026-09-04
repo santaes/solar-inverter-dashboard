@@ -816,6 +816,9 @@ class DashboardAssetTests(unittest.TestCase):
         self.assertIn("def verify_installed_payload(payload_root: Path, payload_files: tuple[str, ...]) -> None:", installer)
         self.assertIn("def wait_for_health(expected_version: str) -> None:", installer)
         self.assertIn("running_version == expected_version", installer)
+        self.assertIn("bundled_version = dashboard_asset_version(payload_root)", installer)
+        self.assertIn("expected_version = dashboard_asset_version(APPLICATION_ROOT)", installer)
+        self.assertIn("Installed dashboard version differs from the bundle", installer)
         self.assertIn("wait_for_health(expected_version)", installer)
         self.assertIn('request_path == "/api/updater-history/download"', server_source)
         self.assertIn('"Content-Disposition"', server_source)
@@ -1488,25 +1491,24 @@ class DashboardRendererTests(unittest.TestCase):
             path.read_text(encoding="utf-8") for path in (WEB_ROOT / "styles").glob("*.css")
         )
         expected = {
-            1: (83, 538, 91), 2: (129, 137, 537, 89),
-            3: (129, 137, 545, 94), 4: (129, 137, 542, 93),
-            5: (129, 137, 541, 92), 6: (151, 153),
-            7: (159, 160, 130), 8: (157,), 9: (162,), 10: (163,),
+            1: (157,), 2: (164, 158), 3: (129, 137, 130, 405),
+            4: (140, 406, 407, 139, 133, 339), 5: (142, 410, 143, 409),
+            6: (141, 411, 16651, 16650), 7: (412, 413),
+            8: (147, 418, 146, 419), 9: (27, 28),
         }
         for page, registers in expected.items():
             start = lcd.index(f"code: 'P{page}'")
-            end_marker = f"code: 'P{page + 1}'" if page < 10 else "];\n      const page"
+            end_marker = f"code: 'P{page + 1}'" if page < 9 else "];\n      const page"
             end = lcd.index(end_marker, start)
             block = lcd[start:end]
             for register in registers:
                 self.assertRegex(block, rf"(?:numberValue\(\[{register}\]\)|registerLabel\([^\n]*\b{register}\b|versionValue\([^\n]*\b{register}\b|interpretedValue\([^\n]*\b{register}\b)")
         self.assertIn("registerLabel(157, t('dailyPvEnergy'))", lcd)
-        self.assertNotIn("code: 'P11'", lcd)
-        self.assertNotIn("code: 'P12'", lcd)
-        self.assertNotIn("registerLabel(403, t('bmsConnection'))", lcd[lcd.index("code: 'P1'"):lcd.index("code: 'P10'")])
+        self.assertNotIn("code: 'P10'", lcd)
+        self.assertNotIn("registerLabel(403, t('bmsConnection'))", lcd[lcd.index("code: 'P1'"):lcd.index("code: 'P5'")])
         app = (WEB_ROOT / "scripts" / "app.js").read_text(encoding="utf-8")
         runtime = (ROOT / "solar_inverter" / "services" / "inverter_service_runtime.py").read_text(encoding="utf-8")
-        self.assertIn("const lcdInformationPageCount = 10", app)
+        self.assertIn("const lcdInformationPageCount = 9", app)
         self.assertIn('re.fullmatch(r"P(?:[1-9]|10)", clean_page)', runtime)
         self.assertNotRegex(lcd + translations, r"(?i)local(?:ьной|ьної)? SQLite")
         self.assertIn("justify-items: center; color: #fff; text-align: center", css_source)

@@ -659,11 +659,23 @@ def install() -> None:
         payload_root = Path(temporary)
         payload_files = extract_payload(payload_root)
         validate_payload(payload_root)
-        expected_version = dashboard_asset_version(payload_root)
-        print(f"Bundled dashboard version: {expected_version}", flush=True)
+        bundled_version = dashboard_asset_version(payload_root)
+        print(f"Bundled dashboard version: {bundled_version}", flush=True)
         run(["systemctl", "stop", SERVICE_NAME], check=False)
         install_payload(payload_root, payload_files, uid, gid)
         verify_installed_payload(payload_root, payload_files)
+        # The web process hashes the installed application directory at import
+        # time. Use that same directory for the health-check expectation so an
+        # update cannot fail solely because an older install contains an
+        # additional static file outside this archive.
+        expected_version = dashboard_asset_version(APPLICATION_ROOT)
+        if expected_version != bundled_version:
+            print(
+                "Installed dashboard version differs from the bundle because "
+                "the application directory contains retained static files; "
+                f"using installed version {expected_version} for verification.",
+                flush=True,
+            )
         record_installed_version(uid, gid, expected_version)
     run(["systemctl", "daemon-reload"])
     run(["systemctl", "enable", SERVICE_NAME])

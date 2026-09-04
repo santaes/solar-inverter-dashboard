@@ -14,14 +14,14 @@
     document.querySelector('#demo-button').addEventListener('click', fillChartExampleData);
     document.querySelector('#chart-demo-button').addEventListener('click', fillChartExampleData);
     document.querySelector('#manage-values-button').addEventListener('click', openGaugePicker);
-    document.querySelector('#register-log-start').addEventListener('click', () => updateRegisterLog('start'));
-    document.querySelector('#register-log-stop').addEventListener('click', () => updateRegisterLog('stop'));
-    document.querySelector('#register-log-mark').addEventListener('click', () =>
-      updateRegisterLog('mark', document.querySelector('#register-log-note').value));
-    document.querySelector('#register-log-note').addEventListener('keydown', event => {
+    document.querySelector('#register-log-start')?.addEventListener('click', () => updateRegisterLog('start'));
+    document.querySelector('#register-log-stop')?.addEventListener('click', () => updateRegisterLog('stop'));
+   document.querySelector('#register-log-mark')?.addEventListener('click', () =>
+        updateRegisterLog('mark', document.querySelector('#register-log-note').value));
+    document.querySelector('#register-log-note')?.addEventListener('keydown', event => {
       if (event.key === 'Enter') updateRegisterLog('mark', event.currentTarget.value);
     });
-    document.querySelector('#register-map-upload-button').addEventListener('click', () =>
+   /*  document.querySelector('#register-map-upload-button').addEventListener('click', () =>
       document.querySelector('#register-map-file').click());
     document.querySelector('#register-map-file').addEventListener('change', event =>
       void uploadRegisterMap(event.currentTarget.files?.[0]));
@@ -30,13 +30,13 @@
       demoRegisterRows
         ? renderRegisters(demoRegisterRows)
         : lastData && renderRegisters(lastData.registers);
-    });
-    document.querySelector('#register-load-more').addEventListener('click', () => {
+    }); */
+/*     document.querySelector('#register-load-more').addEventListener('click', () => {
       registerRenderLimit += REGISTER_RENDER_LIMIT;
       demoRegisterRows
         ? renderRegisters(demoRegisterRows)
         : lastData && renderRegisters(lastData.registers);
-    });
+    }); */
     document.querySelector('.view-tabs').addEventListener('click', event => {
       const tab = event.target.closest('.view-tab[data-view]');
       if (tab) showView(tab.dataset.view);
@@ -54,10 +54,59 @@
       tabs[nextIndex].focus();
       showView(tabs[nextIndex].dataset.view);
     });
-    document.querySelector('.lcd-controls').addEventListener('click', event => {
+    let lcdEnterHoldTimer = null;
+    const lcdControls = document.querySelector('.lcd-controls');
+    lcdControls.addEventListener('click', event => {
       const button = event.target.closest('[data-lcd-key]');
-      if (button) handleLcdKey(button.dataset.lcdKey);
+      if (button && button.dataset.lcdKey !== 'enter') handleLcdKey(button.dataset.lcdKey);
     });
+    
+    // Period selector for LCD energy display
+    const lcdPeriodSelector = document.querySelector('.lcd-period-selector');
+    if (lcdPeriodSelector) {
+      // Initialize default selection (DAY)
+      const periodButtons = lcdPeriodSelector.querySelectorAll('b');
+      periodButtons.forEach(b => {
+        if (b.textContent.trim() === 'DAY') {
+          b.classList.add('lcd-period-active');
+        }
+      });
+      
+      lcdPeriodSelector.addEventListener('click', event => {
+        const periodButton = event.target.closest('b');
+        if (!periodButton) return;
+        
+        const periodText = periodButton.textContent.trim();
+        if (periodText === 'SETTING') return; // Setting is not a period
+        
+        const periodMap = {'DAY': 'day', 'MONTH': 'month', 'YEAR': 'year'};
+        const newPeriod = periodMap[periodText];
+        if (newPeriod && window.lcdEnergyPeriod !== newPeriod) {
+          window.lcdEnergyPeriod = newPeriod;
+          // Update visual selection
+          periodButtons.forEach(b => {
+            b.classList.toggle('lcd-period-active', b === periodButton);
+          });
+          // Re-render LCD with new period
+          if (lastData) {
+            renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
+          }
+        }
+      });
+    }
+    lcdControls.addEventListener('pointerdown', event => {
+      const button = event.target.closest('[data-lcd-key="enter"]');
+      if (!button || event.button !== 0) return;
+      window.clearTimeout(lcdEnterHoldTimer);
+      lcdEnterHoldTimer = window.setTimeout(() => {
+        lcdEnterHoldTimer = null;
+        handleLcdEnterHold();
+      }, 2000);
+    });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => lcdControls.addEventListener(type, () => {
+      if (lcdEnterHoldTimer !== null) window.clearTimeout(lcdEnterHoldTimer);
+      lcdEnterHoldTimer = null;
+    }));
     window.addEventListener('keydown', event => {
       if (currentView !== 'lcd' || event.target?.closest?.('input, select, textarea')) return;
       const key = ({Escape:'escape', ArrowUp:'up', ArrowDown:'down', Enter:'enter'})[event.key];

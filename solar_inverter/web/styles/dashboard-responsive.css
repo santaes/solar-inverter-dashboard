@@ -467,3 +467,91 @@
       content: ""; position: absolute; right: 2px; width: 3px; height: 8px;
       border-radius: 0 2px 2px 0; background: currentColor;
     }
+
+    /* LCD uses a taller, stacked face on phones so every live measurement has
+       a readable physical slot rather than being compressed or clipped. */
+    @media (max-width: 640px) {
+      .lcd-device-display { aspect-ratio: .92; min-height: 350px }
+      .lcd-device-mode { font-size: 2.35cqw }
+      .lcd-battery-source { top: 4%; left: 5%; width: 22% }
+      .lcd-battery-top { top: 6%; left: 28%; width: 43%; height: 19% }
+      .lcd-battery-side { top: 7%; left: 75%; width: 19%; font-size: 5.3cqw }
+      .lcd-battery-main { font-size: 13cqw }
+      .lcd-state-caption { font-size: 1.8cqw; white-space: normal; line-height: 1.05 }
+      .lcd-battery-scale { top: 27%; left: 20%; width: 59%; height: 7%; font-size: 1.75cqw }
+      .lcd-power-path { top: 39%; left: 8%; width: 84%; height: 11%; border-width: .4cqw }
+      .lcd-power-path::before, .lcd-power-path::after { top: -.4cqw; height: 9cqw; border-width: .4cqw }
+      .lcd-power-path::before { left: 29% } .lcd-power-path::after { left: 65% }
+      .lcd-power-path .lcd-icon { top: -1.8cqw; width: 4.8cqw; height: 3.4cqw }
+      .lcd-column { top: 49%; bottom: 10%; gap: .75cqw }
+      .lcd-column-input { left: 3%; width: 27% }
+      .lcd-column-output { left: 37%; width: 26% }
+      .lcd-column-pv { right: 3%; width: 27% }
+      .lcd-column strong { font-size: 2.15cqw; line-height: 1.05 }
+      .lcd-column .lcd-measure { font-size: 5.3cqw; gap: .4cqw }
+      .lcd-column .lcd-measure-large { font-size: 8.4cqw }
+      .lcd-column-icon { flex-basis: 5.5cqw; width: 6cqw; height: 5.5cqw }
+      .lcd-solar-panel { width: 6.4cqw }
+      .lcd-ac2-region { gap: .3cqw; margin-top: .45cqw; padding-top: .65cqw }
+      .lcd-ac2-region .lcd-measure { font-size: 3.7cqw }
+      .lcd-output-arrow { width: 4.4cqw; height: 3.2cqw; margin-top: 1.3cqw }
+      .lcd-day-energy { bottom: 1.8%; width: 49%; font-size: 5.1cqw }
+      .lcd-day-energy > span:first-child { font-size: 1.9cqw }
+    }
+
+    @media (max-width: 640px) {
+      .lcd-device-display { aspect-ratio: .98; min-height: 335px; border-radius: 8px }
+      .lcd-battery-source { top: 6%; left: 5%; width: 18% }
+      .lcd-ups-mode { left: 7%; top: 58%; font-size: 2.7cqw }
+      .lcd-battery-top { top: 7%; left: 17%; width: 67%; height: 28% }
+      .lcd-battery-main { padding-top: 1.8cqw; font-size: 14.2cqw }
+      .lcd-battery-side { top: 10%; left: 70%; width: 22%; font-size: 5.9cqw }
+      .lcd-state-caption { font-size: 1.85cqw }
+      .lcd-battery-scale { top: 39%; left: 18%; width: 64%; height: 7%; font-size: 1.8cqw }
+      .lcd-battery-scale::before { font-size: 1.7cqw }
+      .lcd-column-output { top: 51%; bottom: 13%; left: 15%; width: 70% }
+      .lcd-column-output .lcd-output-heading { font-size: 3.2cqw }
+      .lcd-output-reading-label { font-size: 1.75cqw }
+      .lcd-column-output .lcd-output-primary { font-size: 15.2cqw }
+      .lcd-column-output .lcd-output-frequency { font-size: 7.4cqw }
+      .lcd-output-arrow { width: 8.2cqw; height: 5.9cqw }
+      .lcd-day-energy { right: 8%; bottom: 4%; width: 34%; font-size: 6.5cqw }
+      .lcd-day-energy > span:first-child { right: calc(100% + 5cqw); font-size: 1.8cqw }
+    }
+
+    @media (max-width: 640px) {
+      .lcd-panel { padding: 13px 8px 15px; border-radius: 14px }
+      .lcd-status-lights { justify-content: space-between; gap: 6px; margin-bottom: 10px; font-size: 10px; letter-spacing: .04em }
+      .lcd-status-light { gap: 3px }.lcd-status-light i { width: 10px; height: 10px }
+      .lcd-screen { padding: 7px; border-width: 4px; border-radius: 10px }
+      .lcd-controls { gap: 9px }
+      .lcd-key { width: 59px; min-height: 59px; padding-top: 21px; font-size: 8px }
+      .lcd-key::before { top: 9px; font-size: 19px }.lcd-key[data-lcd-key="escape"]::before { font-size: 22px }.lcd-key[data-lcd-key="down"]::before, .lcd-key[data-lcd-key="enter"]::before { font-size: 24px }
+    }
+
+    @media (max-width: 640px) {
+      .lcd-device-display { aspect-ratio: 1.18; min-height: 0 }
+      .lcd-battery-source { top: 8%; left: 6%; width: 17% }
+      .lcd-battery-top { top: 7%; left: 16%; width: 69%; height: 29% }
+      .lcd-battery-main { font-size: 14.3cqw }.lcd-battery-side { left: 69%; width: 21%; font-size: 5.6cqw }.lcd-state-caption { font-size: 1.7cqw }
+      .lcd-battery-scale { top: 39%; left: 18%; width: 64%; height: 7.5%; grid-template-columns: repeat(3,1fr) 5.2cqw 3.8cqw 5.2cqw }.lcd-battery-scale::before { font-size: 1.65cqw }.lcd-battery-scale > span { font-size: 1.8cqw }
+      .lcd-ups-mode { left: 6%; top: 57%; font-size: 2.4cqw }
+      .lcd-column-output { top: 50%; bottom: 15%; left: 18%; width: 64%; padding: 2cqw 2.5cqw .5cqw }.lcd-column-output .lcd-output-heading { font-size: 3cqw }.lcd-column-output .lcd-output-primary { font-size: 14.5cqw }.lcd-column-output .lcd-output-frequency { font-size: 7.1cqw }
+      .lcd-flow-marker { right: 8%; bottom: 14%; width: 8cqw; height: 7cqw }.lcd-day-energy { right: 7%; bottom: 4%; width: 34%; font-size: 6.4cqw }.lcd-day-energy > span:first-child { right: calc(100% + 5cqw); font-size: 1.8cqw }
+    }
+
+    /* Preserve readable LCD glyphs on phones: the fixed physical face pans
+       within its viewport instead of compressing into an unreadable card. */
+    @media (max-width: 640px) {
+      .lcd-screen { overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; }
+      .lcd-device-display:not(.lcd-information-page) { width:620px; min-width:620px; aspect-ratio:1.58 !important; }
+    }
+
+    /* The real normal live screen is a fixed physical face: narrow viewports
+       pan it horizontally instead of activating any of the legacy LCD stacks. */
+    @media (max-width: 640px) {
+      .lcd-device-display.lcd-normal-live {
+        width:620px !important; min-width:620px !important; min-height:0 !important;
+        aspect-ratio:1.58 !important;
+      }
+    }

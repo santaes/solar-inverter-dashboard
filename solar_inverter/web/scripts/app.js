@@ -13,13 +13,23 @@
     let chartDemoCancelRequested = false;
     let demoRegisterRows = null;
     let demoFlowCase = '';
+    
+    // Make key variables available globally for event handlers
+    window.lastData = lastData;
+    window.chartDemoRunning = chartDemoRunning;
+    window.demoRegisterRows = demoRegisterRows;
     let demoGeneratorPower = 0;
     let demoPvVoltage = 0;
     let demoPvPower = 0;
     let currentView = 'dashboard';
     let lcdPageIndex = 0;
-    const lcdInformationPageCount = 10;
+    // Section 4.3 of the supplied LCD manual defines nine information pages.
+    // UP/DOWN cycle those pages; ESC returns to the normal operating screen.
+    const lcdInformationPageCount = 9;
     let lcdEnterNotice = false;
+    let lcdOutputScreenMode = 0;
+    let lcdEnergyPeriod = 'day'; // 'day', 'month', 'year'
+    let lcdOutputCycleTimer = null;
     let refreshInFlight = false;
     let refreshTimer = null;
     let refreshController = null;
@@ -139,6 +149,10 @@
     }
 
     function renderRegisters(registers) {
+      const registerRows = document.querySelector('#registers');
+      // The live register list is intentionally optional. Keep its renderer
+      // dormant when the list is commented out, without affecting logging.
+      if (!registerRows) return;
       const query = document.querySelector('#search').value.trim().toLowerCase();
       const shown = registers.filter(item =>
         `${item.register} ${localizeApiField(item, 'group')} ${localizeApiField(item, 'name')} ${item.description || ''} ${registerVersionDisplay(item, registers)} ${registerInterpretation(item)} ${item.unit}`.toLowerCase().includes(query)
@@ -152,7 +166,7 @@
           shown: shown.length
         });
       const visible = shown.slice(0, registerRenderLimit);
-      document.querySelector('#registers').innerHTML = visible.map(item => {
+      registerRows.innerHTML = visible.map(item => {
         const value = registerNumericValue(item);
         const bmsFormula = item.register === 413 && item.available ? r413BmsFormula(value) : '';
         const displayValue = registerVersionDisplay(item, registers);
@@ -226,7 +240,7 @@
       document.querySelector('#register-load-more').textContent = t('loadMoreRegisters', {count: remaining});
     }
 
-    document.querySelector('#registers').addEventListener('click', event => {
+    document.querySelector('#registers')?.addEventListener('click', event => {
       const editButton = event.target.closest('[data-register-edit]');
       if (editButton) {
         editingRegister = Number(editButton.dataset.registerEdit);
@@ -370,6 +384,7 @@
     }
     function render(data) {
       lastData = data;
+      window.lastData = data;
       document.querySelector('#identifier').textContent = getDisplayIdentifier(data);
       const status = document.querySelector('#status');
       status.classList.toggle('online', chartDemoRunning || (data.online && !data.paused));
@@ -485,6 +500,7 @@
         if (data.dashboard_instance) dashboardInstance = data.dashboard_instance;
         if (data.dashboard_version) dashboardVersion = data.dashboard_version;
         lastData = data;
+        window.lastData = data;
         recordChartSamples(data);
         if (!chartDemoRunning) render(data);
       } catch (error) {
@@ -541,8 +557,8 @@
 
     let registerMapFeedbackTimer = null;
     async function uploadRegisterMap(file) {
-      const button = document.querySelector('#register-map-upload-button');
-      const input = document.querySelector('#register-map-file');
+/*       const button = document.querySelector('#register-map-upload-button');
+ */      const input = document.querySelector('#register-map-file');
       if (!file) return;
       if (file.size > 1024 * 1024) {
         button.textContent = t('registerMapFileTooLarge');
@@ -605,6 +621,10 @@
     }
 
     function showView(view) {
+      if (lcdOutputCycleTimer !== null) {
+        window.clearInterval(lcdOutputCycleTimer);
+        lcdOutputCycleTimer = null;
+      }
       currentView = ['dashboard', 'charts', 'lcd', 'register-map'].includes(view) ? view : 'dashboard';
       document.querySelector('#dashboard-view').hidden = currentView !== 'dashboard';
       document.querySelector('#charts-view').hidden = currentView !== 'charts';
@@ -626,7 +646,15 @@
         });
       }
       if (currentView === 'lcd' && lastData) {
+        // Manual section 4.2 cycles voltage, apparent power, then active power.
+        // Entering the live screen always begins with output voltage.
+        lcdOutputScreenMode = 0;
         renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
+        lcdOutputCycleTimer = window.setInterval(() => {
+          if (currentView !== 'lcd' || !lastData) return;
+          lcdOutputScreenMode = (lcdOutputScreenMode + 1) % 3;
+          renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
+        }, 5000);
       }
       if (currentView === 'dashboard') renderDashboardValues();
       if (currentView === 'register-map' && lastData) renderRegisterMap(registerMapDisplayData(lastData));
@@ -672,8 +700,6 @@
           ? 1
           : lcdPageIndex + 1;
         lcdEnterNotice = false;
-      } else if (key === 'enter') {
-        lcdEnterNotice = true;
       } else {
         return;
       }
@@ -681,6 +707,16 @@
         renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
       }
       void recordDemoLcdKey(key);
+    }
+
+    function handleLcdEnterHold() {
+      // Physical ENTER requires a two-second hold to enter settings. The web
+      // display is intentionally read-only, so show the notice without writes.
+      lcdEnterNotice = true;
+      if (lastData) {
+        renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
+      }
+      void recordDemoLcdKey('enter-hold');
     }
 
     function refreshDisabledButtonHints(root = document) {
