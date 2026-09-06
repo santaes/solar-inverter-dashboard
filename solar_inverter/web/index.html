@@ -52,8 +52,8 @@
           <button class="view-tab active" id="dashboard-tab" type="button" role="tab" data-view="dashboard" aria-controls="dashboard-view" aria-selected="true" tabindex="0" data-i18n="dashboardTab">Панель</button>
           <button class="view-tab" id="charts-tab" type="button" role="tab" data-view="charts" aria-controls="charts-view" aria-selected="false" tabindex="-1" data-i18n="chartsTab">Графіки</button>
           <button class="view-tab" id="lcd-tab" type="button" role="tab" data-view="lcd" aria-controls="lcd-view" aria-selected="false" tabindex="-1" data-i18n="lcdTab">LCD</button>
-          <button class="view-tab" id="register-map-tab" type="button" role="tab" data-view="register-map" aria-controls="register-map-view" aria-selected="false" tabindex="-1" data-i18n="registerMapTab">Карта регістрів</button>
-          <button id="settings-button" type="button" data-i18n-title="settingsAria" data-i18n-aria="settingsAria" aria-label="Налаштування">⚙</button>
+<!--           <button class="view-tab" id="register-map-tab" type="button" role="tab" data-view="register-map" aria-controls="register-map-view" aria-selected="false" tabindex="-1" data-i18n="registerMapTab">Карта регістрів</button>
+ -->          <button id="settings-button" type="button" data-i18n-title="settingsAria" data-i18n-aria="settingsAria" aria-label="Налаштування">⚙</button>
           <button id="logs-button" type="button" data-i18n-title="logsAria" data-i18n-aria="logsAria" aria-label="Логи сервера">📋</button>
           <button id="modbus-debug-button" type="button" data-i18n-title="modbusDebugAria" data-i18n-aria="modbusDebugAria" aria-label="Modbus налагодження">🔧</button>
           <button id="updater-history-button" type="button" data-i18n-title="updaterHistoryAria" data-i18n-aria="updaterHistoryAria" aria-label="Історія оновлень">📜</button>
@@ -64,7 +64,7 @@
 
     <section id="dashboard-view" role="tabpanel" aria-labelledby="dashboard-tab" tabindex="0">
     <div class="toolbar">
-      <button id="demo-button" class="all-data-demo-button" type="button">Запустити реалістичне демо  с</button>
+      <button id="demo-button" class="all-data-demo-button" type="button">Запустити реалістичне демо   с</button>
       <button id="manage-values-button" type="button" data-i18n="addValues">＋ Додати індикатори</button>
       <span class="chip" id="cycle">Цикл —</span>
       <span class="chip" id="site-visits">Відвідувачі — · —</span>
@@ -232,8 +232,8 @@
         </div>
       </div>
     </section>
- <!--
-    <section class="panel">
+
+<!--     <section class="panel">
       <div class="panel-head">
         <div><h2 data-i18n="liveRegisters">Поточні регістри</h2><span class="muted" id="register-count" aria-live="polite"></span></div>
         <input id="search" type="search" placeholder="Пошук регістрів…" aria-label="Пошук регістрів" data-i18n-placeholder="searchRegisters" data-i18n-aria="searchRegisters">
@@ -247,9 +247,9 @@
       <div class="register-list-actions" id="register-list-actions" hidden>
         <button type="button" id="register-load-more"></button>
       </div>
+    </section> -->
     </section>
-    </section>
- -->
+
     <section id="lcd-view" role="tabpanel" aria-labelledby="lcd-tab" tabindex="0" hidden>
       <div class="panel lcd-panel">
         <div class="lcd-status-lights" aria-label="Inverter status indicators">
@@ -301,21 +301,13 @@
                 <symbol id="lcd-icon-usb" viewBox="0 0 44 64"><path d="M22 57V11M22 11l-7 8M22 11l7 8M22 34h13l-5-5M22 45H10l5 5"></path><circle cx="10" cy="50" r="3"></circle><rect x="32" y="30" width="6" height="6"></rect></symbol>
               </defs>
             </svg>
-            <!-- Persistent physical ink: these labels, frames and dim segment
-                 placeholders stay visible when a live register is absent. -->
-            <div class="lcd-face-geometry" aria-hidden="true">
-              <div class="lcd-geom-battery-frame"></div>
-              <div class="lcd-geom-source-line lcd-geom-source-line-one"></div>
-              <div class="lcd-geom-source-line lcd-geom-source-line-two"></div>
-              <div class="lcd-geom-capacity"><b>BATT</b><span>100</span><span>75</span><span>50</span><span>25</span><i></i><span>25</span><span>50</span><span>75</span><span>100</span><b>LOAD</b></div>
-              <div class="lcd-geom-bay lcd-geom-input"><strong>AC INPUT</strong><em>888</em><small>V&nbsp;&nbsp;88.8 Hz</small></div>
-              <div class="lcd-geom-bay lcd-geom-output"><strong>AC OUTPUT</strong><em>888</em><small>kW&nbsp; V&nbsp; A&nbsp;&nbsp;88.8 Hz</small></div>
-              <div class="lcd-geom-bay lcd-geom-pv"><strong>PV INPUT</strong><em>888</em><small>V&nbsp;&nbsp;88.8 A&nbsp;&nbsp;888 W</small></div>
-              <div class="lcd-geom-ac2"><strong>GEN / AC OUTPUT2</strong><span>888 V&nbsp;&nbsp;88.8 Hz</span></div>
-              <div class="lcd-geom-phase"><strong>L1<br>L2<br>L3</strong><span>888</span><small>kW<br>V<br>A</small></div>
-              <div class="lcd-geom-time"><b>SETTING<br>DAY<br>MONTH<br>YEAR</b><span>88:88:88:88:88:88</span></div>
-              <div class="lcd-geom-fault"><b>FAULT &#9650;</b><span>8888 W</span><small>kWh<br>tC02e</small></div>
-            </div>
+            <section class="lcd-settings-simulator" id="lcd-settings-simulator" aria-live="polite" aria-label="Local LCD settings simulator" hidden>
+              <div class="lcd-settings-topline"><span id="lcd-settings-mode">PROGRAM SELECT</span><span class="lcd-settings-local">LOCAL ONLY</span></div>
+              <div class="lcd-settings-title"><span>PROGRAM <b id="lcd-settings-program">01</b></span><span id="lcd-settings-title">Output voltage</span></div>
+              <output class="lcd-settings-value" id="lcd-settings-value">230V</output>
+              <p class="lcd-settings-help" id="lcd-settings-note">UP/DOWN program • ENTER edit</p>
+              <p class="lcd-settings-readonly">ESC normal display • saved in this browser only</p>
+            </section>
             <div class="lcd-manual-readouts" aria-live="polite">
               <div class="lcd-manual-reading"><strong id="lcd-manual-left-label">INPUT</strong><span id="lcd-manual-left-value">—</span></div>
               <div class="lcd-manual-reading"><strong id="lcd-manual-right-label">OUTPUT</strong><span id="lcd-manual-right-value">—</span></div>

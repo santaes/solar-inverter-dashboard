@@ -626,6 +626,9 @@
         lcdOutputCycleTimer = null;
       }
       currentView = ['dashboard', 'charts', 'lcd', 'register-map'].includes(view) ? view : 'dashboard';
+      // Keep the compact LCD viewport mode independent of :has(), which is not
+      // consistently available in older mobile WebViews.
+      document.documentElement.classList.toggle('lcd-view-active', currentView === 'lcd');
       document.querySelector('#dashboard-view').hidden = currentView !== 'dashboard';
       document.querySelector('#charts-view').hidden = currentView !== 'charts';
       document.querySelector('#lcd-view').hidden = currentView !== 'lcd';
@@ -688,35 +691,19 @@
       }
     }
 
-    function handleLcdKey(key) {
+    function handleLcdKey(key) { if (window.handleLcdSimulatorKey?.(key)) { lcdPageIndex = 0; lcdEnterNotice = false; if (lastData) renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers); void recordDemoLcdKey(`local-${key}`); return; }
       if (key === 'escape') {
-        lcdPageIndex = 0;
-        lcdEnterNotice = false;
+        lcdPageIndex = 0; lcdEnterNotice = false;
       } else if (key === 'up') {
-        lcdPageIndex = lcdPageIndex <= 1 ? lcdInformationPageCount : lcdPageIndex - 1;
-        lcdEnterNotice = false;
+        lcdPageIndex = lcdPageIndex <= 1 ? lcdInformationPageCount : lcdPageIndex - 1; lcdEnterNotice = false;
       } else if (key === 'down') {
-        lcdPageIndex = lcdPageIndex === 0 || lcdPageIndex >= lcdInformationPageCount
-          ? 1
-          : lcdPageIndex + 1;
+        lcdPageIndex = lcdPageIndex === 0 || lcdPageIndex >= lcdInformationPageCount ? 1 : lcdPageIndex + 1;
         lcdEnterNotice = false;
       } else {
         return;
       }
-      if (lastData) {
-        renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
-      }
+      if (lastData) renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
       void recordDemoLcdKey(key);
-    }
-
-    function handleLcdEnterHold() {
-      // Physical ENTER requires a two-second hold to enter settings. The web
-      // display is intentionally read-only, so show the notice without writes.
-      lcdEnterNotice = true;
-      if (lastData) {
-        renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
-      }
-      void recordDemoLcdKey('enter-hold');
     }
 
     function refreshDisabledButtonHints(root = document) {

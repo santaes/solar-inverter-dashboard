@@ -539,19 +539,3 @@
       .lcd-column-output { top: 50%; bottom: 15%; left: 18%; width: 64%; padding: 2cqw 2.5cqw .5cqw }.lcd-column-output .lcd-output-heading { font-size: 3cqw }.lcd-column-output .lcd-output-primary { font-size: 14.5cqw }.lcd-column-output .lcd-output-frequency { font-size: 7.1cqw }
       .lcd-flow-marker { right: 8%; bottom: 14%; width: 8cqw; height: 7cqw }.lcd-day-energy { right: 7%; bottom: 4%; width: 34%; font-size: 6.4cqw }.lcd-day-energy > span:first-child { right: calc(100% + 5cqw); font-size: 1.8cqw }
     }
-
-    /* Preserve readable LCD glyphs on phones: the fixed physical face pans
-       within its viewport instead of compressing into an unreadable card. */
-    @media (max-width: 640px) {
-      .lcd-screen { overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; }
-      .lcd-device-display:not(.lcd-information-page) { width:620px; min-width:620px; aspect-ratio:1.58 !important; }
-    }
-
-    /* The real normal live screen is a fixed physical face: narrow viewports
-       pan it horizontally instead of activating any of the legacy LCD stacks. */
-    @media (max-width: 640px) {
-      .lcd-device-display.lcd-normal-live {
-        width:620px !important; min-width:620px !important; min-height:0 !important;
-        aspect-ratio:1.58 !important;
-      }
-    }

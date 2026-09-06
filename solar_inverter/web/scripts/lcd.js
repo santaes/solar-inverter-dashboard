@@ -1,3 +1,59 @@
+    const stepped = (start, end, step, suffix = '') => Array.from(
+      {length: Math.floor((end - start) / step) + 1}, (_, index) => `${start + index * step}${suffix}`
+    );
+    const withOff = values => ['OFF', ...values];
+    const lcdSettingsPrograms = [
+      {id:'01', title:'Output voltage', values:['220V','230V','240V'], index:1}, {id:'02', title:'Output frequency', values:['50Hz','60Hz'], index:0},
+      {id:'03', title:'Output source priority', values:['Grid first','Solar first','PBG priority','MKS'], index:0}, {id:'04', title:'Input mode', values:['APP','UPS','GEN'], index:0},
+      {id:'05', title:'Charger source priority', values:['PV + Grid','PV only','PV first'], index:0}, {id:'06', title:'Grid charging current', values:['2A', ...stepped(10,160,10,'A')], index:6},
+      {id:'07', title:'Maximum charging current', values:['2A', ...stepped(10,160,10,'A')], index:10}, {id:'08', title:'Menu default', values:['ON','OFF'], index:0},
+      {id:'09', title:'Auto restart overload', values:['ON','OFF'], index:0}, {id:'10', title:'Auto restart over-temperature', values:['ON','OFF'], index:0},
+      {id:'11', title:'Main-input-cut warning', values:['ON','OFF'], index:0}, {id:'12', title:'Energy saving', values:['ON','OFF'], index:1},
+      {id:'13', title:'Overload bypass', values:['ON','OFF'], index:1}, {id:'14', title:'Silent mode', values:['ON','OFF'], index:1},
+      {id:'15', title:'Return-to-grid voltage', values:stepped(44,54,1,'V'), index:4, note:'Battery-type dependent range.'}, {id:'16', title:'Switch-back-to-battery voltage', values:stepped(48,58,1,'V'), index:4, note:'Battery-type dependent range.'},
+      {id:'17', title:'Battery type', values:['AGM','FLD','LIB','FEL','CUS'], index:2}, {id:'19', title:'Battery low-voltage point', values:stepped(40,50,1,'V'), index:6, note:'Used for USER / lead-acid batteries.'},
+      {id:'20', title:'Constant-voltage point', values:stepped(48,58,1,'V'), index:6, note:'Used for USER / lead-acid batteries.'}, {id:'21', title:'Float-charge point', values:stepped(48,58,1,'V'), index:4, note:'Used for USER / lead-acid batteries.'},
+      {id:'22', title:'Grid low-voltage point', values:[...stepped(90,154,1,'V'), ...stepped(170,200,1,'V')], index:0, note:'APP/GEN: 90–154V; UPS: 170–200V.'}, {id:'23', title:'Grid high-voltage point', values:stepped(264,280,1,'V'), index:0, note:'Input-mode dependent.'},
+      {id:'24', title:'Auto backlight off', values:['ON','OFF'], index:0}, {id:'25', title:'Inverter soft start', values:['ON','OFF'], index:0}, {id:'26', title:'Reset factory settings', values:['NO','YES'], index:0},
+      {id:'29', title:'Battery-disconnection alarm', values:['ON','OFF'], index:0}, {id:'31', title:'Equalization voltage', values:stepped(48,60,.2,'V'), index:52},
+      {id:'32', title:'Equalization charging time', values:withOff(stepped(5,900,5,'min')), index:0}, {id:'33', title:'Equalization delay time', values:withOff(stepped(5,900,5,'min')), index:24},
+      {id:'34', title:'Equalization interval', values:stepped(1,90,1,'day'), index:29}, {id:'35', title:'Equalization immediately', values:['ON','OFF'], index:1},
+      {id:'36', title:'Grid-tie function', values:['OFF','INT','MET'], index:0}, {id:'37', title:'Maximum grid-tie power', values:stepped(0,12,.5,'kW'), index:24},
+      {id:'38', title:'Dual-output low-voltage shutdown', values:stepped(44,60,1,'V'), index:4}, {id:'39', title:'Dual-output duration', values:['OFF','FUL', ...stepped(5,900,5,'min')], index:0},
+      {id:'40', title:'Dual-output battery SOC cutoff', values:withOff(stepped(5,90,5,'%')), index:4}, {id:'44', title:'BMS protocol', values:['OFF','CVT','PYL','GRO','VOL','IRO','PAC'], index:0},
+      {id:'45', title:'BMS ID', values:['AUTO', ...stepped(0,15,1)], index:0}, {id:'46', title:'Low-SOC shutdown', values:withOff(stepped(5,50,5,'%')), index:4},
+      {id:'47', title:'High SOC to battery', values:withOff(stepped(10,100,10,'%')), index:9}, {id:'48', title:'Low SOC to grid', values:withOff(stepped(10,90,10,'%')), index:5},
+      {id:'61', title:'Maximum discharge current', values:withOff(stepped(10,220,5,'A')), index:0}, {id:'62', title:'PV parallel mode', values:['OFF','ON'], index:0}
+    ];
+    let lcdSettingsMode = 'normal';
+    let lcdSettingsProgramIndex = 0;
+    try {
+      const stored = JSON.parse(window.localStorage?.getItem('lcdLocalSettingsSimulator') || 'null');
+      stored?.indices?.forEach((index, programIndex) => {
+        const program = lcdSettingsPrograms[programIndex];
+        if (program && Number.isInteger(index)) program.index = Math.max(0, Math.min(index, program.values.length - 1));
+      });
+    } catch (_) { /* Browser storage is optional for the local simulator. */ }
+    const persistLcdSettings = () => {
+      try { window.localStorage?.setItem('lcdLocalSettingsSimulator', JSON.stringify({indices:lcdSettingsPrograms.map(program => program.index)})); } catch (_) { /* no-op */ }
+    };
+    window.lcdSettingsSimulator = () => ({active:lcdSettingsMode !== 'normal', mode:lcdSettingsMode, program:lcdSettingsPrograms[lcdSettingsProgramIndex]});
+    window.handleLcdSimulatorKey = key => {
+      if (lcdSettingsMode === 'normal') {
+        if (key !== 'enter-hold') return false;
+        lcdSettingsMode = 'select'; lcdSettingsProgramIndex = 0; return true;
+      }
+      if (key === 'escape') lcdSettingsMode = 'normal';
+      else if (key === 'enter') lcdSettingsMode = lcdSettingsMode === 'select' ? 'edit' : 'select';
+      else if (key === 'up' || key === 'down') {
+        const program = lcdSettingsPrograms[lcdSettingsProgramIndex];
+        if (lcdSettingsMode === 'select') lcdSettingsProgramIndex = (lcdSettingsProgramIndex + (key === 'up' ? -1 : 1) + lcdSettingsPrograms.length) % lcdSettingsPrograms.length;
+        else { program.index = (program.index + (key === 'up' ? 1 : -1) + program.values.length) % program.values.length; }
+      } else return false;
+      if (key === 'enter' && lcdSettingsMode === 'select') persistLcdSettings();
+      return true;
+    };
+
     window.renderLcd = function renderLcd(data, registers = data.registers || []) {
       const energyPeriod = window.lcdEnergyPeriod || 'day';
       const selectedBatteryType = window.lcdBatteryType || window.localStorage?.getItem('lcdBatteryType') || 'Li-ion';
@@ -334,6 +390,7 @@
         : 0;
       // The page sequence and measurements follow manual section 4.3 exactly.
       // P3–P5 are available only when the inverter reports a lithium BMS.
+      const bmsOnlyHelp = ' BMS-dependent — not displayed when BMS is disabled.';
       const getPeriodEnergy = () => {
         if (energyPeriod === 'month') return monthlyPvEnergy;
         if (energyPeriod === 'year') return yearlyPvEnergy;
@@ -370,40 +427,40 @@
           label2: '', value2: '', help: t('lcdP2Help')
         },
         {
-          code: 'P3', title: t('batteryVoltage'),
+          code: 'P3', title: `${t('batteryVoltage')} · BMS`,
           icons: ['battery'],
           label1: registerLabel([129, 137], t('batteryVoltage')), value1: reading(batteryVoltage, 'V'),
-          label2: registerLabel([130, 405], t('batteryCurrent')), value2: reading(batteryCurrent, 'A', 1), help: t('lcdP3Help')
+          label2: registerLabel([130, 405], t('batteryCurrent')), value2: reading(batteryCurrent, 'A', 1), help: `${t('lcdP3Help')}${bmsOnlyHelp}`
         },
         {
-          code: 'P4', title: t('batteryTemperature'),
+          code: 'P4', title: `${t('batteryTemperature')} · BMS`,
           icons: ['battery'],
           label1: registerLabel([140, 406], t('batteryTemperature')), value1: reading(batteryTemperature, '°C'),
-          label2: registerLabel([407, 139, 133, 339], t('batterySoc')), value2: reading(batterySoc, '%', 0), help: t('lcdP4Help')
+          label2: registerLabel([407, 139, 133, 339], t('batterySoc')), value2: reading(batterySoc, '%', 0), help: `${t('lcdP4Help')}${bmsOnlyHelp}`
         },
         {
-          code: 'P5', title: t('batteryCapacity'),
+          code: 'P5', title: `${t('batteryCapacity')} · BMS`,
           icons: ['battery'],
           label1: registerLabel([142, 410], t('batteryCapacity')), value1: reading(numberValue([142, 410]), 'Ah', 0),
-          label2: registerLabel([143, 409], t('remainingCapacity')), value2: reading(numberValue([143, 409]), 'Ah', 0), help: t('lcdP5Help')
+          label2: registerLabel([143, 409], t('remainingCapacity')), value2: reading(numberValue([143, 409]), 'Ah', 0), help: `${t('lcdP5Help')}${bmsOnlyHelp}`
         },
         {
-          code: 'P6', title: t('maxChargeVoltage'),
+          code: 'P6', title: `${t('maxChargeVoltage')} · BMS`,
           icons: ['battery', 'charger'],
           label1: registerLabel([141, 411, 16651], t('maxChargeVoltage')), value1: reading(maximumChargeVoltage, 'V'),
-          label2: registerLabel(16650, t('lowerBmsVoltageLimit')), value2: reading(numberValue([16650]), 'V'), help: t('lcdP6Help')
+          label2: registerLabel(16650, t('lowerBmsVoltageLimit')), value2: reading(numberValue([16650]), 'V'), help: `${t('lcdP6Help')}${bmsOnlyHelp}`
         },
         {
-          code: 'P7', title: t('maxChargeCurrent'),
+          code: 'P7', title: `${t('maxChargeCurrent')} · BMS`,
           icons: ['battery', 'charger'],
           label1: registerLabel(412, t('maxChargeCurrent')), value1: reading(numberValue([412]), 'A', 1),
-          label2: registerLabel(413, t('currentLimit')), value2: reading(numberValue([413]), 'A', 1), help: t('lcdP7Help')
+          label2: registerLabel(413, t('currentLimit')), value2: reading(numberValue([413]), 'A', 1), help: `${t('lcdP7Help')}${bmsOnlyHelp}`
         },
         {
-          code: 'P8', title: t('alarmFault'),
+          code: 'P8', title: `${t('alarmFault')} · BMS`,
           icons: ['battery'],
           label1: registerLabel([147, 418], t('alarmFlags')), value1: interpretedValue([147, 418]),
-          label2: registerLabel([146, 419], t('alarmFault')), value2: interpretedValue([146, 419]), help: t('lcdP8Help')
+          label2: registerLabel([146, 419], t('alarmFault')), value2: interpretedValue([146, 419]), help: `${t('lcdP8Help')}${bmsOnlyHelp}`
         },
         {
           code: 'P9', title: t('deviceConfiguration'),
@@ -412,14 +469,36 @@
           label2: '', value2: '', help: t('lcdP9Help')
         }
       ];
-      const page = pages[lcdPageIndex] || pages[0];
+      const localSettings = window.lcdSettingsSimulator?.();
+      const settingsActive = Boolean(localSettings?.active && localSettings.program);
+      const settingsProgram = localSettings?.program;
+      const settingsMode = localSettings?.mode || 'normal';
+      const page = settingsActive ? {
+        code: 'SET', title: settingsProgram.title,
+        icons: [], label1: settingsMode === 'edit' ? 'EDIT VALUE' : 'PROGRAM SELECT', value1: settingsProgram.values[settingsProgram.index],
+        label2: 'LOCAL ONLY', value2: 'No inverter writes',
+        help: settingsProgram.note || 'Selections are saved only in this browser.'
+      } : (pages[lcdPageIndex] || pages[0]);
       // P1--P9 are actual LCD screens in the manual, not auxiliary dashboard
       // cards. Keep the normal instrument diagram for LCD and switch the
       // physical face itself to the compact information-screen layout.
       if (lcdDisplay) {
-        lcdDisplay.classList.toggle('lcd-information-page', page.code !== 'LCD');
+        lcdDisplay.classList.toggle('lcd-information-page', page.code !== 'LCD' && page.code !== 'SET');
         lcdDisplay.classList.toggle('lcd-normal-live', page.code === 'LCD');
+        lcdDisplay.classList.toggle('lcd-settings-active', settingsActive);
         lcdDisplay.dataset.lcdPage = page.code;
+      }
+      const settingsSimulator = document.querySelector('#lcd-settings-simulator');
+      if (settingsSimulator) {
+        settingsSimulator.hidden = !settingsActive;
+        if (settingsActive) {
+          setText('#lcd-settings-program', settingsProgram.id);
+          setText('#lcd-settings-title', settingsProgram.title);
+          setText('#lcd-settings-value', settingsProgram.values[settingsProgram.index]);
+          setText('#lcd-settings-mode', settingsMode === 'edit' ? 'EDIT VALUE' : 'PROGRAM SELECT');
+          setText('#lcd-settings-note', settingsProgram.note || (settingsMode === 'edit'
+            ? 'UP/DOWN change • ENTER save' : 'UP/DOWN program • ENTER edit'));
+        }
       }
       const manualContext = document.querySelector('#lcd-manual-context');
       const iconNames = page.icons || [];

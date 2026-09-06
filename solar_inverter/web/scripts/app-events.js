@@ -54,12 +54,33 @@
       tabs[nextIndex].focus();
       showView(tabs[nextIndex].dataset.view);
     });
-    let lcdEnterHoldTimer = null;
     const lcdControls = document.querySelector('.lcd-controls');
+    let lcdEnterHoldTimer = null;
+    const clearLcdEnterHold = () => {
+      if (lcdEnterHoldTimer !== null) window.clearTimeout(lcdEnterHoldTimer);
+      lcdEnterHoldTimer = null;
+    };
+    const startLcdEnterHold = () => {
+      if (window.lcdSettingsSimulator?.().active) {
+        handleLcdKey('enter');
+        return;
+      }
+      clearLcdEnterHold();
+      lcdEnterHoldTimer = window.setTimeout(() => {
+        lcdEnterHoldTimer = null;
+        handleLcdKey('enter-hold');
+      }, 2000);
+    };
     lcdControls.addEventListener('click', event => {
       const button = event.target.closest('[data-lcd-key]');
       if (button && button.dataset.lcdKey !== 'enter') handleLcdKey(button.dataset.lcdKey);
     });
+    lcdControls.addEventListener('pointerdown', event => {
+      if (event.target.closest('[data-lcd-key="enter"]')) startLcdEnterHold();
+    });
+    lcdControls.addEventListener('pointerup', clearLcdEnterHold);
+    lcdControls.addEventListener('pointercancel', clearLcdEnterHold);
+    lcdControls.addEventListener('pointerleave', clearLcdEnterHold);
     
     // Period selector for LCD energy display
     const lcdPeriodSelector = document.querySelector('.lcd-period-selector');
@@ -94,25 +115,17 @@
         }
       });
     }
-    lcdControls.addEventListener('pointerdown', event => {
-      const button = event.target.closest('[data-lcd-key="enter"]');
-      if (!button || event.button !== 0) return;
-      window.clearTimeout(lcdEnterHoldTimer);
-      lcdEnterHoldTimer = window.setTimeout(() => {
-        lcdEnterHoldTimer = null;
-        handleLcdEnterHold();
-      }, 2000);
-    });
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => lcdControls.addEventListener(type, () => {
-      if (lcdEnterHoldTimer !== null) window.clearTimeout(lcdEnterHoldTimer);
-      lcdEnterHoldTimer = null;
-    }));
     window.addEventListener('keydown', event => {
       if (currentView !== 'lcd' || event.target?.closest?.('input, select, textarea')) return;
       const key = ({Escape:'escape', ArrowUp:'up', ArrowDown:'down', Enter:'enter'})[event.key];
       if (!key) return;
       event.preventDefault();
-      handleLcdKey(key);
+      if (key !== 'enter') { handleLcdKey(key); return; }
+      if (event.shiftKey) { handleLcdKey('enter-hold'); return; }
+      if (!event.repeat) startLcdEnterHold();
+    });
+    window.addEventListener('keyup', event => {
+      if (event.key === 'Enter') clearLcdEnterHold();
     });
     document.querySelector('#app-toggle').addEventListener('click', async event => {
       if (!lastData) return;

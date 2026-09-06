@@ -1710,10 +1710,6 @@
     .lcd-device-display:not(.lcd-information-page) .lcd-day-energy .lcd-unit { font-size:.28em; color:#d9bf64; }
     .lcd-device-display:not(.lcd-information-page) .lcd-fault-marker.active { position:absolute; right:6%; bottom:6%; z-index:5; width:auto; color:#e7c86d; font-size:1cqw; }
 
-    @media (max-width:640px) {
-      .lcd-device-display:not(.lcd-information-page) { width:620px; min-width:620px; aspect-ratio:1.58 !important; }
-    }
-
     /* Final normal-live screen.  It is deliberately keyed by state rather
        than the absence of an information page so manual experiments above
        cannot leak back into the physical screen. */
@@ -1775,10 +1771,6 @@
     .lcd-device-display.lcd-normal-live .lcd-column-output { top:51%; left:28%; width:42%; height:34%; }
     .lcd-device-display.lcd-normal-live .lcd-day-energy { right:28%; bottom:6.5%; }
     .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:18%; bottom:15%; }
-    @media (max-width:640px) {
-      .lcd-device-display.lcd-normal-live { width:620px !important; min-width:620px !important; aspect-ratio:1.58 !important; }
-    }
-
     /* Physical fascia refinement.  This intentionally stops at the LCD bezel:
        the compact live face remains a separate, unchanged instrument surface. */
     #lcd-view .lcd-panel {
@@ -1844,6 +1836,23 @@
     }
     #lcd-view .lcd-key::before { top: clamp(11px, 1.3vw, 13px); }
     #lcd-view .lcd-controls-note { display:none; }
+    /* Local settings intentionally look like a real backlit LCD program page,
+       but are visually marked as browser-only so operators never mistake it
+       for a Modbus write interface. */
+    .lcd-device-display.lcd-settings-active {
+      --lcd-ink:#75e6ff;
+      color:var(--lcd-ink);
+      background:radial-gradient(ellipse at 50% 45%, rgba(12,77,111,.48), transparent 66%), linear-gradient(135deg,#03192b,#061529 60%,#020d1a);
+    }
+    .lcd-device-display.lcd-settings-active > :not(.lcd-icon-definitions):not(.lcd-settings-simulator) { display:none !important; }
+    .lcd-settings-simulator { position:absolute; inset:0; z-index:10; display:grid; align-content:center; justify-items:center; gap:clamp(9px,1.3cqw,15px); padding:7cqw 10cqw; text-align:center; }
+    .lcd-settings-simulator[hidden] { display:none; }
+    .lcd-settings-topline { width:100%; display:flex; justify-content:space-between; align-items:center; font:700 2cqw/1 monospace; letter-spacing:.15em; color:#b5efff; }
+    .lcd-settings-local { padding:.35cqw .75cqw; border:.16cqw solid #e3bd57; color:#f2cd67; font-size:1.35cqw; letter-spacing:.1em; }
+    .lcd-settings-title { color:#e6c96f; font:700 3.1cqw/1.1 monospace; text-transform:uppercase; max-width:95%; }
+    .lcd-settings-value { min-width:48%; padding:1.9cqw 3cqw; border:.28cqw dashed currentColor; color:#d9f8ff; background:rgba(69,205,255,.08); box-shadow:inset 0 0 1cqw rgba(99,221,255,.12), 0 0 .8cqw rgba(71,205,255,.15); font:900 7.4cqw/.9 monospace; letter-spacing:-.06em; text-shadow:0 0 .5cqw rgba(95,226,255,.6); }
+    .lcd-settings-help { margin:0; color:#9cdbec; font:700 1.5cqw/1.35 monospace; }
+    .lcd-settings-readonly { margin:0; color:#d7b95f; font:700 1.25cqw/1.25 monospace; }
     @media (max-width:640px) {
       #lcd-view .lcd-panel { padding: 16px 12px 20px; }
       #lcd-view .lcd-status-lights { gap: 14px; margin-bottom: 16px; font-size: 11px; }
@@ -1851,4 +1860,200 @@
       #lcd-view .lcd-controls { gap: 11px; }
       #lcd-view .lcd-key { width: 62px; min-height: 62px; padding-top: 23px; }
       #lcd-view .lcd-key::before { top: 8px; }
+    }
+
+    /* LCD viewport fit: the instrument is one proportional surface, never a
+       fixed-width canvas.  These final rules deliberately live after the
+       legacy LCD experiments above so narrow displays cannot reintroduce
+       panning or let secondary content crowd the controls. */
+    #lcd-view,
+    #lcd-view .lcd-panel,
+    #lcd-view .lcd-screen {
+      min-width: 0;
+      max-width: 100%;
+    }
+    #lcd-view .lcd-panel { overflow: clip; }
+    #lcd-view .lcd-device-display {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin-inline: auto;
+    }
+    #lcd-view .lcd-page-panel,
+    #lcd-view .lcd-page-title,
+    #lcd-view .lcd-page-description,
+    #lcd-view .lcd-page-reading,
+    #lcd-view .lcd-settings-title,
+    #lcd-view .lcd-settings-help,
+    #lcd-view .lcd-settings-readonly {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 640px) {
+      #lcd-view .lcd-panel {
+        padding: 10px 8px 12px;
+        border-radius: 8px;
+      }
+      #lcd-view .lcd-status-lights {
+        gap: clamp(7px, 3.4vw, 14px);
+        margin-bottom: 9px;
+        font-size: clamp(9px, 3vw, 11px);
+        letter-spacing: .05em;
+      }
+      #lcd-view .lcd-status-light { min-width: 0; gap: 4px; white-space: nowrap; }
+      #lcd-view .lcd-status-light i { width: 10px; height: 10px; flex: 0 0 10px; }
+      #lcd-view .lcd-screen {
+        padding: 6px;
+        border-width: 4px;
+        border-radius: 8px;
+      }
+      #lcd-view .lcd-device-display {
+        /* Cap the face by both available width and short viewport height. */
+        width: min(100%, calc((100svh - 196px) * 1.58));
+        aspect-ratio: 1.58;
+      }
+      /* P1--P9 already render on the physical face; the former duplicate
+         detail card is omitted here to keep the hardware controls in view. */
+      #lcd-view .lcd-page-panel { display: none; }
+      #lcd-view .lcd-controls-wrap {
+        margin-top: 9px;
+        padding-top: 8px;
+      }
+      #lcd-view .lcd-controls-title { display: none; }
+      #lcd-view .lcd-controls {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(44px, 1fr));
+        width: min(100%, 312px);
+        gap: clamp(5px, 2vw, 9px);
+        margin: 0 auto;
+      }
+      #lcd-view .lcd-key {
+        width: 100%;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 18px 2px 4px;
+        font-size: 8px;
+      }
+      #lcd-view .lcd-key::before { top: 5px; font-size: 16px; }
+      #lcd-view .lcd-key[data-lcd-key="escape"]::before { font-size: 19px; }
+      #lcd-view .lcd-key[data-lcd-key="down"]::before,
+      #lcd-view .lcd-key[data-lcd-key="enter"]::before { font-size: 20px; }
+    }
+
+    @media (max-width: 380px) {
+      #lcd-view .lcd-panel { padding-inline: 5px; }
+      #lcd-view .lcd-screen { padding: 4px; border-width: 3px; }
+      #lcd-view .lcd-status-lights { gap: 6px; font-size: 9px; }
+      #lcd-view .lcd-status-light i { display: none; }
+      #lcd-view .lcd-device-display { width: min(100%, calc((100svh - 184px) * 1.58)); }
+    }
+
+    @media (max-height: 620px) and (max-width: 640px) {
+      #lcd-view .lcd-panel { padding-block: 7px 8px; }
+      #lcd-view .lcd-status-lights { margin-bottom: 5px; }
+      #lcd-view .lcd-controls-wrap { margin-top: 6px; padding-top: 6px; }
+      #lcd-view .lcd-device-display { width: min(100%, calc((100svh - 174px) * 1.58)); }
+    }
+
+    /* LCD mode is a bounded instrument view. The explicit root class is set
+       by showView(), so this works in mobile browsers without :has() support. */
+    @media (max-width: 640px) {
+      html.lcd-view-active,
+      html.lcd-view-active body {
+        height: 100%;
+        overflow: hidden;
+      }
+      html.lcd-view-active .shell {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        width: calc(100% - 12px);
+        height: 100dvh;
+        min-height: 0;
+        padding: max(4px, env(safe-area-inset-top)) 0 max(4px, env(safe-area-inset-bottom));
+        overflow: hidden;
+      }
+      html.lcd-view-active .shell > header {
+        flex: 0 0 44px;
+        min-height: 44px;
+        margin-bottom: 4px;
+        padding: 3px 4px;
+        border-radius: 8px;
+      }
+      html.lcd-view-active .brand,
+      html.lcd-view-active .header-actions > :not(.view-tabs),
+      html.lcd-view-active .view-tabs > :not(.view-tab) { display: none; }
+      html.lcd-view-active .header-actions,
+      html.lcd-view-active .view-tabs {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        flex-wrap: nowrap;
+      }
+      html.lcd-view-active .view-tab {
+        flex: 1 1 0;
+        min-width: 0;
+        padding-inline: 4px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      html.lcd-view-active #lcd-view {
+        display: flex;
+        flex: 1 1 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+      html.lcd-view-active #lcd-view .lcd-panel {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 0;
+        padding: 4px;
+      }
+      html.lcd-view-active #lcd-view .lcd-status-lights {
+        flex: 0 0 auto;
+        margin-bottom: 3px;
+      }
+      html.lcd-view-active #lcd-view .lcd-screen {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) 44px;
+        gap: 4px;
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: 4px;
+        overflow: hidden;
+        container-type: size;
+      }
+      html.lcd-view-active #lcd-view .lcd-device-display {
+        align-self: center;
+        justify-self: center;
+        width: min(100%, calc((100cqh - 48px) * 1.58));
+        max-height: 100%;
+        min-height: 0;
+      }
+      html.lcd-view-active #lcd-view .lcd-controls-wrap {
+        height: 44px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      html.lcd-view-active #lcd-view .lcd-controls-title,
+      html.lcd-view-active #lcd-view .lcd-controls-note { display: none; }
+      html.lcd-view-active #lcd-view .lcd-controls {
+        width: min(100%, 300px);
+        height: 44px;
+        gap: 5px;
+      }
+      html.lcd-view-active #lcd-view .lcd-key {
+        min-height: 44px;
+        height: 44px;
+      }
+    }
+
+    @media (max-width: 640px) and (max-height: 520px) {
+      html.lcd-view-active #lcd-view .lcd-status-lights { display: none; }
+      html.lcd-view-active #lcd-view .lcd-panel { padding: 3px; }
+      html.lcd-view-active #lcd-view .lcd-screen { border-width: 3px; padding: 3px; }
     }
