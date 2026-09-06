@@ -2,7 +2,7 @@
       {length: Math.floor((end - start) / step) + 1}, (_, index) => `${start + index * step}${suffix}`
     );
     const withOff = values => ['OFF', ...values];
-    const lcdSettingsPrograms = [
+    const legacyLcdSettingsPrograms = [
       {id:'01', title:'Output voltage', values:['220V','230V','240V'], index:1}, {id:'02', title:'Output frequency', values:['50Hz','60Hz'], index:0},
       {id:'03', title:'Output source priority', values:['Grid first','Solar first','PBG priority','MKS'], index:0}, {id:'04', title:'Input mode', values:['APP','UPS','GEN'], index:0},
       {id:'05', title:'Charger source priority', values:['PV + Grid','PV only','PV first'], index:0}, {id:'06', title:'Grid charging current', values:['2A', ...stepped(10,160,10,'A')], index:6},
@@ -24,6 +24,29 @@
       {id:'45', title:'BMS ID', values:['AUTO', ...stepped(0,15,1)], index:0}, {id:'46', title:'Low-SOC shutdown', values:withOff(stepped(5,50,5,'%')), index:4},
       {id:'47', title:'High SOC to battery', values:withOff(stepped(10,100,10,'%')), index:9}, {id:'48', title:'Low SOC to grid', values:withOff(stepped(10,90,10,'%')), index:5},
       {id:'61', title:'Maximum discharge current', values:withOff(stepped(10,220,5,'A')), index:0}, {id:'62', title:'PV parallel mode', values:['OFF','ON'], index:0}
+    ];
+    // Programs documented in supplied manual section 4.2.2. The physical LCD
+    // codes are used verbatim; later supplied pages can extend this list.
+    const lcdSettingsPrograms = [
+      {id:'01', title:'Output voltage', values:['OPU220', 'OPU230', 'OPU240'], index:1},
+      {id:'02', title:'Output frequency', values:['OPF50', 'OPF60'], index:0},
+      {id:'03', title:'Output source priority', values:['OPPG', 'OPPS', 'OPPP', 'OPPMKS'], index:0},
+      {id:'04', title:'Input mode', values:['nOdAPP', 'nOdUPS', 'nOdGEN'], index:0},
+      {id:'05', title:'Charger source priority', values:['CHGPNG', 'CHGOPV', 'CHGPVF'], index:0},
+      {id:'06', title:'Grid charging current', values:['rCF2', ...stepped(10, 160, 10).map(value => `rCF${value}`)], index:6},
+      {id:'07', title:'Maximum charging current', values:['nCC2', ...stepped(10, 160, 10).map(value => `nCC${value}`)], index:10},
+      {id:'08', title:'Menu default', values:['odFON', 'odFOFF'], index:0},
+      {id:'09', title:'Auto restart when overload occurs', values:['tASON', 'tASOFF'], index:0},
+      {id:'10', title:'Auto restart when over temperature occurs', values:['tHSON', 'tHSOFF'], index:0},
+      {id:'11', title:'Main input cut warning', values:['ALPON', 'ALPOFF'], index:0},
+      {id:'12', title:'Energy-saving mode', values:['PsuON', 'PsuOFF'], index:1},
+      {id:'13', title:'Overload transfer to bypass', values:['OLCON', 'OLCOFF'], index:1},
+      {id:'14', title:'Silent mode setting', values:['nuHON', 'nuHOFF'], index:1},
+      {id:'15', title:'Battery return to grid voltage point', values:stepped(44, 52, 1).map(value => `btG${Number(value).toFixed(1)}`), index:2},
+      {id:'16', title:'Switching back to battery mode voltage point', values:stepped(48, 58, 1).map(value => `btb${Number(value).toFixed(1)}`), index:4},
+      {id:'17', title:'Battery type', values:['bAtAGM', 'bAtFLd', 'bAtLIb', 'bAtFEL', 'bAtCUS'], index:2},
+      {id:'18', title:'Battery low voltage point', values:stepped(41.2, 50, .2).map(value => `bAL${Number(value).toFixed(1)}`), index:32},
+      {id:'19', title:'Battery shutdown voltage point', values:stepped(40, 48, 1).map(value => `bAU${Number(value).toFixed(1)}`), index:6}
     ];
     let lcdSettingsMode = 'normal';
     let lcdSettingsProgramIndex = 0;
@@ -406,6 +429,14 @@
         if (energyPeriod === 'year') return 452;
         return 157;
       };
+      // Information pages show the raw compact LCD values. A missing BMS
+      // reading is rendered as ERR, exactly as section 4.3 specifies.
+      const bmsCompactValue = (value, digits = 1) =>
+        Number.isFinite(value) ? value.toFixed(digits) : 'ERR';
+      const bmsStatusValue = numbers => {
+        const value = numberValue(numbers);
+        return Number.isFinite(value) ? String(Math.trunc(value)) : 'ERR';
+      };
       const pages = [
         {
           code: 'LCD', title: t('mainDisplay'),
@@ -414,11 +445,11 @@
           label2: registerLabel([537, 89], t('acOutputVoltage')), value2: reading(outputVoltage, 'V'), help: t('lcdMainPageHelp')
         },
         {
-          code: 'P1', title: getPeriodLabel(),
+          code: 'P1', title: t('dailyPvEnergy'),
           icons: ['solar', 'energy'],
-          label1: registerLabel(getPeriodRegister(), getPeriodLabel()),
-          value1: reading(getPeriodEnergy(), 'kWh'),
-          label2: '', value2: '', help: energyPeriod === 'month' ? t('lcdP1MonthHelp') : energyPeriod === 'year' ? t('lcdP1YearHelp') : t('lcdP1Help')
+          label1: registerLabel(157, t('dailyPvEnergy')),
+          value1: reading(dailyPvEnergy, 'kWh'),
+          label2: '', value2: '', help: t('lcdP1Help')
         },
         {
           code: 'P2', title: t('totalPvEnergy'),
@@ -429,8 +460,8 @@
         {
           code: 'P3', title: `${t('batteryVoltage')} · BMS`,
           icons: ['battery'],
-          label1: registerLabel([129, 137], t('batteryVoltage')), value1: reading(batteryVoltage, 'V'),
-          label2: registerLabel([130, 405], t('batteryCurrent')), value2: reading(batteryCurrent, 'A', 1), help: `${t('lcdP3Help')}${bmsOnlyHelp}`
+          label1: registerLabel([129, 137], t('batteryVoltage')), value1: bmsCompactValue(batteryVoltage),
+          label2: registerLabel([130, 405], t('batteryCurrent')), value2: bmsCompactValue(batteryCurrent), help: `${t('lcdP3Help')}${bmsOnlyHelp}`
         },
         {
           code: 'P4', title: `${t('batteryTemperature')} · BMS`,
@@ -441,26 +472,26 @@
         {
           code: 'P5', title: `${t('batteryCapacity')} · BMS`,
           icons: ['battery'],
-          label1: registerLabel([142, 410], t('batteryCapacity')), value1: reading(numberValue([142, 410]), 'Ah', 0),
-          label2: registerLabel([143, 409], t('remainingCapacity')), value2: reading(numberValue([143, 409]), 'Ah', 0), help: `${t('lcdP5Help')}${bmsOnlyHelp}`
+          label1: registerLabel([142, 410], t('batteryCapacity')), value1: bmsCompactValue(numberValue([142, 410]), 0),
+          label2: registerLabel([143, 409], t('remainingCapacity')), value2: bmsCompactValue(numberValue([143, 409]), 0), help: `${t('lcdP5Help')}${bmsOnlyHelp}`
         },
         {
           code: 'P6', title: `${t('maxChargeVoltage')} · BMS`,
           icons: ['battery', 'charger'],
-          label1: registerLabel([141, 411, 16651], t('maxChargeVoltage')), value1: reading(maximumChargeVoltage, 'V'),
-          label2: registerLabel(16650, t('lowerBmsVoltageLimit')), value2: reading(numberValue([16650]), 'V'), help: `${t('lcdP6Help')}${bmsOnlyHelp}`
+          label1: registerLabel([141, 411, 16651], t('maxChargeVoltage')), value1: bmsCompactValue(maximumChargeVoltage),
+          label2: registerLabel([346, 16650], t('lowerBmsVoltageLimit')), value2: bmsCompactValue(numberValue([346, 16650])), help: `${t('lcdP6Help')}${bmsOnlyHelp}`
         },
         {
           code: 'P7', title: `${t('maxChargeCurrent')} · BMS`,
           icons: ['battery', 'charger'],
-          label1: registerLabel(412, t('maxChargeCurrent')), value1: reading(numberValue([412]), 'A', 1),
-          label2: registerLabel(413, t('currentLimit')), value2: reading(numberValue([413]), 'A', 1), help: `${t('lcdP7Help')}${bmsOnlyHelp}`
+          label1: registerLabel(412, t('maxChargeCurrent')), value1: bmsCompactValue(numberValue([412])),
+          label2: registerLabel(413, t('currentLimit')), value2: bmsCompactValue(numberValue([413])), help: `${t('lcdP7Help')}${bmsOnlyHelp}`
         },
         {
           code: 'P8', title: `${t('alarmFault')} · BMS`,
           icons: ['battery'],
-          label1: registerLabel([147, 418], t('alarmFlags')), value1: interpretedValue([147, 418]),
-          label2: registerLabel([146, 419], t('alarmFault')), value2: interpretedValue([146, 419]), help: `${t('lcdP8Help')}${bmsOnlyHelp}`
+          label1: registerLabel([147, 418], t('alarmFlags')), value1: bmsStatusValue([147, 418]),
+          label2: registerLabel([146, 419], t('alarmFault')), value2: bmsStatusValue([146, 419]), help: `${t('lcdP8Help')}${bmsOnlyHelp}`
         },
         {
           code: 'P9', title: t('deviceConfiguration'),
@@ -469,16 +500,18 @@
           label2: '', value2: '', help: t('lcdP9Help')
         }
       ];
+      // Section 4.3: P3-P8 are available only while the lithium BMS is
+      // reporting. P1, P2 and P9 remain available without it.
+      const bmsAvailable = [129, 130, 140, 141, 142, 143, 144, 146, 147, 405, 406, 407, 409, 410, 411, 412, 413, 418, 419]
+        .some(number => byNumber.get(number)?.available);
+      const availablePages = bmsAvailable ? pages : [pages[0], pages[1], pages[2], pages[9]];
+      window.lcdInformationPageCount = availablePages.length - 1;
+      if (lcdPageIndex >= availablePages.length) lcdPageIndex = 0;
       const localSettings = window.lcdSettingsSimulator?.();
       const settingsActive = Boolean(localSettings?.active && localSettings.program);
       const settingsProgram = localSettings?.program;
       const settingsMode = localSettings?.mode || 'normal';
-      const page = settingsActive ? {
-        code: 'SET', title: settingsProgram.title,
-        icons: [], label1: settingsMode === 'edit' ? 'EDIT VALUE' : 'PROGRAM SELECT', value1: settingsProgram.values[settingsProgram.index],
-        label2: 'LOCAL ONLY', value2: 'No inverter writes',
-        help: settingsProgram.note || 'Selections are saved only in this browser.'
-      } : (pages[lcdPageIndex] || pages[0]);
+      const page = settingsActive ? {code:'SET', title:settingsProgram.title, icons:[]} : (availablePages[lcdPageIndex] || pages[0]);
       // P1--P9 are actual LCD screens in the manual, not auxiliary dashboard
       // cards. Keep the normal instrument diagram for LCD and switch the
       // physical face itself to the compact information-screen layout.
@@ -487,6 +520,16 @@
         lcdDisplay.classList.toggle('lcd-normal-live', page.code === 'LCD');
         lcdDisplay.classList.toggle('lcd-settings-active', settingsActive);
         lcdDisplay.dataset.lcdPage = page.code;
+      }
+      const legacySettingsSimulator = document.querySelector('#lcd-settings-simulator');
+      if (legacySettingsSimulator) {
+        legacySettingsSimulator.hidden = !settingsActive;
+        if (settingsActive) {
+          setText('#lcd-settings-program', settingsProgram.id);
+          setText('#lcd-settings-title', settingsProgram.title);
+          setText('#lcd-settings-value', settingsProgram.values[settingsProgram.index]);
+          setText('#lcd-settings-mode', settingsMode === 'edit' ? 'EDIT' : 'SELECT');
+        }
       }
       const settingsSimulator = document.querySelector('#lcd-settings-simulator');
       if (settingsSimulator) {
@@ -568,10 +611,9 @@
       setText('#lcd-lead-capacity-value', isLeadAcid && Number.isFinite(batteryVoltage)
         ? `${batteryCapacityDisplay}% · ${batteryVoltage.toFixed(1)}V · ${inverterLoad > 50 ? 'LOAD >50%' : inverterLoad >= 20 ? '50%≥LOAD>20%' : 'LOAD <20%'}`
         : 'Li SOC');
-      document.querySelectorAll('[data-lcd-battery-type]').forEach(button => {
-        const isSelected = button.dataset.lcdBatteryType === batteryType;
-        button.classList.toggle('active', isSelected);
-        button.setAttribute('aria-pressed', String(isSelected));
+      document.querySelectorAll('[data-lcd-battery-mark]').forEach(mark => {
+        const isSelected = mark.dataset.lcdBatteryMark === batteryType;
+        mark.classList.toggle('active', isSelected);
       });
       const phaseIndex = Number.isFinite(parallelMode) ? Math.max(0, Math.min(2, parallelMode - 2)) : 0;
       active('#lcd-mode-master', !Number.isFinite(parallelMode) || parallelMode <= 2);
@@ -611,7 +653,10 @@
       // Keep each zone out of the normal display only when this inverter has
       // no verified measurement for it; never replace missing telemetry with
       // a decorative zero. AC2 has no verified register mapping in this model.
-      const ac2Supported = false; // Set to true if AC2 registers are available
+      // The manual reserves this bay for GEN / AC OUTPUT2. The current
+      // profile has no verified AC2 register mapping, so retain the physical
+      // bay and its unavailable dashes instead of substituting another value.
+      const ac2Supported = true;
       available('#lcd-grid-node', gridConnected);
       available('#lcd-load-node', pvConnected);
       available('.lcd-ac2-region', ac2Supported);

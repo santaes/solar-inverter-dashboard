@@ -184,13 +184,13 @@
       border: 1px solid var(--ui-border); background: var(--control); transition: background .25s ease;
     }
     .theme-slider::after {
-      content: "☾"; position: absolute; display: grid; place-items: center;
+      content: "â˜¾"; position: absolute; display: grid; place-items: center;
       width: 19px; height: 19px; left: 1px; top: 1px; border-radius: 50%;
       color: #fff; font-size: 12px; background: #475569; transition: transform .25s ease, background .25s ease;
     }
     .theme-switch input:checked + .theme-slider { background: rgba(251,191,36,.22) }
     .theme-switch input:checked + .theme-slider::after {
-      content: "☀"; transform: translateX(19px); color: #412b00; background: var(--amber);
+      content: "â˜€"; transform: translateX(19px); color: #412b00; background: var(--amber);
     }
     .theme-switch input:focus-visible + .theme-slider { outline: 3px solid var(--focus-ring); outline-offset: 2px }
     .language-switch {
@@ -253,7 +253,7 @@
     }
     button:disabled { cursor: not-allowed; opacity: .62 }
     button:disabled::after {
-      content: "⊘"; display: inline-block; margin-inline-start: 6px;
+      content: "âŠ˜"; display: inline-block; margin-inline-start: 6px;
       color: var(--red); font-weight: 950; line-height: 1;
     }
     #demo-button {
@@ -841,1219 +841,114 @@
     .lcd-controls-note { margin-top: 10px; font: 600 11px/1.4 system-ui,sans-serif; opacity: .68 }
     @keyframes lcd-pulse { 50% { transform: translateX(3px); opacity: .55 } }
 
-    /* Manual-faithful live LCD: the measured values remain discrete elements so
-       the renderer can update them without sacrificing the screen geometry. */
-    .lcd-screen {
-      box-sizing: border-box; overflow: visible; border-color: #252b29; border-radius: 18px;
-      color: #151916; background: #cbd0c5;
-      background-image: linear-gradient(135deg, rgba(255,255,255,.26), transparent 52%), repeating-linear-gradient(0deg, rgba(31,38,32,.035) 0 1px, transparent 1px 4px);
-    }
-    .lcd-device-display {
-      overflow: visible; aspect-ratio: 1.7; border: 3px solid #2e3430; border-radius: 3px;
-      background-color: #e4e7dc;
-      background-image: radial-gradient(circle at 30% 12%, rgba(255,255,255,.8), transparent 34%), repeating-linear-gradient(90deg, rgba(42,49,43,.025) 0 1px, transparent 1px 3px);
-      box-shadow: inset 0 0 0 3px rgba(55,64,55,.17), inset 0 0 22px rgba(38,47,39,.14);
-      text-shadow: .4px .4px 0 rgba(16,22,17,.18);
-    }
-    .lcd-device-display::before { content: ""; position: absolute; inset: 1.4%; z-index: 0; border: .22cqw solid rgba(39,47,40,.35); pointer-events: none }
-    .lcd-device-display > :not(.lcd-icon-definitions) { z-index: 1 }
-    .lcd-device-mode { top: 3%; right: 3%; padding: .25cqw .6cqw; border: .22cqw solid currentColor; font-size: 1.55cqw; letter-spacing: .08em; opacity: .72 }
-    .lcd-battery-source { top: 8%; left: 4%; width: 17%; gap: .35cqw; overflow: visible; opacity: .8 }
-    .lcd-source-grid { flex-basis: 2.8cqw; width: 2.8cqw; height: 2.8cqw }
-    .lcd-source-sun { flex-basis: 2.5cqw; width: 2.5cqw; height: 2.5cqw }
-    .lcd-source-arrow { flex-basis: 2.8cqw; width: 2.8cqw; height: 1.7cqw }
-    .lcd-battery-mini { flex-basis: 3cqw; width: 3cqw; height: 2cqw }
-    .lcd-battery-top { top: 6%; left: 24%; width: 38%; height: 22%; border-width: .55cqw .25cqw; }
-    .lcd-battery-top::before, .lcd-battery-top::after { top: -.56cqw; height: .55cqw }
-    .lcd-battery-main { font-size: clamp(29px, 10.2cqw, 94px) }
-    .lcd-tag { left: .8cqw; bottom: .55cqw; font-size: 1.45cqw }
-    .lcd-battery-side { top: 7%; left: 66%; width: 24%; gap: .55cqw; overflow: visible; font-size: 4.4cqw }
-    .lcd-state-caption { overflow: visible; font-size: 1.35cqw; text-overflow: clip }
-    .lcd-battery-scale { top: 30%; left: 23%; width: 44%; height: 7%; grid-template-columns: repeat(4,1fr) 3cqw 4.2cqw; font-size: 1.45cqw }
-    .lcd-battery-scale > span { padding: .28cqw .1cqw }
-    .lcd-battery-scale em { font-size: 1.7cqw }
-    .lcd-power-path { top: 42%; left: 7%; width: 86%; height: 12%; border-width: .25cqw }
-    .lcd-power-path::before, .lcd-power-path::after { top: -.25cqw; height: 6.2cqw; border-width: .25cqw }
-    .lcd-power-path::before { left: 29% } .lcd-power-path::after { left: 65% }
-    .lcd-power-path .lcd-icon { top: -1.18cqw; width: 3cqw; height: 2.1cqw }
-    .lcd-path-left { left: 30% } .lcd-path-mid { left: 66% }
-    .lcd-column { top: 47%; bottom: 8%; gap: .45cqw; overflow: visible }
-    .lcd-column strong { overflow: visible; font-size: 1.45cqw; letter-spacing: .04em; text-overflow: clip }
-    .lcd-column .lcd-measure { max-width: 100%; font-size: 4cqw; line-height: .95 }
-    .lcd-column .lcd-measure-large { margin-top: .25cqw; font-size: 7.4cqw }
-    .lcd-column-input { left: 3%; width: 26% }
-    .lcd-column-output { left: 37%; width: 26% }
-    .lcd-column-pv { right: 3%; width: 26% }
-    .lcd-column-icon { flex-basis: 3.8cqw; width: 4.2cqw; height: 3.8cqw }
-    .lcd-solar-panel { width: 4.4cqw }
-    .lcd-output-arrow { width: 3cqw; height: 2.15cqw; margin-top: .6cqw }
-    .lcd-ac2-region { display: grid; width: 100%; justify-items: center; gap: .15cqw; margin-top: .1cqw; padding-top: .4cqw; border-top: .2cqw dashed rgba(23,26,23,.55); opacity: .6 }
-    .lcd-ac2-region .lcd-measure { font-size: 2.6cqw }
-    .lcd-day-energy { bottom: 1.6%; width: 34%; gap: .8cqw; overflow: visible; font-size: 3.8cqw }
-    .lcd-day-energy > span:first-child { font-size: 1.35cqw }
-    .lcd-measure { overflow: visible }
-    .lcd-digits { max-width: none; overflow: visible }
-
-    /* Photo-faithful blue backlit operating screen. The central output field is
-       intentionally dominant; optional AC/PV fields stay off-screen instead of
-       inventing a second three-column dashboard. */
-    .lcd-screen { border-color: #11171d; background: #252c31; box-shadow: inset 0 0 0 2px #586168, 0 22px 65px rgba(0,0,0,.48) }
-    .lcd-device-display {
-      aspect-ratio: 1.58; color: #79dcff; border: 4px solid #050a10; border-radius: 12px;
-      background-color: #061427;
-      background-image: radial-gradient(ellipse at 50% 43%, rgba(12,115,205,.46), transparent 54%), repeating-linear-gradient(0deg, rgba(130,232,255,.025) 0 1px, transparent 1px 3px);
-      box-shadow: inset 0 0 28px rgba(0,0,0,.85), inset 0 0 4px #60d9ff, 0 0 0 2px #26333d;
-      text-shadow: 0 0 .48cqw rgba(70,213,255,.94);
-    }
-    .lcd-device-display::before { inset: 1%; border: 0; background: linear-gradient(90deg, transparent 49.7%, rgba(126,225,255,.08) 50%, transparent 50.3%); opacity: .45 }
-    .lcd-device-mode { display: none }
-    .lcd-ups-mode { position: absolute; z-index: 2; left: 10%; top: 58%; color: #83e2ff; font: 900 1.85cqw/1 "Arial Narrow",sans-serif; letter-spacing: .1em; text-shadow: 0 0 .42cqw rgba(70,213,255,.94) }
-    .lcd-battery-source { top: 9%; left: 8%; width: 14%; color: #a4edff; opacity: 1 }
-    .lcd-source-grid { flex-basis: 2.35cqw; width: 2.35cqw; height: 2.35cqw }
-    .lcd-source-plus { display: none }
-    .lcd-source-sun { display: none }
-    .lcd-source-arrow { flex-basis: 2.1cqw; width: 2.1cqw; height: 1.4cqw }
-    .lcd-battery-mini { flex-basis: 2.55cqw; width: 2.55cqw; height: 1.7cqw }
-    .lcd-battery-top { top: 7%; left: 22%; width: 57%; height: 30%; border-width: .46cqw .25cqw; border-color: #83e2ff; border-radius: 0; box-shadow: 0 0 .4cqw rgba(78,213,255,.6) }
-    .lcd-battery-top::before, .lcd-battery-top::after { top: -.47cqw; height: .46cqw; width: 5.5cqw; background: #83e2ff }
-    .lcd-battery-main { justify-content: center; padding-top: 1cqw; font-size: clamp(31px, 11cqw, 102px); color: #d1f8ff }
-    .lcd-tag { left: 7%; bottom: 8%; color: #062033; background: #8ee9ff; font-size: 1.55cqw; text-shadow: none }
-    .lcd-battery-side { top: 10%; left: 66%; width: 19%; gap: .65cqw; color: #a7edff; font-size: 4.65cqw }
-    .lcd-state-caption { font-size: 1.35cqw; color: #a7edff; opacity: .95 }
-    .lcd-battery-scale { top: 40%; left: 26%; width: 46%; height: 8%; grid-template-columns: repeat(4,1fr) 3.1cqw 4.2cqw; gap: .45cqw; color: #f1d874; font-size: 1.45cqw }
-    .lcd-battery-scale::before { content: "BATT\00a0\00a0\00a0\00a0\00a0\00a0 LOAD"; position: absolute; bottom: 100%; left: 3%; width: 94%; color: #d9be69; font-size: 1.3cqw; letter-spacing: .08em; text-align: center }
-    .lcd-battery-scale > span { color: #071426; background: #39d5b0; clip-path: polygon(0 0,87% 0,100% 100%,12% 100%); text-shadow: none }
-    .lcd-battery-scale > span:nth-child(2) { background: #d8ba5e }.lcd-battery-scale > span:nth-child(3) { background: #e05d7d }.lcd-battery-scale > span:nth-child(4) { color: transparent; background: #ead78e }
-    .lcd-battery-level-icon { color: #e4c96c }.lcd-battery-level-fill { fill: #e4c96c }.lcd-battery-scale em { color: #95eaff; font-size: 1.7cqw }
-    .lcd-power-path, .lcd-column-input, .lcd-column-pv { display: none !important }
-    .lcd-column-output { top: 51%; bottom: 13%; left: 25%; width: 50%; gap: .15cqw; color: #87e2ff; opacity: 1; justify-content: flex-start }
-    .lcd-column-output .lcd-output-heading { display: block; width: auto; margin-bottom: -.1cqw; font-size: 2.2cqw; letter-spacing: .08em }
-    .lcd-output-reading-label { min-height: 1.25em; color: #6ecdea; font-size: 1.18cqw; letter-spacing: .12em }
-    .lcd-column-output .lcd-output-primary { font-size: 10.8cqw; line-height: .85; color: #c8f5ff; }
-    .lcd-column-output .lcd-output-frequency { margin-top: .35cqw; font-size: 5.25cqw; color: #9beaff }
-    .lcd-output-primary .lcd-unit { font-size: .24em }.lcd-output-frequency .lcd-unit { font-size: .27em }
-    .lcd-output-voltage-source { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
-    .lcd-output-arrow { position: absolute; right: -5%; bottom: -7%; width: 6.6cqw; height: 4.7cqw; margin: 0; color: #87e2ff; opacity: .75 }
-    .lcd-day-energy { right: 10%; bottom: 4%; left: auto; width: 28%; gap: .6cqw; color: #d6b664; font-size: 5cqw; transform: none; text-shadow: 0 0 .35cqw rgba(218,178,85,.65) }
-    .lcd-day-energy > span:first-child { position: absolute; right: calc(100% + 7cqw); bottom: .4cqw; padding: .25cqw .9cqw; color: #082137; background: #80dff8; font-size: 1.45cqw; text-shadow: none }
-    .lcd-day-energy .lcd-unit { color: #d6b664; font-size: .26em }
-
-    /* The LCD sits in a physical front panel rather than a generic dashboard card. */
-    .lcd-panel {
-      box-sizing: border-box; padding: clamp(16px, 2.8vw, 30px); border: 1px solid #536069; border-radius: 18px;
-      background-color: #2f373c;
-      background-image: radial-gradient(rgba(255,255,255,.08) .7px, transparent .8px), linear-gradient(145deg, #4b555a, #20272b 54%, #161b1f);
-      background-size: 4px 4px, auto; box-shadow: inset 0 1px rgba(255,255,255,.34), inset 0 -5px 12px rgba(0,0,0,.42), 0 20px 40px rgba(0,0,0,.28);
-    }
-    .lcd-status-lights { display: flex; align-items: center; justify-content: center; gap: clamp(14px,4.5vw,50px); margin: 0 auto 17px; color: #c7ced0; font: 900 clamp(10px,1.6vw,17px)/1 "Arial Narrow",sans-serif; letter-spacing: .08em }
-    .lcd-status-light { display: inline-flex; align-items: center; gap: 6px; opacity: .78 }
-    .lcd-status-light i { display: block; width: clamp(11px,1.5vw,17px); height: clamp(11px,1.5vw,17px); border: 1px solid #11171b; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #cbd3d4, #586166 52%, #252b2e 56%); box-shadow: inset 0 1px 2px rgba(0,0,0,.7), 0 1px rgba(255,255,255,.22) }
-    .lcd-status-light.active { color: #f5db92; opacity: 1 }
-    .lcd-status-light.active i { border-color: #6e4c10; background: radial-gradient(circle at 42% 35%, #fff6ae, #ffbd29 37%, #c5790d 68%, #61370b); box-shadow: 0 0 10px rgba(255,177,33,.72), inset 0 0 2px #fff1a7 }
-    .lcd-screen { padding: clamp(10px, 2vw, 20px); border: 5px solid #13191d; border-radius: 14px; background: linear-gradient(145deg, #12191d, #364047 53%, #11161a); box-shadow: inset 0 1px #738089, inset 0 -2px #06090b, 0 3px 5px rgba(0,0,0,.55) }
-    .lcd-controls-wrap { margin: 18px -1px -1px; padding: 16px 10px 4px; border-top: 1px solid rgba(220,231,232,.22); color: #d7dfe1 }
-    .lcd-controls-title { color: #b5c0c4; text-align: center; font-size: 10px }
-    .lcd-controls { gap: clamp(13px,3.2vw,34px); margin-top: 13px }
-    .lcd-key {
-      position: relative; width: clamp(58px,8vw,78px); min-height: clamp(58px,8vw,78px); padding: 22px 5px 6px;
-      border: 3px solid #0c1114; border-radius: 50%; color: #e0e7e9;
-      background: radial-gradient(circle at 42% 33%, #667279, #30383d 43%, #151b1f 47%, #566168 51%, #252d32 56%, #12171a 70%);
-      box-shadow: inset 0 0 0 3px #79858a, inset 0 0 0 5px #151a1d, inset 0 -5px 8px rgba(0,0,0,.68), 0 2px 3px #080b0d;
-      font: 900 10px/1 "Arial Narrow",sans-serif; letter-spacing: .08em; text-shadow: 0 1px #000;
-    }
-    .lcd-key::before { position: absolute; top: 10px; left: 50%; color: #c9d3d5; font: 900 21px/1 Arial,sans-serif; transform: translateX(-50%); content: "" }
-    .lcd-key[data-lcd-key="escape"]::before { content: "↻"; font-size: 25px }.lcd-key[data-lcd-key="up"]::before { content: "▲" }.lcd-key[data-lcd-key="down"]::before { content: "▽"; font-size: 28px }.lcd-key[data-lcd-key="enter"]::before { content: "↵"; font-size: 28px }
-    .lcd-key:hover, .lcd-key:focus-visible { border-color: #9bdff2; color: #fff; outline: 2px solid #a5e8fb; outline-offset: 3px }
-    .lcd-key:active { transform: translateY(2px); box-shadow: inset 0 0 0 3px #404a4e, inset 0 3px 8px rgba(0,0,0,.82), 0 0 1px #080b0d }
-    .lcd-controls-note { color: #b7c1c5; text-align: center }
-
-    /* Canonical 1111.png normal LCD face: fixed device geometry, not a data grid. */
-    .lcd-device-display { aspect-ratio: 1.58; overflow: hidden; border-radius: 9px; background: #031124; background-image: radial-gradient(ellipse at 50% 44%, rgba(0,116,214,.52), transparent 56%), repeating-linear-gradient(0deg, rgba(108,221,255,.035) 0 1px, transparent 1px 3px) }
-    .lcd-device-display::before { display: none }
-    .lcd-battery-source { top: 8.5%; left: 8%; width: 15%; gap: .65cqw; color: #9deaff }
-    .lcd-source-grid { flex-basis: 2.45cqw; width: 2.45cqw; height: 2.45cqw }.lcd-source-sun { display: block; flex-basis: 2.6cqw; width: 2.6cqw; height: 2.1cqw }.lcd-source-arrow { flex-basis: 2.15cqw; width: 2.15cqw; height: 1.55cqw }
-    .lcd-battery-top { top: 7%; left: 22%; width: 57%; height: 30%; border: 0; box-shadow: none; clip-path: polygon(3.5% 0, 42% 0, 44% 3.5%, 94% 3.5%, 100% 16%, 100% 73%, 94% 100%, 7% 100%, 0 73%, 0 18%) }
-    .lcd-battery-top::before { inset: 0; width: auto; height: auto; background: #86e7ff; clip-path: inherit; transform: none }
-    .lcd-battery-top::after { inset: .35cqw; width: auto; height: auto; background: #071c36; clip-path: polygon(3.5% 0, 42% 0, 44% 3.5%, 94% 3.5%, 100% 16%, 100% 73%, 94% 100%, 7% 100%, 0 73%, 0 18%); transform: none }
-    .lcd-battery-top > * { position: relative; z-index: 1 }
-    .lcd-battery-main { padding-top: .9cqw; font-family: "Digital-7 Mono", "DS-Digital", "Lucida Console", monospace; font-size: clamp(30px, 11.2cqw, 104px); letter-spacing: -.12em }
-    .lcd-tag { left: 10%; bottom: 8%; font-size: 1.45cqw }
-    .lcd-battery-side { top: 10%; left: 66.5%; width: 18%; gap: .45cqw; font-family: "Digital-7 Mono", "DS-Digital", "Lucida Console", monospace; font-size: 4.5cqw }
-    .lcd-state-caption { font-family: "Arial Narrow",sans-serif; font-size: 1.3cqw; letter-spacing: .04em }
-    .lcd-battery-scale { top: 40%; left: 26%; width: 47%; height: 7.5%; grid-template-columns: repeat(3,1fr) 4cqw 3cqw 4cqw; gap: .45cqw; color: #e5c86d }
-    .lcd-battery-scale::before { content: "BATT\00a0\00a0\00a0\00a0\00a0\00a0 LOAD"; bottom: calc(100% + .2cqw); color: #e1c873; font-size: 1.25cqw }
-    .lcd-battery-scale > span { padding: .28cqw .1cqw; font: 900 1.45cqw/1 "Arial Narrow",sans-serif; clip-path: polygon(0 0,82% 0,100% 100%,14% 100%) }
-    .lcd-battery-scale > span:nth-child(1) { background: #38cba4 }.lcd-battery-scale > span:nth-child(2) { background: #d7b761 }.lcd-battery-scale > span:nth-child(3) { background: #d85072 }
-    .lcd-battery-scale .lcd-load-block { display: grid; align-content: center; gap: .25cqw; padding: .45cqw .25cqw; background: transparent; clip-path: none }
-    .lcd-load-block i { display: block; height: .38cqw; background: #e7d279; box-shadow: 0 0 .18cqw rgba(232,205,112,.55) }
-    .lcd-battery-level-icon { width: 2.6cqw; height: 3.9cqw; color: #e7cf75 }.lcd-battery-scale em { color: transparent; font-size: 0 }
-    .lcd-ups-mode { left: 9%; top: 58%; font-size: 1.7cqw }
-    .lcd-column-output { top: 51%; bottom: 15%; left: 27%; width: 46%; gap: .2cqw; padding: 1.35cqw 2cqw .3cqw; clip-path: polygon(10% 0, 37% 0, 39% 3%, 61% 3%, 63% 0, 90% 0,100% 21%,100% 100%,0 100%,0 21%); background: #86e7ff }
-    .lcd-column-output::before { content: ""; position: absolute; inset: .35cqw; z-index: -1; background: #071c36; clip-path: inherit }
-    .lcd-column-output .lcd-output-heading { margin-bottom: 0; font: 900 2.05cqw/1 "Arial Narrow",sans-serif; color: #9eeaff }
-    .lcd-output-reading-label { display: none }
-    .lcd-column-output .lcd-output-primary { margin-top: .2cqw; font-family: "Digital-7 Mono", "DS-Digital", "Lucida Console", monospace; font-size: 10.2cqw; letter-spacing: -.14em; text-shadow: 0 0 .55cqw rgba(79,214,255,.9) }
-    .lcd-column-output .lcd-output-frequency { margin-top: .6cqw; font-family: "Digital-7 Mono", "DS-Digital", "Lucida Console", monospace; font-size: 5.05cqw; letter-spacing: -.13em }
-    .lcd-output-arrow { display: none }.lcd-flow-marker { position: absolute; right: 13%; bottom: 14%; z-index: 2; width: 6.1cqw; height: 5.4cqw; opacity: .9; background: repeating-linear-gradient(135deg, transparent 0 .55cqw, #86e7ff .58cqw .83cqw, transparent .86cqw 1.25cqw); clip-path: polygon(100% 0,100% 100%,0 100%) }
-    .lcd-day-energy { right: 9%; bottom: 4%; width: 27%; font-family: "Digital-7 Mono", "DS-Digital", "Lucida Console", monospace; font-size: 5cqw; letter-spacing: -.1em }
-    .lcd-day-energy > span:first-child { right: calc(100% + 6cqw); bottom: .5cqw; font-family: "Arial Narrow",sans-serif; font-size: 1.35cqw; letter-spacing: .05em }
-    .lcd-day-energy .lcd-unit { letter-spacing: 0 }
-
-    /* Local CSS seven-segment glyphs: no installed-font or network dependency. */
-    .lcd-segmented-value { display: inline-flex; align-items: flex-end; justify-content: center; height: 1em; gap: .035em; vertical-align: bottom; letter-spacing: 0 }
-    .lcd-segment-glyph { position: relative; display: inline-block; width: .62em; height: 1em; flex: 0 0 .62em }
-    .lcd-segment { position: absolute; display: block; box-sizing: border-box; border-radius: .06em; background: currentColor; box-shadow: 0 0 .09em currentColor }
-    .lcd-segment-a, .lcd-segment-g, .lcd-segment-d { left: .11em; width: .4em; height: .075em; clip-path: polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%) }
-    .lcd-segment-a { top: 0 }.lcd-segment-g { top: .463em }.lcd-segment-d { bottom: 0 }
-    .lcd-segment-f, .lcd-segment-b, .lcd-segment-e, .lcd-segment-c { width: .075em; height: .405em; clip-path: polygon(0 10%,50% 0,100% 10%,100% 90%,50% 100%,0 90%) }
-    .lcd-segment-f { top: .055em; left: .03em }.lcd-segment-b { top: .055em; right: .03em }.lcd-segment-e { bottom: .055em; left: .03em }.lcd-segment-c { bottom: .055em; right: .03em }
-    .lcd-segment-dot { display: inline-block; width: .12em; height: .12em; margin: 0 .02em .005em -.01em; border-radius: 50%; background: currentColor; box-shadow: 0 0 .09em currentColor }
-    .lcd-segment-minus { display: inline-block; width: .42em; height: .075em; margin: 0 .08em .465em; border-radius: .05em; background: currentColor; box-shadow: 0 0 .09em currentColor }
-    .lcd-segment-blank { display: inline-block; width: .4em }
-
-    /* Manual 4.2.1 vocabulary: source/mode at left, communications at right,
-       and the four period/fault marks along the lower edge. */
-    .lcd-mode-source { position:absolute; z-index:3; top:8%; left:4%; display:flex; align-items:center; gap:.35cqw; color:#9deaff; font:900 1.55cqw/1 monospace }
-    .lcd-mode-source .lcd-icon { width:2.25cqw; height:2.25cqw; stroke-width:3.4 }
-    .lcd-mode-source .lcd-icon:last-child { width:1.75cqw; height:1.65cqw; fill:currentColor; stroke:none }
-    .lcd-link-status { position:absolute; z-index:3; top:8%; right:6%; display:flex; align-items:center; gap:.7cqw; color:#9deaff; opacity:.72 }
-    .lcd-link-status .lcd-icon { width:2.2cqw; height:2.2cqw; stroke-width:3.3 }
-    .lcd-link-status .lcd-link-bluetooth { width:1.35cqw }
-    .lcd-link-status .lcd-link-usb { width:1.45cqw; height:2.1cqw }
-    .lcd-link-status .lcd-icon:not(.active) { opacity:.24 }
-    .lcd-period-selector { position:absolute; z-index:2; left:24%; bottom:4%; display:grid; gap:.15cqw; color:#95eaff; font:900 1.05cqw/1 "Arial Narrow",sans-serif; letter-spacing:.04em }
-    .lcd-period-selector b { padding:.16cqw .55cqw; border:.14cqw solid currentColor; font:inherit; cursor: pointer; color:#95eaff; background:transparent; transition: all 0.2s ease }
-    .lcd-period-selector b:hover { background: rgba(139, 231, 255, 0.3) }
-    .lcd-period-selector b.lcd-period-active { color:#071c36; background:#8be7ff; text-shadow:none; cursor: default }
-    .lcd-fault-marker { position:absolute; z-index:2; right:4.5%; bottom:5%; display:none; align-items:center; gap:.35cqw; color:#ffd878; font:900 1.15cqw/1 "Arial Narrow",sans-serif }
-    .lcd-fault-marker.active { display:flex }
-    .lcd-fault-marker i { width:0; height:0; border-left:.75cqw solid transparent; border-right:.75cqw solid transparent; border-bottom:1.35cqw solid currentColor }
-    .lcd-fault-marker i::after { content:"!"; position:absolute; margin-left:-.17cqw; margin-top:.43cqw; color:#071c36; font-size:.75cqw; text-shadow:none }
-    .lcd-fault-marker #lcd-fault-code { font:900 1.0cqw/1 "Arial Narrow",sans-serif; color:#ffd878 }
-    .lcd-time-display { position:absolute; z-index:2; left:24%; bottom:8%; color:#95eaff; font:900 0.85cqw/1 "Arial Narrow",sans-serif; letter-spacing:.04em }
-    .lcd-charging-state { font:900 0.75cqw/1 "Arial Narrow",sans-serif; color:#a7edff; letter-spacing:.06em; text-transform:uppercase }
-    .lcd-battery-type { font:900 0.65cqw/1 "Arial Narrow",sans-serif; color:#e7d279; letter-spacing:.04em; text-transform:uppercase }
-    .lcd-battery-scale .lcd-load-block { position:relative; opacity:.38 }
-    .lcd-battery-scale .lcd-load-block::after { content:""; position:absolute; inset:0; transform-origin:bottom; transform:scaleY(var(--lcd-load-scale,0)); background:#e7d279; box-shadow:0 0 .18cqw rgba(232,205,112,.55) }
-    .lcd-battery-scale .lcd-load-block i { position:relative; z-index:1 }
-    @media (max-width:640px) {
-      .lcd-mode-source { top:7%; left:4%; font-size:1.65cqw }.lcd-mode-source .lcd-icon { width:2.45cqw; height:2.45cqw }
-      .lcd-link-status { top:8%; right:5%; gap:.55cqw }.lcd-link-status .lcd-icon { width:2.35cqw; height:2.35cqw }
-      .lcd-period-selector { display:none }
-      .lcd-fault-marker { right:4%; bottom:4%; font-size:1.2cqw }
-    }
-
-    /* Final normal-face geometry: this is the manual diagram, condensed to
-       the physical blue display.  Zones appear only when their own telemetry
-       exists, preserving the real device's focused normal screen. */
-    .lcd-device-display .lcd-manual-absent { display:none !important }
-    .lcd-device-display .lcd-power-path { display:block !important; top:45%; left:5%; width:90%; height:7%; border-color:rgba(134,231,255,.8); opacity:.7 }
-    .lcd-device-display .lcd-power-path::before, .lcd-device-display .lcd-power-path::after { height:4cqw; border-color:rgba(134,231,255,.8) }
-    .lcd-device-display .lcd-power-path::before { left:27% }.lcd-device-display .lcd-power-path::after { left:67% }
-    .lcd-device-display .lcd-power-path .lcd-icon { top:-.85cqw; width:2.35cqw; height:1.7cqw; color:#86e7ff }
-    .lcd-device-display .lcd-column-input,
-    .lcd-device-display .lcd-column-pv { display:flex !important; top:53%; bottom:auto; height:27%; padding:.55cqw .3cqw; justify-content:flex-start; gap:.22cqw; color:#93e8ff; border:0; background:transparent; clip-path:none }
-    .lcd-device-display .lcd-column-input { left:4%; width:24% }
-    .lcd-device-display .lcd-column-pv { right:4%; width:24% }
-    .lcd-device-display .lcd-column-input::before,
-    .lcd-device-display .lcd-column-pv::before { content:""; position:absolute; inset:0; border:.24cqw solid currentColor; border-bottom:0; opacity:.9; clip-path:polygon(0 18%,16% 0,43% 0,48% 4%,55% 4%,60% 0,84% 0,100% 18%,100% 100%,0 100%) }
-    .lcd-device-display .lcd-column-input > *, .lcd-device-display .lcd-column-pv > * { position:relative; z-index:1 }
-    .lcd-device-display .lcd-column-input strong,
-    .lcd-device-display .lcd-column-pv strong { font:900 1.15cqw/1 "Arial Narrow",sans-serif; color:#a7edff; letter-spacing:.06em }
-    .lcd-device-display .lcd-column-input .lcd-column-icon,
-    .lcd-device-display .lcd-column-pv .lcd-column-icon { display:none }
-    .lcd-device-display .lcd-column-input .lcd-measure-large,
-    .lcd-device-display .lcd-column-pv .lcd-measure-large { margin-top:.35cqw; font-size:5.8cqw; line-height:.82 }
-    .lcd-device-display .lcd-column-input .lcd-measure,
-    .lcd-device-display .lcd-column-pv .lcd-measure { font-size:2.8cqw; line-height:.9 }
-    .lcd-device-display .lcd-column-input .lcd-unit,
-    .lcd-device-display .lcd-column-pv .lcd-unit { font-size:.28em }
-    .lcd-device-display .lcd-column-output { top:52%; bottom:auto; left:31%; width:38%; height:28%; padding:1cqw 1cqw .3cqw }
-    .lcd-device-display .lcd-column-output .lcd-output-heading { font-size:1.65cqw }
-    .lcd-device-display .lcd-column-output .lcd-output-primary { font-size:8.2cqw }
-    .lcd-device-display .lcd-column-output .lcd-output-frequency { margin-top:.35cqw; font-size:3.9cqw }
-    .lcd-device-display .lcd-column-input .lcd-ac2-region { position:absolute; top:128%; left:0; display:grid; width:100%; gap:.12cqw; padding:.45cqw .2cqw 0; border-top:.2cqw solid currentColor; color:#87e2ff; opacity:1 }
-    .lcd-device-display .lcd-ac2-region strong { font-size:1.05cqw }
-    .lcd-device-display .lcd-ac2-region .lcd-measure { font-size:2.6cqw }
-    .lcd-device-display .lcd-period-selector { left:43%; bottom:4%; font-size:.88cqw }
-    .lcd-device-display .lcd-day-energy { right:5%; bottom:3%; width:21%; font-size:3.35cqw }
-    .lcd-device-display .lcd-day-energy > span:first-child { right:calc(100% + 2.5cqw); font-size:1cqw }
-    .lcd-device-display .lcd-flow-marker { right:27%; bottom:11%; width:4.1cqw; height:3.6cqw }
-    .lcd-device-display .lcd-mode-source .lcd-manual-absent,
-    .lcd-device-display .lcd-link-status .lcd-manual-absent { display:none !important }
-    @media (max-width:640px) {
-      .lcd-device-display { aspect-ratio:1.15 }
-      .lcd-device-display .lcd-power-path { top:46%; height:5.5%; left:4%; width:92% }
-      .lcd-device-display .lcd-power-path::before, .lcd-device-display .lcd-power-path::after { height:3.5cqw }
-      .lcd-device-display .lcd-column-input, .lcd-device-display .lcd-column-pv { top:54%; height:25%; width:25%; padding:.35cqw .15cqw }
-      .lcd-device-display .lcd-column-input { left:3% }.lcd-device-display .lcd-column-pv { right:3% }
-      .lcd-device-display .lcd-column-input strong, .lcd-device-display .lcd-column-pv strong { font-size:1.15cqw }
-      .lcd-device-display .lcd-column-input .lcd-measure-large, .lcd-device-display .lcd-column-pv .lcd-measure-large { font-size:5.25cqw }
-      .lcd-device-display .lcd-column-input .lcd-measure, .lcd-device-display .lcd-column-pv .lcd-measure { font-size:2.5cqw }
-      .lcd-device-display .lcd-column-output { top:53%; left:30%; width:40%; height:26%; padding:.7cqw .7cqw .2cqw }
-      .lcd-device-display .lcd-column-output .lcd-output-heading { font-size:1.65cqw }.lcd-device-display .lcd-column-output .lcd-output-primary { font-size:7.7cqw }.lcd-device-display .lcd-column-output .lcd-output-frequency { font-size:3.6cqw }
-      .lcd-device-display .lcd-period-selector { display:grid; left:40%; bottom:3%; font-size:.72cqw }
-      .lcd-device-display .lcd-day-energy { right:4%; bottom:2%; width:23%; font-size:3.15cqw }
-      .lcd-device-display .lcd-flow-marker { right:28%; bottom:10%; width:3.5cqw; height:3.1cqw }
-    }
-
-    /* Manual 4.2 screen geometry: fixed instrument bays, not dashboard cards. */
-    .lcd-device-display { --lcd-ink:#a4eaff; --lcd-glow:rgba(78,205,255,.68); aspect-ratio:1.58; background:radial-gradient(ellipse at 50% 45%,#074676 0%,#02152d 58%,#010914 100%); color:var(--lcd-ink) }
-    .lcd-device-display .lcd-device-mode,.lcd-device-display .lcd-battery-source,.lcd-device-display .lcd-link-bluetooth,.lcd-device-display .lcd-link-wifi,.lcd-device-display .lcd-link-usb { display:none !important }
-    .lcd-device-display .lcd-mode-source { top:11%; left:7%; gap:.48cqw; color:var(--lcd-ink) }.lcd-device-display .lcd-mode-source b { display:none }.lcd-device-display .lcd-mode-source .lcd-icon { width:2.45cqw; height:2.25cqw; stroke-width:3 }.lcd-device-display .lcd-mode-source .lcd-icon:last-child { width:1.8cqw; height:1.35cqw }
-    .lcd-device-display .lcd-link-status { top:9%; right:8%; color:var(--lcd-ink); opacity:.92 }.lcd-device-display .lcd-link-status .lcd-link-speaker { width:3cqw; height:3cqw }
-    .lcd-device-display .lcd-battery-top { top:6%; left:25%; width:52%; height:29%; color:var(--lcd-ink); background:var(--lcd-ink); clip-path:polygon(4% 0,39% 0,42% 4%,91% 4%,100% 19%,100% 72%,93% 100%,7% 100%,0 72%,0 18%) }.lcd-device-display .lcd-battery-top::before { display:none }.lcd-device-display .lcd-battery-top::after { content:""; position:absolute; inset:.32cqw; background:#03162e; clip-path:inherit }.lcd-device-display .lcd-battery-top > * { z-index:1 }.lcd-device-display .lcd-battery-main { padding-top:1.8cqw; font-size:10.3cqw; line-height:.82; text-shadow:0 0 .45cqw var(--lcd-glow) }.lcd-device-display .lcd-tag { left:10%; bottom:7%; font-size:1.2cqw }.lcd-device-display .lcd-battery-side { top:9%; left:65%; width:19%; gap:.15cqw; font-size:4.3cqw }.lcd-device-display .lcd-state-caption { font-size:1.05cqw; letter-spacing:.03em }
-    .lcd-device-display .lcd-battery-scale { top:39%; left:29%; width:42%; height:5.7%; grid-template-columns:repeat(3,1fr) 3.5cqw 2.5cqw 3.5cqw; gap:.35cqw }.lcd-device-display .lcd-battery-scale::before { font-size:1.05cqw; bottom:calc(100% + .3cqw) }.lcd-device-display .lcd-battery-scale > span { padding:.2cqw .05cqw; font-size:1.2cqw }.lcd-device-display .lcd-battery-level-icon { width:2cqw; height:3cqw }.lcd-device-display .lcd-ups-mode { top:54%; left:9%; font-size:1.5cqw }
-    .lcd-device-display .lcd-power-path { display:block !important; top:47%; left:7%; width:86%; height:5%; border-color:var(--lcd-ink); opacity:.88 }.lcd-device-display .lcd-power-path::before,.lcd-device-display .lcd-power-path::after { height:5.6cqw; border-color:var(--lcd-ink) }.lcd-device-display .lcd-power-path::before { left:28% }.lcd-device-display .lcd-power-path::after { left:67% }.lcd-device-display .lcd-power-path .lcd-icon { color:var(--lcd-ink); width:2.1cqw; height:1.55cqw }
-    .lcd-device-display .lcd-column { top:52%; bottom:auto; height:35%; padding:.45cqw .25cqw; gap:.25cqw; overflow:visible; color:var(--lcd-ink) }.lcd-device-display .lcd-column::before { content:""; position:absolute; inset:0; border:.23cqw solid currentColor; border-bottom:0; opacity:.95; clip-path:polygon(0 17%,14% 0,42% 0,48% 5%,55% 5%,61% 0,86% 0,100% 17%,100% 100%,0 100%) }.lcd-device-display .lcd-column > * { position:relative; z-index:1 }.lcd-device-display .lcd-column-input { display:flex !important; left:4%; width:25% }.lcd-device-display .lcd-column-output { left:35%; width:30%; height:34%; padding:.75cqw .5cqw .25cqw; background:transparent; clip-path:none }.lcd-device-display .lcd-column-output::before { inset:0; background:transparent }.lcd-device-display .lcd-column-pv { display:flex !important; right:4%; width:25% }.lcd-device-display .lcd-column strong { font-size:1.1cqw; letter-spacing:.05em; white-space:nowrap }.lcd-device-display .lcd-column-icon { display:none }.lcd-device-display .lcd-column .lcd-measure-large { margin-top:.4cqw; font-size:6.3cqw; line-height:.82; text-shadow:0 0 .3cqw var(--lcd-glow) }.lcd-device-display .lcd-column .lcd-measure { font-size:3.1cqw; line-height:.88 }.lcd-device-display .lcd-column .lcd-unit { font-size:.27em }.lcd-device-display .lcd-column-output .lcd-output-heading { font-size:1.35cqw }.lcd-device-display .lcd-output-reading-label { display:none }.lcd-device-display .lcd-column-output .lcd-output-primary { margin-top:.6cqw; font-size:8cqw }.lcd-device-display .lcd-column-output .lcd-output-frequency { margin-top:.65cqw; font-size:4.5cqw }.lcd-device-display .lcd-ac2-region { display:none !important }.lcd-device-display .lcd-flow-marker { right:28%; bottom:12%; width:4.8cqw; height:4.3cqw }.lcd-device-display .lcd-day-energy { right:13%; bottom:4%; width:20%; font-size:3.8cqw }.lcd-device-display .lcd-day-energy > span:first-child { right:calc(100% + 4cqw); bottom:.3cqw; font-size:1.05cqw }.lcd-device-display .lcd-period-selector { display:none }.lcd-device-display .lcd-fault-marker { right:6%; bottom:4% }
-    /* P1--P9 replace the live diagram exactly as shown in manual section 4.3. */
-    .lcd-device-display.lcd-information-page > :not(.lcd-manual-readouts):not(.lcd-manual-context):not(.lcd-icon-definitions) { display:none !important }.lcd-device-display.lcd-information-page .lcd-manual-context { display:none !important }.lcd-device-display.lcd-information-page .lcd-manual-readouts { position:absolute; inset:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-content:center; gap:4%; padding:14% 15% 10%; color:var(--lcd-ink); text-align:center }.lcd-device-display.lcd-information-page .lcd-manual-readouts::before { content:attr(data-lcd-page); position:absolute; top:11%; left:0; right:0; font:900 7cqw/1 monospace; letter-spacing:-.12em }.lcd-device-display.lcd-information-page .lcd-manual-readouts::after { content:""; position:absolute; left:17%; right:17%; top:30%; height:.35cqw; background:currentColor; clip-path:polygon(0 100%,5% 0,46% 0,49% 100%,51% 100%,54% 0,95% 0,100% 100%) }.lcd-device-display.lcd-information-page .lcd-manual-reading { display:grid; place-items:center; gap:1cqw; min-width:0 }.lcd-device-display.lcd-information-page .lcd-manual-reading strong { display:none }.lcd-device-display.lcd-information-page .lcd-manual-reading span { font:900 var(--lcd-manual-value-size,7cqw)/1 monospace; letter-spacing:-.1em; white-space:nowrap; text-shadow:0 0 .4cqw var(--lcd-glow) }.lcd-device-display.lcd-information-page .lcd-manual-readouts-single { grid-template-columns:1fr }.lcd-device-display.lcd-information-page .lcd-manual-readouts-single .lcd-manual-reading span { font-size:min(10cqw,var(--lcd-manual-value-size,10cqw)) }
-    @media (max-width:640px) { .lcd-device-display { aspect-ratio:1.58; min-height:0 }.lcd-device-display .lcd-column-input { left:3%; width:27% }.lcd-device-display .lcd-column-output { left:34%; width:32% }.lcd-device-display .lcd-column-pv { right:3%; width:27% }.lcd-device-display .lcd-column strong { font-size:1.2cqw }.lcd-device-display .lcd-column .lcd-measure-large { font-size:6cqw }.lcd-device-display .lcd-column .lcd-measure { font-size:3cqw } }
-
-    /* Complete manual topology: the surrounding bays remain physical slots;
-       their live readouts are removed only by .lcd-manual-absent in lcd.js. */
-    .lcd-device-display .lcd-column-input.lcd-manual-absent,
-    .lcd-device-display .lcd-column-pv.lcd-manual-absent { display:none !important }
-    .lcd-device-display .lcd-mode-source .lcd-source-device { display:block; width:2.2cqw; height:2.2cqw; opacity:.38 }
-    .lcd-device-display .lcd-mode-plus { display:block; color:var(--lcd-ink); font:900 2cqw/1 monospace; opacity:.65 }
-    .lcd-device-display .lcd-link-bluetooth,
-    .lcd-device-display .lcd-link-wifi,
-    .lcd-device-display .lcd-link-usb { display:block !important; opacity:.2 }
-    .lcd-device-display .lcd-link-status .active { opacity:1 }
-    .lcd-device-display .lcd-period-selector { display:grid; left:43%; bottom:3.2%; grid-template-columns:repeat(4,max-content); color:var(--lcd-ink); font-size:.82cqw; opacity:.78 }
-    .lcd-device-display .lcd-period-selector b { border-color:currentColor; padding:.12cqw .38cqw }
-    .lcd-device-display .lcd-manual-subreading { display:grid; gap:.12cqw; margin-top:auto; color:var(--lcd-ink); font:900 .85cqw/1 monospace; text-align:center; opacity:.9 }
-    .lcd-device-display .lcd-manual-subreading b { font-size:2.35cqw; font-weight:900; letter-spacing:-.1em; text-shadow:0 0 .25cqw var(--lcd-glow) }
-    .lcd-device-display .lcd-pv-channels { display:grid; grid-template-columns:auto 1fr; gap:.15cqw .45cqw; margin-top:auto; color:var(--lcd-ink); font:900 .95cqw/1 monospace; text-align:left; opacity:.9 }
-    .lcd-device-display .lcd-pv-channels span { font-size:1.25cqw; letter-spacing:-.08em; white-space:nowrap }
-    .lcd-device-display .lcd-fault-marker { display:flex; opacity:.22 }
-    .lcd-device-display .lcd-fault-marker.active { opacity:1 }
-
-    /* Literal manual bay map: UPS/GEN is a stepped left route, AC OUTPUT is
-       the short centre bay, and P1/P2/PV is a separate right route. These are
-       deliberately asymmetric because that is how the firmware diagram is
-       drawn in section 4.2. */
-    .lcd-device-display .lcd-column { border:0; align-items:center; justify-content:flex-start }
-    .lcd-device-display .lcd-column::before { background:transparent; border:.26cqw solid currentColor; border-bottom:0; clip-path:polygon(0 22%,15% 0,43% 0,49% 6%,55% 6%,61% 0,85% 0,100% 22%,100% 100%,0 100%) }
-    .lcd-device-display .lcd-column-input { top:53%; left:5%; width:23%; height:26% }
-    .lcd-device-display .lcd-column-input::after { content:"UPS APP\A L1  L2  L3"; position:absolute; left:0; top:-3.7cqw; width:100%; color:var(--lcd-ink); font:900 .92cqw/1.25 monospace; white-space:pre; text-align:left; opacity:.85 }
-    .lcd-device-display .lcd-column-input strong { display:none }
-    .lcd-device-display .lcd-column-input .lcd-measure-large { margin-top:1.25cqw; font-size:6.8cqw }
-    .lcd-device-display .lcd-column-input .lcd-manual-subreading { position:absolute; left:0; top:100%; width:100%; margin-top:1.6cqw; padding-top:.65cqw; border-top:.2cqw solid currentColor }
-    .lcd-device-display .lcd-column-output { top:52%; left:36%; width:28%; height:28% }
-    .lcd-device-display .lcd-column-output::after { content:"AC OUTPUT"; position:absolute; left:0; right:0; top:-1.65cqw; font:900 1.2cqw/1 monospace; letter-spacing:.04em; text-align:center }
-    .lcd-device-display .lcd-column-output .lcd-output-heading { display:none }
-    .lcd-device-display .lcd-column-output .lcd-output-primary { margin-top:1.4cqw; font-size:8.5cqw }
-    .lcd-device-display .lcd-column-output .lcd-output-current-reading { position:absolute; left:110%; top:92%; width:5.2cqw; margin:0; text-align:left }
-    .lcd-device-display .lcd-column-pv { top:53%; right:5%; width:23%; height:27% }
-    .lcd-device-display .lcd-column-pv::after { content:"P1     P2\A PV"; position:absolute; left:0; right:0; top:-3.7cqw; color:var(--lcd-ink); font:900 .92cqw/1.25 monospace; white-space:pre; text-align:right; opacity:.85 }
-    .lcd-device-display .lcd-column-pv .lcd-column-icon { display:block; position:absolute; right:4%; top:-7cqw; width:4.6cqw; height:4.4cqw; color:var(--lcd-ink); opacity:.9 }
-    .lcd-device-display .lcd-column-pv strong { display:none }
-    .lcd-device-display .lcd-column-pv .lcd-measure-large { margin-top:1.25cqw; font-size:6.5cqw }
-    .lcd-device-display .lcd-column-pv .lcd-pv-channels { position:absolute; left:0; top:100%; width:100%; margin-top:1.6cqw; padding-top:.65cqw; border-top:.2cqw solid currentColor }
-    .lcd-device-display .lcd-power-path { top:48%; height:4%; }
-    .lcd-device-display .lcd-power-path::before { left:29%; height:5.1cqw }.lcd-device-display .lcd-power-path::after { left:68%; height:5.1cqw }
-    .lcd-device-display .lcd-flow-marker { right:8%; bottom:17%; width:6cqw; height:5.5cqw }
-    .lcd-device-display .lcd-day-energy { right:25%; bottom:4%; width:18%; }
-    .lcd-device-display .lcd-period-selector { left:37%; bottom:3%; }
-
-    /* Manual-only LCD marks. These remain compact so the display preserves
-       the instrument's information density at every responsive size. */
-    .lcd-device-display .lcd-battery-types { position:absolute; z-index:4; top:15%; left:29%; display:grid; gap:.18cqw; }
-    .lcd-device-display .lcd-battery-types button { min-width:3.1cqw; margin:0; padding:.16cqw .3cqw; border:.12cqw solid var(--lcd-ink); border-radius:0; background:transparent; color:var(--lcd-ink); font:900 .72cqw/1 monospace; cursor:pointer; }
-    .lcd-device-display .lcd-battery-types button.active { background:var(--lcd-ink); color:#03162e; box-shadow:0 0 .35cqw var(--lcd-glow); }
-    .lcd-device-display .lcd-lead-capacity { position:absolute; z-index:3; top:43%; left:30%; display:none; grid-template-columns:repeat(4,auto); gap:.25cqw; color:#e8cc70; font:900 .78cqw/1 monospace; text-align:center; }
-    .lcd-device-display.lcd-lead-acid .lcd-lead-capacity { display:none; }
-    .lcd-device-display .lcd-lead-capacity b { grid-column:1 / -1; color:var(--lcd-ink); font-size:.9cqw; }
-    .lcd-device-display .lcd-mode-indicators { position:absolute; z-index:4; top:5%; left:6%; display:flex; flex-wrap:wrap; width:17%; gap:.25cqw; color:var(--lcd-ink); font:900 .75cqw/1 monospace; }
-    .lcd-device-display .lcd-mode-indicators span { padding:.15cqw .22cqw; border:.1cqw solid currentColor; opacity:.25; white-space:nowrap; }
-    .lcd-device-display .lcd-mode-indicators span.active { opacity:1; background:var(--lcd-ink); color:#03162e; box-shadow:0 0 .3cqw var(--lcd-glow); }
-    .lcd-device-display .lcd-mode-indicators #lcd-mode-pv-grid,
-    .lcd-device-display .lcd-mode-indicators #lcd-mode-pv-first { flex-basis:100%; }
-    .lcd-device-display .lcd-charge-stages { position:absolute; z-index:4; top:8%; left:49%; display:flex; gap:.16cqw; color:var(--lcd-ink); font:900 .75cqw/1 monospace; }
-    .lcd-device-display .lcd-charge-stages span { padding:.18cqw .4cqw; border:.1cqw solid currentColor; opacity:.25; }
-    .lcd-device-display .lcd-charge-stages span.active { opacity:1; background:var(--lcd-ink); color:#03162e; box-shadow:0 0 .3cqw var(--lcd-glow); }
-    .lcd-device-display .lcd-mode-source .lcd-icon { opacity:.22; }
-    .lcd-device-display .lcd-mode-source .lcd-icon.active { opacity:1; filter:drop-shadow(0 0 .22cqw var(--lcd-glow)); }
-    .lcd-device-display .lcd-battery-scale > span:not(.lcd-load-block) { opacity:.2; }
-    .lcd-device-display .lcd-battery-scale > span:not(.lcd-load-block).active { opacity:1; }
-    .lcd-device-display .lcd-battery-scale .lcd-load-block { display:grid; grid-template-columns:repeat(4,1fr); gap:.12cqw; opacity:1; }
-    .lcd-device-display .lcd-battery-scale .lcd-load-block i { display:grid; place-items:center; min-height:1.1cqw; color:var(--lcd-ink); background:transparent; font:900 .68cqw/1 monospace; font-style:normal; opacity:.22; }
-    .lcd-device-display .lcd-battery-scale .lcd-load-block i.active { color:#03162e; background:var(--lcd-ink); opacity:1; }
-    .lcd-device-display .lcd-max-ac-current { position:absolute; z-index:3; right:7%; bottom:9%; display:grid; gap:.15cqw; color:var(--lcd-ink); font:900 .75cqw/1 monospace; text-align:right; }
-    .lcd-device-display .lcd-max-ac-current b { font-size:1.45cqw; letter-spacing:-.08em; text-shadow:0 0 .25cqw var(--lcd-glow); }
-
-    /* P1--P9 use the manual's small top code, stepped bracket and centred
-       marker—not a full-screen page heading. */
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts { align-content:start; grid-template-columns:repeat(2, minmax(0,1fr)); gap:2%; padding:42% 19% 12%; }
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts::before { top:12%; font-size:4.7cqw; letter-spacing:-.08em; }
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts::after { left:24%; right:24%; top:30%; height:.42cqw; clip-path:polygon(0 100%,7% 0,43% 0,47% 100%,53% 100%,57% 0,93% 0,100% 100%); }
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts::marker { display:none }
-    .lcd-device-display.lcd-information-page .lcd-manual-reading { align-content:start; padding-top:2cqw }
-    .lcd-device-display.lcd-information-page .lcd-manual-reading span { font-size:min(6.5cqw,var(--lcd-manual-value-size,6.5cqw)); }
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts-single .lcd-manual-reading span { font-size:min(8.4cqw,var(--lcd-manual-value-size,8.4cqw)); }
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts::selection { background:transparent }
-
     /* =====================================================================
-       AUTHORITATIVE LCD BAY MAP
-       The manual is a fixed instrument face, so the normal screen has one
-       coordinate system.  This final block intentionally resets the earlier
-       experimental LCD rules: every live item owns a non-overlapping bay.
-       Values may shrink inside a bay, but a bay never grows into another.
+       LCD MANUAL FACE — single authoritative coordinate system
+       Section 4.2.1 is a fixed instrument face.  All normal-live elements
+       below are placed in dedicated bays of this one proportional canvas.
        ===================================================================== */
-    .lcd-device-display:not(.lcd-information-page) {
-      --lcd-ink: #a4eaff;
-      --lcd-glow: rgba(78, 205, 255, .68);
-      aspect-ratio: 1.58;
-      min-height: 0;
-      overflow: hidden;
-    }
-    .lcd-device-display:not(.lcd-information-page) > :not(.lcd-icon-definitions) {
-      box-sizing: border-box;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-manual-readouts,
-    .lcd-device-display:not(.lcd-information-page) .lcd-manual-context,
-    .lcd-device-display:not(.lcd-information-page) .lcd-device-mode,
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-source,
-    .lcd-device-display:not(.lcd-information-page) .lcd-lead-capacity,
-    .lcd-device-display:not(.lcd-information-page) .lcd-ac2-region,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-current-reading,
-    .lcd-device-display:not(.lcd-information-page) .lcd-pv-channels,
-    .lcd-device-display:not(.lcd-information-page) .lcd-flow-marker {
-      display: none !important;
-    }
-
-    /* Top rail: source/mode at left, battery instrument at centre, links right. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators {
-      top: 5%; left: 4%; width: 13%; gap: .22cqw; font-size: .72cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators span { padding: .12cqw .18cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source {
-      top: 16%; left: 5%; width: 15%; gap: .42cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source .lcd-icon { width: 2.2cqw; height: 2.1cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status {
-      top: 7%; right: 4%; width: 17%; justify-content:flex-end; gap: .65cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status .lcd-icon { width: 2.35cqw; height: 2.35cqw; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top {
-      top: 5%; left: 23%; width: 53%; height: 26%;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-main {
-      padding: 6.5cqw 0 0 9.5cqw; justify-content:flex-start;
-      font-size: 9.2cqw; line-height: .78;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top .lcd-unit { font-size: .25em; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-tag { display:none; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types {
-      top: 12%; left: 29%; z-index: 5; gap: .2cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types button {
-      min-width: 3.45cqw; padding: .14cqw .25cqw; font-size: .72cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages {
-      top: 8%; left: 46%; z-index: 5; gap: .18cqw; font-size: .72cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages span { padding: .17cqw .42cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-side {
-      top: 8%; left: 62%; width: 12%; gap: .28cqw; font-size: 3.5cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-state-caption { font-size: .9cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-max-ac-current {
-      top: 19%; right: 25%; bottom:auto; width: 8%; font-size: .7cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-max-ac-current b { font-size: 1.35cqw; }
-
-    /* Dedicated centre meter strip; it has no relationship to data bays below. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale {
-      top: 34%; left: 18%; width: 64%; height: 6.5%;
-      grid-template-columns: repeat(4, 1fr) 3.1cqw 2.35cqw 3.1cqw;
-      gap: .3cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale::before { font-size: 1.05cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale > span { font-size: 1.1cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-level-icon { width: 2cqw; height: 3cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path {
-      display:block !important; top: 44%; left: 7%; width: 86%; height: 4%;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path::before,
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path::after { height: 3.2cqw; }
-
-    /* Three separate telemetry bays, with hard x/y limits matching the manual. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-column {
-      top: 51%; bottom:auto; height: 27%; padding: .55cqw .3cqw;
-      gap: .22cqw; overflow:hidden; justify-content:flex-start;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column::before { border-width:.22cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input { left: 4%; width: 25%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output { left: 35%; width: 30%; padding:.65cqw .25cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv { right: 4%; width: 25%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input::after,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv::after { top: -2.2cqw; font-size: .8cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv .lcd-column-icon { display:none; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column .lcd-measure-large { margin-top:.5cqw; font-size:5.65cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column .lcd-measure { font-size:2.35cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output::after { top:-1.45cqw; font-size:1.05cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-primary { margin-top:.8cqw; font-size:7.1cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-frequency { margin-top:.45cqw; font-size:3.45cqw; }
-
-    /* Bottom rail is independent of the three telemetry bays. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-ups-mode { top: 49%; left: 8%; font-size: 1.2cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-period-selector {
-      left: 30%; bottom: 4%; display:grid; font-size:.72cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-time-display {
-      left: 42%; bottom: 6%; font-size:.76cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy {
-      right: 26%; bottom: 4%; width: 13%; font-size: 2.6cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy > span:first-child {
-      right: calc(100% + 1.4cqw); font-size: .78cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-fault-marker {
-      right: 5%; bottom: 5%; width: 15%; gap:.22cqw; font-size:.9cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-fault-marker i { flex:0 0 auto; }
-
-    /* Keep the same physical face on narrow screens: scaling is collision-safe. */
-    @media (max-width:640px) {
-      .lcd-device-display:not(.lcd-information-page) { aspect-ratio:1.58; }
-      .lcd-device-display:not(.lcd-information-page) .lcd-column-input { left:4%; width:25%; }
-      .lcd-device-display:not(.lcd-information-page) .lcd-column-output { left:35%; width:30%; }
-      .lcd-device-display:not(.lcd-information-page) .lcd-column-pv { right:4%; width:25%; }
-    }
-
-    /* Reserve the manual's secondary bays inside the fixed face; never use
-       negative offsets or wrapping to make these fit. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-ac2-region,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-current-reading,
-    .lcd-device-display:not(.lcd-information-page) .lcd-pv-channels,
-    .lcd-device-display:not(.lcd-information-page) .lcd-flow-marker { display:grid !important; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-ac2-region {
-      position:absolute; top:80%; left:4%; width:25%; height:9%; padding:.25cqw;
-      gap:.1cqw; border-top:.16cqw solid currentColor; font-size:.7cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-ac2-region .lcd-measure { font-size:1.65cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-current-reading {
-      position:absolute; top:80%; left:35%; width:30%; height:7%; margin:0;
-      padding:.2cqw; border-top:.16cqw solid currentColor; gap:.1cqw; font-size:.7cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-current-reading b { font-size:1.75cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-pv-channels {
-      position:absolute; top:80%; right:4%; width:25%; height:9%; margin:0;
-      padding:.25cqw; border-top:.16cqw solid currentColor; grid-template-columns:auto 1fr;
-      gap:.1cqw .35cqw; font-size:.7cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-flow-marker {
-      position:absolute; right:27%; bottom:18%; width:4%; height:4%;
-    }
-    /* Grid current has no separate normal-screen bay in the manual; the
-       lower-left bay is reserved for GEN / AC OUTPUT2. */
-    .lcd-device-display:not(.lcd-information-page) #lcd-grid-current-reading { display:none !important; }
-
-    /* Telemetry headings live inside their own bays, below the divider. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input::after,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv::after {
-      top:.45cqw; left:.35cqw; right:.35cqw; width:auto; text-align:center;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output::after {
-      top:.5cqw; left:.35cqw; right:.35cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input .lcd-measure-large,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv .lcd-measure-large {
-      margin-top:2.05cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-primary {
-      margin-top:2.15cqw;
-    }
-
-    /* Telemetry headings occupy the first row of their own bays.  Do not use
-       inherited pseudo-labels: their negative offsets crossed the power path. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input::after,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output::after,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv::after {
-      content:none; display:none;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input > strong,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output > .lcd-output-heading,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv > strong {
-      display:block !important; flex:0 0 1.25cqw; height:1.25cqw; margin:0;
-      overflow:hidden; color:var(--lcd-ink); font:900 .9cqw/1.25cqw monospace;
-      letter-spacing:.04em; text-align:center; white-space:nowrap;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column .lcd-measure-large,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-primary {
-      margin-top:.25cqw;
-    }
-
-    /* =====================================================================
-       NORMAL LCD — FINAL PHYSICAL FACE
-       One coordinate map only.  Values are contained in bays; the face never
-       reflows, because the physical panel in the manual does not reflow.
-       ===================================================================== */
-    .lcd-device-display:not(.lcd-information-page) {
-      position:relative;
-      container-type:inline-size;
-      aspect-ratio:1.58 !important;
-      width:100%;
-      min-height:0 !important;
-      isolation:isolate;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators {
-      position:absolute; top:5.3%; left:3.8%; z-index:3; width:9.8%;
-      display:grid; grid-template-columns:repeat(2, 1fr); gap:.34cqw;
-      font:900 1.35cqw/1 "Roboto Mono", monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators span {
-      padding:0; border:0; background:transparent; opacity:.35; text-align:center;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators #lcd-mode-pv-grid,
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators #lcd-mode-pv-first { display:none; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source {
-      position:absolute; top:15.7%; left:6.2%; z-index:3; width:14%; display:flex;
-      align-items:center; gap:.46cqw; color:var(--lcd-ink);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source .lcd-icon { width:2.25cqw; height:2.25cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source .lcd-source-device { display:none; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status {
-      position:absolute; top:6%; right:4.4%; z-index:3; width:17%; display:flex;
-      justify-content:flex-end; align-items:center; gap:1.15cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status .lcd-icon { width:2.3cqw; height:2.3cqw; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top {
-      position:absolute; top:5.2%; left:22.5%; width:54%; height:27.5%; z-index:1;
-      border:0; background:var(--lcd-ink); color:var(--lcd-ink); box-shadow:none;
-      clip-path:polygon(4% 0,35% 0,38% 4%,90% 4%,100% 22%,100% 72%,93% 100%,7% 100%,0 72%,0 19%);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top::after {
-      content:""; position:absolute; inset:.36cqw; background:#03162e; clip-path:inherit;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top > * { position:relative; z-index:2; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-main {
-      position:absolute; left:28%; bottom:11%; display:flex; padding:0; font-size:9.5cqw;
-      line-height:.76; letter-spacing:-.08em; white-space:nowrap;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types {
-      position:absolute; top:13.1%; left:27.4%; z-index:4; display:grid; gap:.23cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types button {
-      min-width:4.25cqw; margin:0; padding:.17cqw .34cqw; border:.13cqw solid var(--lcd-ink);
-      border-radius:0; font:900 .78cqw/1 monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages {
-      position:absolute; top:7.8%; left:44.7%; z-index:4; display:flex; gap:.24cqw;
-      font:900 .8cqw/1 monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages span { padding:.28cqw .55cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-side {
-      position:absolute; top:8.3%; left:61.5%; z-index:4; width:13%; display:grid; gap:.45cqw;
-      font-size:3.75cqw; line-height:.72; text-align:right;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-state-caption { font-size:.85cqw; line-height:1; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-max-ac-current {
-      position:absolute; top:22.4%; right:26.4%; bottom:auto; z-index:4; width:7%;
-      font:900 .7cqw/1 monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-max-ac-current b { font-size:1.25cqw; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale {
-      position:absolute; top:35%; left:16.5%; z-index:4; width:67%; height:6.3%;
-      display:grid; grid-template-columns:repeat(4, 1fr) 3cqw 2.6cqw 3cqw; gap:.26cqw;
-      align-items:end;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale::before {
-      content:"BATT"; position:absolute; left:28%; top:-1.8cqw; font-size:1.2cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale::after {
-      content:"LOAD"; position:absolute; right:12%; top:-1.8cqw; font-size:1.2cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale > span { font-size:.92cqw; min-height:1.55cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-level-icon { width:2.35cqw; height:3.3cqw; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path {
-      position:absolute; top:43.2%; left:5%; z-index:2; width:90%; height:4.5%; display:block !important;
-      border-top:.2cqw solid var(--lcd-ink);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path::before,
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path::after { height:4.3cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-ups-mode { position:absolute; top:47.4%; left:8%; z-index:4; font-size:1.25cqw; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-column {
-      position:absolute; top:50%; z-index:3; height:29%; padding:1.4cqw .45cqw .45cqw;
-      display:flex !important; align-items:center; justify-content:flex-start; gap:.45cqw;
-      overflow:hidden; color:var(--lcd-ink); opacity:1; text-align:center;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column::before {
-      content:""; position:absolute; inset:0; border:.22cqw solid currentColor; border-bottom:0;
-      clip-path:polygon(0 16%,12% 0,88% 0,100% 16%,100% 100%,0 100%);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column > * { position:relative; z-index:1; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input { left:4%; width:26%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output { left:35%; width:30%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv { right:4%; width:26%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input > strong,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output > .lcd-output-heading,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv > strong {
-      display:block !important; flex:0 0 1.2cqw; height:1.2cqw; margin:0; font:900 .9cqw/1.2cqw monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column .lcd-measure-large { margin-top:.15cqw; font-size:6cqw; line-height:.72; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column .lcd-measure { font-size:2.45cqw; line-height:.8; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-primary { margin-top:.15cqw; font-size:7.2cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-frequency { margin-top:.25cqw; font-size:3.4cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-icon { display:none; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-reading-label { display:block; font-size:.68cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-voltage-source,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-arrow { display:none; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-ac2-region,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-current-reading,
-    .lcd-device-display:not(.lcd-information-page) .lcd-pv-channels { display:none !important; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-ac2-region.lcd-manual-absent,
-    .lcd-device-display:not(.lcd-information-page) #lcd-grid-node.lcd-manual-absent,
-    .lcd-device-display:not(.lcd-information-page) #lcd-load-node.lcd-manual-absent { display:flex !important; opacity:.42; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-period-selector {
-      position:absolute; bottom:3.5%; left:28%; z-index:4; display:grid; gap:.18cqw; font-size:.72cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-time-display {
-      position:absolute; bottom:5%; left:40%; z-index:4; width:22%; font-size:2.7cqw; line-height:1; letter-spacing:-.12em;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy {
-      position:absolute; right:25%; bottom:5.2%; z-index:4; width:11%; font-size:2.55cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy > span:first-child { right:calc(100% + 1.1cqw); font-size:.75cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-fault-marker {
-      position:absolute; right:5%; bottom:4.2%; z-index:4; width:15%; display:flex !important; gap:.3cqw; font-size:.8cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-flow-marker { display:none !important; }
-    @media (max-width:640px) {
-      .lcd-device-display:not(.lcd-information-page) { aspect-ratio:1.58 !important; }
-    }
-
-    /* Persistent manual geometry: dim ink makes an unavailable register read
-       as "not measured", never as a missing physical LCD bay. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-face-geometry {
-      position:absolute; inset:0; z-index:0; display:block !important; pointer-events:none;
-      color:rgba(164,234,255,.42); font-family:"Roboto Mono","Courier New",monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-battery-frame {
-      position:absolute; top:5.2%; left:22.5%; width:54%; height:27.5%; border:.18cqw solid currentColor;
-      clip-path:polygon(4% 0,35% 0,38% 4%,90% 4%,100% 22%,100% 72%,93% 100%,7% 100%,0 72%,0 19%);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-source-line { position:absolute; left:4%; width:18%; border-top:.2cqw solid currentColor; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-source-line-one { top:12.5%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-source-line-two { top:20%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-capacity {
-      position:absolute; top:34.5%; left:15.5%; width:69%; display:grid; grid-template-columns:repeat(4,1fr) 2.3cqw repeat(4,1fr);
-      gap:.25cqw; align-items:center; text-align:center; font:900 .85cqw/1 monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-capacity span { min-height:1.4cqw; padding:.18cqw 0; background:rgba(164,234,255,.12); }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-capacity i { height:2.2cqw; border-top:.2cqw solid currentColor; border-bottom:.2cqw solid currentColor; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-capacity b:first-child { position:absolute; top:-1.65cqw; left:29%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-capacity b:last-child { position:absolute; top:-1.65cqw; right:10%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-bay {
-      position:absolute; top:50%; height:29%; border:.18cqw solid currentColor; border-bottom:0;
-      clip-path:polygon(0 16%,12% 0,88% 0,100% 16%,100% 100%,0 100%); text-align:center;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-bay strong { display:block; margin-top:1.35cqw; font-size:.85cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-bay em { display:block; margin-top:1.1cqw; font-style:normal; font-size:5.6cqw; line-height:.7; letter-spacing:-.13em; opacity:.62; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-bay small { display:block; margin-top:1.1cqw; font-size:1.4cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-input { left:4%; width:26%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-output { left:35%; width:30%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-output em { font-size:6.8cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-pv { right:4%; width:26%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-ac2 {
-      position:absolute; left:4%; bottom:4%; width:20%; border-top:.16cqw solid currentColor; padding-top:.35cqw;
-      font-size:.72cqw; line-height:1.25;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-ac2 strong { display:block; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-ac2 span { display:block; font-size:1.5cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-phase {
-      position:absolute; left:4%; bottom:14%; display:grid; grid-template-columns:2cqw 8cqw 2cqw; column-gap:.25cqw; align-items:center;
-      font-size:.75cqw; line-height:1.05;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-phase span { font-size:4.25cqw; letter-spacing:-.14em; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-phase small { font-size:.72cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-time { position:absolute; left:28%; bottom:4%; display:flex; align-items:end; gap:1.2cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-time b { font-size:.68cqw; line-height:1.35; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-time span { font-size:2.55cqw; letter-spacing:-.12em; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-fault { position:absolute; right:4%; bottom:4%; width:17%; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-fault b { display:block; font-size:.8cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-fault span { display:block; font-size:3.3cqw; letter-spacing:-.12em; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-geom-fault small { position:absolute; left:-3.8cqw; bottom:0; font-size:.67cqw; }
-
-    /* The profile switcher owns this exact upper-left rectangle. It cannot
-       grow into the capacity rail, even when the selected style is applied. */
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types {
-      top:12.4%; left:27.2%; width:4.7cqw; height:10.6cqw; overflow:hidden; gap:.22cqw;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types button {
-      box-sizing:border-box; width:4.7cqw; min-width:0; height:2.35cqw; padding:.16cqw .18cqw;
-      font-size:.72cqw; line-height:1; white-space:nowrap;
-    }
-
-    /* =====================================================================
-       REAL SINGLE-PHASE UNIT — NORMAL LIVE SCREEN
-       This is deliberately sparse.  The photographed inverter does not show
-       the full manual's three-column diagnostic face during normal operation.
-       ===================================================================== */
-    .lcd-device-display:not(.lcd-information-page) {
-      --lcd-ink:#79e5ff;
-      --lcd-glow:rgba(72,212,255,.62);
-      aspect-ratio:1.58 !important;
-      color:var(--lcd-ink);
-      background:
-        radial-gradient(ellipse at 50% 48%, rgba(7,47,77,.36), transparent 58%),
-        linear-gradient(135deg,#031326,#061a31 58%,#020f20);
-      border-color:#16455d;
-      box-shadow:inset 0 0 1.8cqw rgba(64,210,255,.18), inset 0 0 .25cqw rgba(146,240,255,.45);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-face-geometry,
-    .lcd-device-display:not(.lcd-information-page) .lcd-device-mode,
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-indicators,
-    .lcd-device-display:not(.lcd-information-page) .lcd-power-path,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-input,
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-pv,
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-types,
-    .lcd-device-display:not(.lcd-information-page) .lcd-period-selector,
-    .lcd-device-display:not(.lcd-information-page) .lcd-time-display,
-    .lcd-device-display:not(.lcd-information-page) .lcd-max-ac-current,
-    .lcd-device-display:not(.lcd-information-page) .lcd-lead-capacity,
-    .lcd-device-display:not(.lcd-information-page) .lcd-fault-marker:not(.active) {
-      display:none !important;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source {
-      position:absolute; display:flex !important; top:12%; left:9%; z-index:5;
-      width:11%; gap:.35cqw; color:var(--lcd-ink); opacity:1;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source .lcd-icon { width:2.35cqw; height:2.35cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-mode-source .lcd-mode-plus { font-size:1.4cqw; line-height:2.2cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status {
-      position:absolute; display:flex !important; top:11%; right:9%; z-index:5; width:auto; gap:1cqw;
-      color:var(--lcd-ink);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status .lcd-icon { width:2.7cqw; height:2.7cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status .lcd-link-bluetooth,
-    .lcd-device-display:not(.lcd-information-page) .lcd-link-status .lcd-link-usb { display:none !important; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top {
-      position:absolute; display:block !important; top:6%; left:19%; z-index:2; width:62%; height:30%;
-      border:.32cqw solid var(--lcd-ink); border-bottom:.28cqw solid var(--lcd-ink); background:transparent;
-      clip-path:polygon(4% 0,37% 0,40% 5%,91% 5%,100% 22%,100% 73%,93% 100%,8% 100%,0 73%,0 20%);
-      box-shadow:0 0 .35cqw rgba(87,219,255,.45);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top::before,
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top::after { display:none; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-main {
-      position:absolute; left:17%; bottom:9%; display:flex; align-items:baseline; padding:0; height:auto;
-      font-size:10.4cqw; line-height:.72; letter-spacing:-.12em; color:#b9f2ff;
-      text-shadow:0 0 .5cqw var(--lcd-glow);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-top .lcd-unit { font-size:.22em; margin-left:.25cqw; letter-spacing:0; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-tag {
-      display:block; left:12%; bottom:7%; padding:.13cqw .55cqw; border:.15cqw solid var(--lcd-ink);
-      color:#b9f2ff; background:#06354e; font:900 1.25cqw/1 monospace; text-transform:none;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages {
-      position:absolute; display:flex; top:8.5%; left:43%; z-index:5; gap:.18cqw; font:900 .8cqw/1 monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages span { display:none; padding:.22cqw .5cqw; border:.13cqw solid currentColor; opacity:.44; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-charge-stages span.active { display:block; opacity:1; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-side {
-      position:absolute; display:grid !important; top:9.4%; left:63%; z-index:5; width:14%; gap:.5cqw;
-      color:#a9edff; text-align:right; font-size:4.25cqw; line-height:.74;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-side .lcd-unit { font-size:.22em; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-state-caption { font:900 .92cqw/1 monospace; white-space:nowrap; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale {
-      position:absolute; display:grid !important; top:39%; left:19%; z-index:5; width:58%; height:6%;
-      grid-template-columns:repeat(4,1fr) 3.1cqw 2.8cqw 3.1cqw; gap:.28cqw; align-items:center; color:#d8bd62;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale::before { content:"BATT"; left:27%; bottom:calc(100% + .3cqw); color:#dfc56b; font-size:1.05cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale::after { content:"LOAD"; right:13%; bottom:calc(100% + .3cqw); color:#dfc56b; font-size:1.05cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale > span:not(.lcd-load-block) {
-      min-height:1.6cqw; padding:.16cqw .1cqw; background:#d7ba61; color:#072039; font:900 .85cqw/1 monospace;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale > span:not(.active):not(.lcd-load-block) { opacity:.25; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale .lcd-load-block { display:grid; grid-template-columns:repeat(4,1fr); gap:.12cqw; background:transparent; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale .lcd-load-block i { min-height:1.6cqw; background:#d7ba61; color:#072039; font:900 .7cqw/1 monospace; opacity:.2; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale .lcd-load-block i.active { opacity:1; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-level-icon { width:2.35cqw; height:3.15cqw; color:#e3c86d; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-battery-scale em { display:none; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-ups-mode { position:absolute; top:51%; left:11%; z-index:5; color:var(--lcd-ink); font-size:1.45cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output {
-      position:absolute; display:flex !important; top:51%; left:27%; z-index:4; width:43%; height:35%; padding:2cqw .5cqw .3cqw;
-      align-items:center; gap:.38cqw; color:var(--lcd-ink); overflow:visible; text-align:center;
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output::before {
-      content:""; position:absolute; inset:0; border:.28cqw solid currentColor; border-bottom:0;
-      clip-path:polygon(0 17%,13% 0,87% 0,100% 17%,100% 100%,0 100%);
-    }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output > * { position:relative; z-index:1; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-heading { display:block !important; font:900 1.85cqw/1 monospace; letter-spacing:.05em; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-reading-label,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-voltage-source,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-arrow,
-    .lcd-device-display:not(.lcd-information-page) .lcd-output-current-reading { display:none !important; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-primary { margin-top:.1cqw; font-size:10.1cqw; line-height:.73; color:#bdf3ff; text-shadow:0 0 .55cqw var(--lcd-glow); }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-output-frequency { margin-top:.25cqw; font-size:4.9cqw; line-height:.75; color:#9aeaff; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-column-output .lcd-unit { font-size:.23em; letter-spacing:0; }
-
-    .lcd-device-display:not(.lcd-information-page) .lcd-flow-marker { display:block !important; right:19%; bottom:15%; z-index:5; width:7.2cqw; height:6.1cqw; opacity:1; background:repeating-linear-gradient(135deg,transparent 0 .55cqw,#7de5ff .59cqw .82cqw,transparent .86cqw 1.23cqw); }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy { position:absolute; display:flex !important; right:28%; bottom:6%; z-index:5; width:15%; color:#d9bf64; font-size:3.45cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy > span:first-child { right:calc(100% + 2cqw); bottom:.45cqw; padding:.18cqw .7cqw; color:#9ceaff; background:#1d92bb; font-size:1.05cqw; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-day-energy .lcd-unit { font-size:.28em; color:#d9bf64; }
-    .lcd-device-display:not(.lcd-information-page) .lcd-fault-marker.active { position:absolute; right:6%; bottom:6%; z-index:5; width:auto; color:#e7c86d; font-size:1cqw; }
-
-    /* Final normal-live screen.  It is deliberately keyed by state rather
-       than the absence of an information page so manual experiments above
-       cannot leak back into the physical screen. */
-    .lcd-device-display.lcd-normal-live {
-      aspect-ratio:1.58 !important;
-      min-height:0 !important;
-      overflow:hidden;
-    }
-    .lcd-device-display.lcd-normal-live .lcd-face-geometry,
-    .lcd-device-display.lcd-normal-live .lcd-device-mode,
-    .lcd-device-display.lcd-normal-live .lcd-mode-indicators,
-    .lcd-device-display.lcd-normal-live .lcd-power-path,
-    .lcd-device-display.lcd-normal-live .lcd-column-input,
-    .lcd-device-display.lcd-normal-live .lcd-column-pv,
-    .lcd-device-display.lcd-normal-live .lcd-battery-types,
-    .lcd-device-display.lcd-normal-live .lcd-period-selector,
-    .lcd-device-display.lcd-normal-live .lcd-time-display,
-    .lcd-device-display.lcd-normal-live .lcd-max-ac-current,
-    .lcd-device-display.lcd-normal-live .lcd-lead-capacity,
-    .lcd-device-display.lcd-normal-live .lcd-link-wifi,
-    .lcd-device-display.lcd-normal-live .lcd-link-bluetooth,
-    .lcd-device-display.lcd-normal-live .lcd-link-usb,
-    .lcd-device-display.lcd-normal-live #lcd-mode-device,
-    .lcd-device-display.lcd-normal-live .lcd-mode-plus,
-    .lcd-device-display.lcd-normal-live .lcd-fault-marker:not(.active) {
-      display:none !important;
-    }
-    .lcd-device-display.lcd-normal-live .lcd-mode-source {
-      top:12%; left:9%; width:auto; gap:.5cqw;
-    }
-    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon { width:2.55cqw; height:2.55cqw; }
-    .lcd-device-display.lcd-normal-live .lcd-mode-source #lcd-mode-flow { width:2.9cqw; height:2.1cqw; }
-    .lcd-device-display.lcd-normal-live .lcd-link-status { top:11%; right:10%; }
-    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-speaker { display:block !important; }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale {
-      top:39%; left:21%; width:53%; height:5.5%;
-      grid-template-columns:repeat(3, 1fr) 1.55fr; gap:.36cqw;
-    }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale::before { left:26%; }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { right:8%; }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale > span:not(.lcd-load-block):nth-child(4),
-    .lcd-device-display.lcd-normal-live .lcd-battery-level-icon,
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale em { display:none; }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale > span:not(.lcd-load-block) {
-      min-height:1.55cqw; clip-path:polygon(0 0,84% 0,100% 100%,14% 100%);
-    }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block {
-      display:grid; grid-template-columns:2.4cqw repeat(2, minmax(0,1fr)); gap:.32cqw; align-items:center;
-    }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block::before {
-      content:""; display:block; width:1.8cqw; height:2.25cqw; justify-self:center;
-      background:repeating-linear-gradient(to bottom,#d7ba61 0 .24cqw,transparent .24cqw .43cqw);
-      filter:drop-shadow(0 0 .12cqw rgba(226,197,101,.45));
-    }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block i {
-      min-height:1.55cqw; clip-path:polygon(0 0,84% 0,100% 100%,14% 100%);
-    }
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block i:nth-child(n+3) { display:none; }
-    .lcd-device-display.lcd-normal-live .lcd-column-output { top:51%; left:28%; width:42%; height:34%; }
-    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:28%; bottom:6.5%; }
-    .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:18%; bottom:15%; }
-    /* Physical fascia refinement.  This intentionally stops at the LCD bezel:
-       the compact live face remains a separate, unchanged instrument surface. */
-    #lcd-view .lcd-panel {
-      max-width: 1110px;
-      padding: clamp(22px, 3.2vw, 36px) clamp(20px, 3.4vw, 38px) clamp(24px, 3vw, 34px);
-      border: 1px solid #596268;
-      border-radius: 8px 8px 12px 12px;
-      background:
-        linear-gradient(104deg, rgba(255,255,255,.055), transparent 22%, transparent 76%, rgba(0,0,0,.2)),
-        linear-gradient(180deg, #373e43 0%, #2b3237 48%, #252c30 100%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.20),
-        inset 0 -12px 22px rgba(0,0,0,.18),
-        0 18px 42px rgba(0,0,0,.34);
-    }
-    #lcd-view .lcd-status-lights {
-      justify-content: center;
-      gap: clamp(24px, 5vw, 64px);
-      margin: 0 auto clamp(22px, 2.5vw, 30px);
-      color: #c6cbcd;
-      font-family: "Arial Narrow", "Roboto Condensed", sans-serif;
-      font-size: clamp(12px, 1.55vw, 17px);
-      letter-spacing: .105em;
-      text-shadow: 0 1px 0 #111;
-    }
-    #lcd-view .lcd-status-light { gap: 9px; opacity: .88; }
-    #lcd-view .lcd-status-light i {
-      width: clamp(13px, 1.55vw, 17px);
-      height: clamp(13px, 1.55vw, 17px);
-      border-color: #111518;
-      background: radial-gradient(circle at 38% 32%, #bcc4c7 0 7%, #6a7479 20%, #323a3e 54%, #181d20 72%);
-      box-shadow: inset 0 1px 2px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.07), 0 1px rgba(255,255,255,.14);
-    }
-    #lcd-view .lcd-status-light.active { color: #f5e3b4; text-shadow: 0 0 6px rgba(255,185,45,.32), 0 1px #1b1710; }
-    #lcd-view .lcd-status-light.active i {
-      border-color: #704400;
-      background: radial-gradient(ellipse at 50% 47%, #fffbd1 0 20%, #ffc83c 34%, #e8890c 56%, #743e05 76%);
-      box-shadow: 0 0 7px 2px rgba(255,160,20,.36), inset 0 0 3px #fff8bb;
-    }
-    #lcd-view .lcd-screen {
-      padding: clamp(12px, 1.9vw, 20px);
-      border: 6px solid #151b1f;
-      border-radius: 13px;
-      background: linear-gradient(135deg, #11181c, #2f393f 53%, #11171b);
-      box-shadow: inset 0 1px 0 #758087, inset 0 0 0 2px #06090b, inset 0 -3px 4px #06090b, 0 3px 7px rgba(0,0,0,.56);
-    }
-    #lcd-view .lcd-controls-wrap {
-      margin-top: clamp(19px, 2.4vw, 26px);
-      padding: clamp(17px, 2vw, 22px) 4px 0;
-      border-top-color: rgba(204,214,216,.18);
-    }
-    #lcd-view .lcd-controls-title { color: #aeb9bd; letter-spacing: .12em; }
-    #lcd-view .lcd-controls { gap: clamp(22px, 5vw, 60px); margin-top: 15px; }
-    #lcd-view .lcd-key {
-      width: clamp(70px, 8.3vw, 88px);
-      min-height: clamp(70px, 8.3vw, 88px);
-      padding-top: clamp(26px, 3vw, 31px);
-      border-width: 2px;
-      color: #e6eaeb;
-      background: radial-gradient(circle at 42% 31%, #707d82 0 4%, #4b575c 22%, #1d2529 44%, #5a666b 47%, #30393e 51%, #151b1f 73%);
-      box-shadow: inset 0 0 0 2px #8b969a, inset 0 0 0 4px #111619, inset 0 -7px 9px rgba(0,0,0,.72), 0 3px 2px #090d0f;
-      font-size: 10px;
-    }
-    #lcd-view .lcd-key::before { top: clamp(11px, 1.3vw, 13px); }
-    #lcd-view .lcd-controls-note { display:none; }
-    /* Local settings intentionally look like a real backlit LCD program page,
-       but are visually marked as browser-only so operators never mistake it
-       for a Modbus write interface. */
-    .lcd-device-display.lcd-settings-active {
-      --lcd-ink:#75e6ff;
-      color:var(--lcd-ink);
-      background:radial-gradient(ellipse at 50% 45%, rgba(12,77,111,.48), transparent 66%), linear-gradient(135deg,#03192b,#061529 60%,#020d1a);
-    }
-    .lcd-device-display.lcd-settings-active > :not(.lcd-icon-definitions):not(.lcd-settings-simulator) { display:none !important; }
-    .lcd-settings-simulator { position:absolute; inset:0; z-index:10; display:grid; align-content:center; justify-items:center; gap:clamp(9px,1.3cqw,15px); padding:7cqw 10cqw; text-align:center; }
-    .lcd-settings-simulator[hidden] { display:none; }
-    .lcd-settings-topline { width:100%; display:flex; justify-content:space-between; align-items:center; font:700 2cqw/1 monospace; letter-spacing:.15em; color:#b5efff; }
-    .lcd-settings-local { padding:.35cqw .75cqw; border:.16cqw solid #e3bd57; color:#f2cd67; font-size:1.35cqw; letter-spacing:.1em; }
-    .lcd-settings-title { color:#e6c96f; font:700 3.1cqw/1.1 monospace; text-transform:uppercase; max-width:95%; }
-    .lcd-settings-value { min-width:48%; padding:1.9cqw 3cqw; border:.28cqw dashed currentColor; color:#d9f8ff; background:rgba(69,205,255,.08); box-shadow:inset 0 0 1cqw rgba(99,221,255,.12), 0 0 .8cqw rgba(71,205,255,.15); font:900 7.4cqw/.9 monospace; letter-spacing:-.06em; text-shadow:0 0 .5cqw rgba(95,226,255,.6); }
-    .lcd-settings-help { margin:0; color:#9cdbec; font:700 1.5cqw/1.35 monospace; }
-    .lcd-settings-readonly { margin:0; color:#d7b95f; font:700 1.25cqw/1.25 monospace; }
-    @media (max-width:640px) {
-      #lcd-view .lcd-panel { padding: 16px 12px 20px; }
-      #lcd-view .lcd-status-lights { gap: 14px; margin-bottom: 16px; font-size: 11px; }
-      #lcd-view .lcd-status-light { gap: 5px; }
-      #lcd-view .lcd-controls { gap: 11px; }
-      #lcd-view .lcd-key { width: 62px; min-height: 62px; padding-top: 23px; }
-      #lcd-view .lcd-key::before { top: 8px; }
-    }
-
-    /* LCD viewport fit: the instrument is one proportional surface, never a
-       fixed-width canvas.  These final rules deliberately live after the
-       legacy LCD experiments above so narrow displays cannot reintroduce
-       panning or let secondary content crowd the controls. */
-    #lcd-view,
-    #lcd-view .lcd-panel,
-    #lcd-view .lcd-screen {
-      min-width: 0;
-      max-width: 100%;
-    }
-    #lcd-view .lcd-panel { overflow: clip; }
+    #lcd-view .lcd-panel { width:min(100%,1110px); margin-inline:auto; padding:clamp(12px,2vw,24px); }
+    #lcd-view .lcd-screen { box-sizing:border-box; padding:clamp(7px,1.2vw,14px); border:5px solid #151b1f; border-radius:13px; background:#252d31; box-shadow:inset 0 0 0 2px #06090b; }
     #lcd-view .lcd-device-display {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      margin-inline: auto;
+      position:relative; box-sizing:border-box; container-type:inline-size; width:100%; aspect-ratio:1.58; overflow:hidden;
+      border:2px solid #16536d; border-radius:8px; color:#9feaff;
+      background:radial-gradient(ellipse at 50% 44%,#064976 0%,#031c36 56%,#010c1c 100%);
+      font-family:"Arial Narrow","Courier New",monospace; font-variant-numeric:tabular-nums;
     }
-    #lcd-view .lcd-page-panel,
-    #lcd-view .lcd-page-title,
-    #lcd-view .lcd-page-description,
-    #lcd-view .lcd-page-reading,
-    #lcd-view .lcd-settings-title,
-    #lcd-view .lcd-settings-help,
-    #lcd-view .lcd-settings-readonly {
-      min-width: 0;
-      overflow-wrap: anywhere;
-    }
+    #lcd-view .lcd-device-display::before { content:""; position:absolute; inset:1.3%; border:.14cqw solid rgba(130,230,255,.16); pointer-events:none; }
+    #lcd-view .lcd-icon-definitions { position:absolute; width:0; height:0; }
+    #lcd-view .lcd-device-display > :not(.lcd-icon-definitions) { box-sizing:border-box; }
+    #lcd-view .lcd-measure { display:flex; justify-content:center; align-items:baseline; min-width:0; white-space:nowrap; }
+    #lcd-view .lcd-digits { display:inline-block; min-width:0; letter-spacing:-.11em; line-height:.8; }
+    #lcd-view .lcd-unit { margin-left:.2cqw; font:900 .27em/1 Arial,sans-serif; letter-spacing:0; }
 
-    @media (max-width: 640px) {
-      #lcd-view .lcd-panel {
-        padding: 10px 8px 12px;
-        border-radius: 8px;
-      }
-      #lcd-view .lcd-status-lights {
-        gap: clamp(7px, 3.4vw, 14px);
-        margin-bottom: 9px;
-        font-size: clamp(9px, 3vw, 11px);
-        letter-spacing: .05em;
-      }
-      #lcd-view .lcd-status-light { min-width: 0; gap: 4px; white-space: nowrap; }
-      #lcd-view .lcd-status-light i { width: 10px; height: 10px; flex: 0 0 10px; }
-      #lcd-view .lcd-screen {
-        padding: 6px;
-        border-width: 4px;
-        border-radius: 8px;
-      }
-      #lcd-view .lcd-device-display {
-        /* Cap the face by both available width and short viewport height. */
-        width: min(100%, calc((100svh - 196px) * 1.58));
-        aspect-ratio: 1.58;
-      }
-      /* P1--P9 already render on the physical face; the former duplicate
-         detail card is omitted here to keep the hardware controls in view. */
-      #lcd-view .lcd-page-panel { display: none; }
-      #lcd-view .lcd-controls-wrap {
-        margin-top: 9px;
-        padding-top: 8px;
-      }
-      #lcd-view .lcd-controls-title { display: none; }
-      #lcd-view .lcd-controls {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(44px, 1fr));
-        width: min(100%, 312px);
-        gap: clamp(5px, 2vw, 9px);
-        margin: 0 auto;
-      }
-      #lcd-view .lcd-key {
-        width: 100%;
-        min-width: 44px;
-        min-height: 44px;
-        padding: 18px 2px 4px;
-        font-size: 8px;
-      }
-      #lcd-view .lcd-key::before { top: 5px; font-size: 16px; }
-      #lcd-view .lcd-key[data-lcd-key="escape"]::before { font-size: 19px; }
-      #lcd-view .lcd-key[data-lcd-key="down"]::before,
-      #lcd-view .lcd-key[data-lcd-key="enter"]::before { font-size: 20px; }
-    }
+    /* Normal face only. P pages and program pages replace this map. */
+    .lcd-device-display.lcd-normal-live .lcd-manual-readouts,
+    .lcd-device-display.lcd-normal-live .lcd-manual-context,
+    .lcd-device-display.lcd-normal-live .lcd-device-mode,
+    .lcd-device-display.lcd-normal-live .lcd-battery-source,
+    .lcd-device-display.lcd-normal-live .lcd-lead-capacity,
+    .lcd-device-display.lcd-normal-live .lcd-hidden-values,
+    .lcd-device-display.lcd-normal-live .lcd-output-reading-label,
+    .lcd-device-display.lcd-normal-live .lcd-output-voltage-source,
+    .lcd-device-display.lcd-normal-live .lcd-output-arrow,
+    .lcd-device-display.lcd-normal-live .lcd-output-current-reading { display:none !important; }
 
-    @media (max-width: 380px) {
-      #lcd-view .lcd-panel { padding-inline: 5px; }
-      #lcd-view .lcd-screen { padding: 4px; border-width: 3px; }
-      #lcd-view .lcd-status-lights { gap: 6px; font-size: 9px; }
-      #lcd-view .lcd-status-light i { display: none; }
-      #lcd-view .lcd-device-display { width: min(100%, calc((100svh - 184px) * 1.58)); }
-    }
+    /* upper-left source and mode marks */
+    .lcd-device-display.lcd-normal-live .lcd-mode-indicators { position:absolute; top:5%; left:4%; z-index:2; display:grid; grid-template-columns:repeat(2,1.2cqw); gap:.26cqw; width:5cqw; font:900 .82cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-indicators span { display:block; padding:0; border:0; opacity:.35; text-align:center; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-indicators .active { opacity:1; }
+    .lcd-device-display.lcd-normal-live #lcd-mode-pv-grid,.lcd-device-display.lcd-normal-live #lcd-mode-pv-first { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source { position:absolute; top:16%; left:6%; z-index:2; display:flex; align-items:center; gap:.38cqw; color:#9feaff; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon { width:2.1cqw; height:2.1cqw; opacity:.35; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon.active { opacity:1; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-mode-plus { display:block; font:900 1.25cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status { position:absolute; top:7%; right:4%; z-index:2; display:flex; gap:.65cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon { display:block !important; width:2cqw; height:2cqw; opacity:.32; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .active { opacity:1; }
 
-    @media (max-height: 620px) and (max-width: 640px) {
-      #lcd-view .lcd-panel { padding-block: 7px 8px; }
-      #lcd-view .lcd-status-lights { margin-bottom: 5px; }
-      #lcd-view .lcd-controls-wrap { margin-top: 6px; padding-top: 6px; }
-      #lcd-view .lcd-device-display { width: min(100%, calc((100svh - 174px) * 1.58)); }
-    }
+    /* upper-centre battery frame */
+    .lcd-device-display.lcd-normal-live .lcd-battery-top { position:absolute; top:5%; left:22%; width:56%; height:27%; border:.27cqw solid currentColor; border-radius:0; background:#03162e; clip-path:polygon(4% 0,35% 0,38% 5%,90% 5%,100% 21%,100% 74%,93% 100%,7% 100%,0 74%,0 20%); }
+    .lcd-device-display.lcd-normal-live .lcd-battery-top::before,.lcd-device-display.lcd-normal-live .lcd-battery-top::after { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-main { position:absolute; left:28%; bottom:11%; display:flex; height:auto; padding:0; font-size:9.15cqw; text-shadow:0 0 .45cqw rgba(106,221,255,.72); }
+    .lcd-device-display.lcd-normal-live .lcd-tag { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types { position:absolute; top:12%; left:24.5%; z-index:3; display:grid; width:4.1cqw; gap:.18cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span { display:block; height:2.2cqw; padding:.18cqw; overflow:hidden; border:.11cqw solid currentColor; font:900 .64cqw/1 monospace; white-space:nowrap; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span.active { color:#03162e; background:#9feaff; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages { position:absolute; top:7.7%; left:41.5%; z-index:3; display:flex; gap:.18cqw; font:900 .7cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages span { padding:.2cqw .4cqw; border:.1cqw solid currentColor; opacity:.35; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages .active { color:#03162e; background:#9feaff; opacity:1; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-side { position:absolute; top:8%; left:63.5%; z-index:3; display:grid; width:11%; gap:.25cqw; font-size:3.25cqw; line-height:.76; text-align:right; }
+    .lcd-device-display.lcd-normal-live .lcd-state-caption { font:900 .68cqw/1 monospace; white-space:nowrap; }
+    .lcd-device-display.lcd-normal-live .lcd-max-ac-current { position:absolute; top:24%; right:23%; z-index:3; display:grid; width:7%; gap:.12cqw; font:900 .6cqw/1 monospace; text-align:center; }
+    .lcd-device-display.lcd-normal-live .lcd-max-ac-current b { font-size:1.1cqw; }
 
-    /* LCD mode is a bounded instrument view. The explicit root class is set
-       by showView(), so this works in mobile browsers without :has() support. */
-    @media (max-width: 640px) {
-      html.lcd-view-active,
-      html.lcd-view-active body {
-        height: 100%;
-        overflow: hidden;
-      }
-      html.lcd-view-active .shell {
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        width: calc(100% - 12px);
-        height: 100dvh;
-        min-height: 0;
-        padding: max(4px, env(safe-area-inset-top)) 0 max(4px, env(safe-area-inset-bottom));
-        overflow: hidden;
-      }
-      html.lcd-view-active .shell > header {
-        flex: 0 0 44px;
-        min-height: 44px;
-        margin-bottom: 4px;
-        padding: 3px 4px;
-        border-radius: 8px;
-      }
-      html.lcd-view-active .brand,
-      html.lcd-view-active .header-actions > :not(.view-tabs),
-      html.lcd-view-active .view-tabs > :not(.view-tab) { display: none; }
-      html.lcd-view-active .header-actions,
-      html.lcd-view-active .view-tabs {
-        display: flex;
-        width: 100%;
-        min-width: 0;
-        height: 100%;
-        flex-wrap: nowrap;
-      }
-      html.lcd-view-active .view-tab {
-        flex: 1 1 0;
-        min-width: 0;
-        padding-inline: 4px;
-        font-size: 11px;
-        white-space: nowrap;
-      }
-      html.lcd-view-active #lcd-view {
-        display: flex;
-        flex: 1 1 0;
-        min-height: 0;
-        overflow: hidden;
-      }
-      html.lcd-view-active #lcd-view .lcd-panel {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-        min-height: 0;
-        padding: 4px;
-      }
-      html.lcd-view-active #lcd-view .lcd-status-lights {
-        flex: 0 0 auto;
-        margin-bottom: 3px;
-      }
-      html.lcd-view-active #lcd-view .lcd-screen {
-        display: grid;
-        grid-template-rows: minmax(0, 1fr) 44px;
-        gap: 4px;
-        flex: 1 1 auto;
-        min-height: 0;
-        padding: 4px;
-        overflow: hidden;
-        container-type: size;
-      }
-      html.lcd-view-active #lcd-view .lcd-device-display {
-        align-self: center;
-        justify-self: center;
-        width: min(100%, calc((100cqh - 48px) * 1.58));
-        max-height: 100%;
-        min-height: 0;
-      }
-      html.lcd-view-active #lcd-view .lcd-controls-wrap {
-        height: 44px;
-        margin: 0;
-        padding: 0;
-        border: 0;
-      }
-      html.lcd-view-active #lcd-view .lcd-controls-title,
-      html.lcd-view-active #lcd-view .lcd-controls-note { display: none; }
-      html.lcd-view-active #lcd-view .lcd-controls {
-        width: min(100%, 300px);
-        height: 44px;
-        gap: 5px;
-      }
-      html.lcd-view-active #lcd-view .lcd-key {
-        min-height: 44px;
-        height: 44px;
-      }
-    }
+    /* centre capacity rail and power path */
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale { position:absolute; top:35.5%; left:16%; z-index:3; display:grid; width:68%; height:5.5%; grid-template-columns:repeat(4,1fr) 2.4cqw 2.1cqw 3.5cqw; gap:.24cqw; align-items:center; color:#e0c663; text-align:center; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::before { content:"BATT"; position:absolute; top:-1.45cqw; left:29%; color:#9feaff; font:900 1cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { content:"LOAD"; position:absolute; top:-1.45cqw; right:12%; color:#9feaff; font:900 1cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale > span { display:block; min-height:1.45cqw; padding:.16cqw .05cqw; background:#d8bd60; color:#081b2c; clip-path:polygon(0 0,84% 0,100% 100%,14% 100%); font:900 .78cqw/1 monospace; opacity:.26; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale > span.active { opacity:1; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block { display:grid; grid-template-columns:repeat(4,1fr); gap:.12cqw; background:none; clip-path:none; opacity:1; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block i { display:grid; place-items:center; min-height:1.45cqw; background:#d8bd60; color:#081b2c; clip-path:polygon(0 0,84% 0,100% 100%,14% 100%); font:900 .62cqw/1 monospace; font-style:normal; opacity:.25; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block i.active { opacity:1; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-level-icon { width:2.1cqw; height:3cqw; color:#e0c663; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale em { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path { position:absolute; top:44%; left:5%; z-index:1; display:block; width:90%; height:4%; border-top:.18cqw solid currentColor; opacity:.9; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path::before,.lcd-device-display.lcd-normal-live .lcd-power-path::after { content:""; position:absolute; top:-.18cqw; height:4cqw; border-left:.18cqw solid currentColor; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path::before { left:29%; }.lcd-device-display.lcd-normal-live .lcd-power-path::after { left:68%; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path .lcd-icon { position:absolute; top:-.85cqw; width:2cqw; height:1.4cqw; }.lcd-device-display.lcd-normal-live .lcd-path-left { left:29%; }.lcd-device-display.lcd-normal-live .lcd-path-mid { left:68%; }
 
-    @media (max-width: 640px) and (max-height: 520px) {
-      html.lcd-view-active #lcd-view .lcd-status-lights { display: none; }
-      html.lcd-view-active #lcd-view .lcd-panel { padding: 3px; }
-      html.lcd-view-active #lcd-view .lcd-screen { border-width: 3px; padding: 3px; }
+    /* lower telemetry bays */
+    .lcd-device-display.lcd-normal-live .lcd-ups-mode { position:absolute; top:48%; left:8%; z-index:3; font:900 1.05cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-column { position:absolute; top:50%; z-index:2; display:flex !important; height:29%; padding:1.35cqw .35cqw .25cqw; align-items:center; gap:.34cqw; overflow:hidden; color:#9feaff; text-align:center; }
+    .lcd-device-display.lcd-normal-live .lcd-column::before { content:""; position:absolute; inset:0; border:.2cqw solid currentColor; border-bottom:0; clip-path:polygon(0 16%,12% 0,88% 0,100% 16%,100% 100%,0 100%); }.lcd-device-display.lcd-normal-live .lcd-column > * { position:relative; z-index:1; }
+    .lcd-device-display.lcd-normal-live .lcd-column-input { left:4%; width:25%; }.lcd-device-display.lcd-normal-live .lcd-column-output { left:35%; width:30%; }.lcd-device-display.lcd-normal-live .lcd-column-pv { right:4%; width:25%; }
+    .lcd-device-display.lcd-normal-live .lcd-column strong,.lcd-device-display.lcd-normal-live .lcd-output-heading { display:block; flex:0 0 1cqw; height:1cqw; margin:0; font:900 .78cqw/1 monospace; white-space:nowrap; }
+    .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { margin-top:.12cqw; font-size:5.3cqw; line-height:.75; text-shadow:0 0 .35cqw rgba(106,221,255,.7); }.lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.1cqw; line-height:.82; }.lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.45cqw; }.lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { margin-top:.15cqw; font-size:3cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-column-icon,.lcd-device-display.lcd-normal-live .lcd-pv-sun { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-ac2-region { position:absolute; top:81%; left:4%; z-index:3; display:grid !important; width:25%; height:8%; padding:.2cqw; border-top:.14cqw solid currentColor; gap:.06cqw; font-size:.6cqw; }.lcd-device-display.lcd-normal-live .lcd-ac2-region .lcd-measure { font-size:1.4cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-pv-channels { position:absolute; top:81%; right:4%; z-index:3; display:grid !important; width:25%; height:8%; padding:.2cqw; border-top:.14cqw solid currentColor; grid-template-columns:auto 1fr; gap:.08cqw .3cqw; font:900 .6cqw/1 monospace; text-align:left; }.lcd-device-display.lcd-normal-live .lcd-pv-channels span { font-size:1cqw; }
+
+    /* bottom parameter / energy / fault bays */
+    .lcd-device-display.lcd-normal-live .lcd-period-selector { position:absolute; left:28%; bottom:3%; z-index:3; display:grid; grid-template-columns:repeat(4,max-content); gap:.14cqw; font:900 .6cqw/1 monospace; }.lcd-device-display.lcd-normal-live .lcd-period-selector b { padding:.12cqw .28cqw; border:.1cqw solid currentColor; }.lcd-device-display.lcd-normal-live .lcd-period-selector .lcd-period-active { color:#03162e; background:#9feaff; }
+    .lcd-device-display.lcd-normal-live .lcd-time-display { position:absolute; left:40%; bottom:5%; z-index:3; width:19%; overflow:hidden; color:#9feaff; font:900 1.5cqw/1 monospace; letter-spacing:-.1em; white-space:nowrap; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { position:absolute; right:24%; bottom:5%; z-index:3; display:flex; width:13%; color:#dfc663; font-size:2.15cqw; }.lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { position:absolute; right:calc(100% + 1cqw); bottom:.2cqw; padding:.14cqw .36cqw; color:#03162e; background:#9feaff; font:900 .62cqw/1 monospace; }.lcd-device-display.lcd-normal-live .lcd-day-energy .lcd-unit { color:#dfc663; }
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { position:absolute; right:28%; bottom:14%; z-index:3; display:block; width:4.2cqw; height:3.8cqw; background:repeating-linear-gradient(135deg,transparent 0 .46cqw,#9feaff .5cqw .7cqw,transparent .74cqw 1.08cqw); }
+    .lcd-device-display.lcd-normal-live .lcd-fault-marker { position:absolute; right:5%; bottom:4%; z-index:3; display:flex; width:15%; gap:.22cqw; font:900 .65cqw/1 monospace; opacity:.4; }.lcd-device-display.lcd-normal-live .lcd-fault-marker.active { opacity:1; }
+
+    /* P1–P9 and 01–19 retain their dedicated simple physical pages. */
+    .lcd-device-display.lcd-information-page > :not(.lcd-manual-readouts):not(.lcd-icon-definitions) { display:none !important; }
+    .lcd-device-display.lcd-information-page .lcd-manual-readouts { position:absolute; inset:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-content:start; gap:3%; padding:40% 18% 12%; text-align:center; }.lcd-device-display.lcd-information-page .lcd-manual-readouts::before { content:attr(data-lcd-page); position:absolute; top:12%; left:0; right:0; font:900 4.8cqw/1 monospace; }.lcd-device-display.lcd-information-page .lcd-manual-readouts::after { content:""; position:absolute; top:30%; left:23%; right:23%; height:.3cqw; background:currentColor; }.lcd-device-display.lcd-information-page .lcd-manual-reading span { font:900 min(6.4cqw,var(--lcd-manual-value-size,6.4cqw))/1 monospace; white-space:nowrap; }
+    .lcd-device-display.lcd-settings-active > :not(.lcd-icon-definitions):not(.lcd-settings-simulator) { display:none !important; }.lcd-device-display.lcd-settings-active .lcd-settings-simulator { position:absolute; inset:0; display:grid; place-items:center; align-content:center; gap:2.2cqw; padding:0; }.lcd-device-display.lcd-settings-active .lcd-settings-topline,.lcd-device-display.lcd-settings-active #lcd-settings-title,.lcd-device-display.lcd-settings-active .lcd-settings-local,.lcd-device-display.lcd-settings-active .lcd-settings-help,.lcd-device-display.lcd-settings-active .lcd-settings-readonly { display:none; }.lcd-device-display.lcd-settings-active .lcd-settings-title { display:block; font:900 4.6cqw/1 monospace; }.lcd-device-display.lcd-settings-active .lcd-settings-title::after { content:""; display:block; width:21cqw; margin:1cqw auto; border-top:.25cqw solid currentColor; }.lcd-device-display.lcd-settings-active .lcd-settings-value { min-width:0; padding:0; border:0; color:inherit; background:transparent; box-shadow:none; font:900 4cqw/1 monospace; }
+
+    /* Hardware controls are external to the screen and always one row. */
+    #lcd-view .lcd-page-panel,#lcd-view .lcd-status-lights,#lcd-view .lcd-controls-wrap.lcd-legacy-controls { display:none; }
+    #lcd-view .lcd-controls-wrap { display:block; margin:10px 0 0; padding:0; border:0; }
+    #lcd-view .lcd-controls { display:flex; justify-content:center; flex-wrap:nowrap; gap:clamp(10px,2.3vw,26px); margin:0; }
+    #lcd-view .lcd-key { display:grid; place-items:center; gap:2px; width:56px; min-width:44px; min-height:56px; height:56px; padding:4px; border:2px solid #11181d; border-radius:50%; color:#e6eaeb; background:radial-gradient(circle at 40% 30%,#728087,#2b3439 55%,#12181c 58%); box-shadow:inset 0 0 0 2px #8c989d,inset 0 -4px 6px rgba(0,0,0,.65),0 2px 2px #090d0f; font:800 8px/1 system-ui,sans-serif; }.lcd-key span { font:500 27px/.72 system-ui,sans-serif; }.lcd-key::before { display:none; }
+
+    @media (max-width:640px) {
+      #lcd-view .lcd-panel { padding:5px; }.lcd-screen { padding:4px; border-width:3px; }
+      #lcd-view .lcd-device-display { width:100%; aspect-ratio:1.58; }
+      #lcd-view .lcd-controls-wrap { margin-top:7px; }.lcd-device-display.lcd-normal-live .lcd-time-display { font-size:1.35cqw; }
     }

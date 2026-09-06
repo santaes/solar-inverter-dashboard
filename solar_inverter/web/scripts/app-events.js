@@ -71,16 +71,16 @@
         handleLcdKey('enter-hold');
       }, 2000);
     };
-    lcdControls.addEventListener('click', event => {
+    lcdControls?.addEventListener('click', event => {
       const button = event.target.closest('[data-lcd-key]');
       if (button && button.dataset.lcdKey !== 'enter') handleLcdKey(button.dataset.lcdKey);
     });
-    lcdControls.addEventListener('pointerdown', event => {
+    lcdControls?.addEventListener('pointerdown', event => {
       if (event.target.closest('[data-lcd-key="enter"]')) startLcdEnterHold();
     });
-    lcdControls.addEventListener('pointerup', clearLcdEnterHold);
-    lcdControls.addEventListener('pointercancel', clearLcdEnterHold);
-    lcdControls.addEventListener('pointerleave', clearLcdEnterHold);
+    lcdControls?.addEventListener('pointerup', clearLcdEnterHold);
+    lcdControls?.addEventListener('pointercancel', clearLcdEnterHold);
+    lcdControls?.addEventListener('pointerleave', clearLcdEnterHold);
     
     // Period selector for LCD energy display
     const lcdPeriodSelector = document.querySelector('.lcd-period-selector');

@@ -252,12 +252,6 @@
 
     <section id="lcd-view" role="tabpanel" aria-labelledby="lcd-tab" tabindex="0" hidden>
       <div class="panel lcd-panel">
-        <div class="lcd-status-lights" aria-label="Inverter status indicators">
-          <span class="lcd-status-light" id="lcd-status-ac"><i aria-hidden="true"></i>AC</span>
-          <span class="lcd-status-light" id="lcd-status-inv"><i aria-hidden="true"></i>INV</span>
-          <span class="lcd-status-light" id="lcd-status-chg"><i aria-hidden="true"></i>CHG</span>
-          <span class="lcd-status-light" id="lcd-status-fault"><i aria-hidden="true"></i>FAULT</span>
-        </div>
         <div class="lcd-screen">
           <div class="lcd-device-display" id="lcd-device-display" role="img" aria-label="Живий дисплей LCD інвертора" data-i18n-aria="lcdDisplayAria">
             <svg class="lcd-icon-definitions" aria-hidden="true" focusable="false">
@@ -302,8 +296,8 @@
               </defs>
             </svg>
             <section class="lcd-settings-simulator" id="lcd-settings-simulator" aria-live="polite" aria-label="Local LCD settings simulator" hidden>
-              <div class="lcd-settings-topline"><span id="lcd-settings-mode">PROGRAM SELECT</span><span class="lcd-settings-local">LOCAL ONLY</span></div>
-              <div class="lcd-settings-title"><span>PROGRAM <b id="lcd-settings-program">01</b></span><span id="lcd-settings-title">Output voltage</span></div>
+              <div class="lcd-settings-topline"><span id="lcd-settings-mode">SELECT</span></div>
+              <div class="lcd-settings-title"><span><b id="lcd-settings-program">01</b></span><span id="lcd-settings-title">Output voltage</span></div>
               <output class="lcd-settings-value" id="lcd-settings-value">230V</output>
               <p class="lcd-settings-help" id="lcd-settings-note">UP/DOWN program • ENTER edit</p>
               <p class="lcd-settings-readonly">ESC normal display • saved in this browser only</p>
@@ -322,11 +316,11 @@
               <span class="lcd-tag" id="lcd-battery-type">Li-ion</span>
               <span class="lcd-measure lcd-battery-main"><span class="lcd-digits" id="lcd-battery-voltage">—</span><span class="lcd-unit">V</span></span>
             </div>
-            <div class="lcd-battery-types" role="group" aria-label="Battery type">
-              <button type="button" data-lcd-battery-type="AGM">AGM</button>
-              <button type="button" data-lcd-battery-type="FLD">FLD</button>
-              <button type="button" data-lcd-battery-type="USER">USER</button>
-              <button type="button" data-lcd-battery-type="Li-ion" aria-pressed="true">Li-ion</button>
+            <div class="lcd-battery-types" aria-label="Battery type">
+              <span data-lcd-battery-mark="AGM">AGM</span>
+              <span data-lcd-battery-mark="FLD">FLD</span>
+              <span data-lcd-battery-mark="USER">USER</span>
+              <span data-lcd-battery-mark="Li-ion">Li-ion</span>
             </div>
             <div class="lcd-charge-stages" aria-label="Battery charging stage">
               <span id="lcd-stage-cc">CC</span><span id="lcd-stage-cv">CV</span><span id="lcd-stage-float">FLOAT</span>
@@ -348,12 +342,12 @@
             </div>
             <div class="lcd-power-path" aria-hidden="true"><svg class="lcd-icon lcd-path-left"><use href="#lcd-icon-arrow-compact"></use></svg><svg class="lcd-icon lcd-path-mid"><use href="#lcd-icon-arrow-compact"></use></svg></div>
             <div class="lcd-column lcd-column-input" id="lcd-grid-node">
-              <svg class="lcd-icon lcd-column-icon lcd-ac-icon" aria-hidden="true"><use href="#lcd-icon-grid"></use></svg><strong data-i18n="lcdAcInputShort">ВХІД AC</strong>
+              <svg class="lcd-icon lcd-column-icon lcd-ac-icon" aria-hidden="true"><use href="#lcd-icon-ac-wave"></use></svg><strong data-i18n="lcdAcInputShort">ВХІД AC</strong>
               <span class="lcd-measure lcd-measure-large"><span class="lcd-digits" id="lcd-grid-voltage">—</span><span class="lcd-unit">V</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-frequency">—</span><span class="lcd-unit">Hz</span></span>
               <span class="lcd-manual-subreading" id="lcd-grid-current-reading"><span>GEN / AC OUTPUT2</span><b id="lcd-grid-current">—</b></span>
               <span class="lcd-ac2-region" aria-label="Generator / AC output 2 unavailable">
-                <strong>GEN / AC2</strong>
+                <strong>AC OUTPUT2</strong>
                 <span class="lcd-measure"><span class="lcd-digits" id="lcd-ac2-voltage">—</span><span class="lcd-unit">V</span></span>
                 <span class="lcd-measure"><span class="lcd-digits" id="lcd-ac2-frequency">—</span><span class="lcd-unit">Hz</span></span>
               </span>
@@ -368,7 +362,7 @@
               <svg class="lcd-icon lcd-output-arrow" id="lcd-grid-arrow" aria-hidden="true"><use href="#lcd-icon-arrow-compact"></use></svg>
             </div>
             <div class="lcd-column lcd-column-pv" id="lcd-load-node">
-              <svg class="lcd-icon lcd-column-icon lcd-solar-panel" aria-hidden="true"><use href="#lcd-icon-solar"></use></svg><strong>PV</strong>
+              <svg class="lcd-icon lcd-column-icon lcd-solar-panel" aria-hidden="true"><use href="#lcd-icon-solar"></use></svg><svg class="lcd-icon lcd-pv-sun" aria-hidden="true"><use href="#lcd-icon-sun"></use></svg><strong>PV</strong>
               <span class="lcd-measure lcd-measure-large"><span class="lcd-digits" id="lcd-pv-voltage">—</span><span class="lcd-unit">V</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-pv-current">—</span><span class="lcd-unit">A</span></span>
               <span class="lcd-measure"><span class="lcd-digits" id="lcd-pv-power">—</span><span class="lcd-unit">W</span></span>
@@ -387,6 +381,14 @@
               <span id="lcd-current-limit"></span><span id="lcd-low-soc-threshold"></span><span id="lcd-system-status"></span><span id="lcd-status-line"></span><span id="lcd-load-arrow"></span>
             </div>
           </div>
+          <div class="lcd-controls-wrap" aria-label="LCD information navigation">
+            <div class="lcd-controls" role="group" aria-label="LCD information navigation">
+              <button class="lcd-key" type="button" data-lcd-key="escape" aria-label="Exit setting mode"><span aria-hidden="true">↩</span><small>ESC</small></button>
+              <button class="lcd-key" type="button" data-lcd-key="up" aria-label="Previous selection"><span aria-hidden="true">⌃</span><small>UP</small></button>
+              <button class="lcd-key" type="button" data-lcd-key="down" aria-label="Next selection"><span aria-hidden="true">⌄</span><small>DOWN</small></button>
+              <button class="lcd-key" type="button" data-lcd-key="enter" aria-label="Confirm selection or enter setting mode"><span aria-hidden="true">✓</span><small>ENTER</small></button>
+            </div>
+          </div>
           <div class="lcd-page-panel" aria-live="polite">
             <div class="lcd-page-head"><span class="lcd-page-code" id="lcd-page-code">LCD</span><span class="lcd-page-title" id="lcd-page-title">—</span></div>
             <div class="lcd-page-values">
@@ -395,7 +397,7 @@
             </div>
             <div class="lcd-page-description" id="lcd-page-description">—</div>
           </div>
-          <div class="lcd-controls-wrap">
+          <div class="lcd-controls-wrap lcd-legacy-controls">
             <div class="lcd-controls-title" data-i18n="lcdControls">Керування LCD</div>
             <div class="lcd-controls" role="group" aria-label="Керування LCD" data-i18n-aria="lcdControls">
               <button class="lcd-key" type="button" data-lcd-key="escape" data-i18n="lcdEscapeKey" data-i18n-aria="lcdEscapeAria">ESC</button>

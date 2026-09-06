@@ -25,7 +25,7 @@
     let lcdPageIndex = 0;
     // Section 4.3 of the supplied LCD manual defines nine information pages.
     // UP/DOWN cycle those pages; ESC returns to the normal operating screen.
-    const lcdInformationPageCount = 9;
+    const lcdInformationPageCount = () => window.lcdInformationPageCount || 9;
     let lcdEnterNotice = false;
     let lcdOutputScreenMode = 0;
     let lcdEnergyPeriod = 'day'; // 'day', 'month', 'year'
@@ -695,9 +695,9 @@
       if (key === 'escape') {
         lcdPageIndex = 0; lcdEnterNotice = false;
       } else if (key === 'up') {
-        lcdPageIndex = lcdPageIndex <= 1 ? lcdInformationPageCount : lcdPageIndex - 1; lcdEnterNotice = false;
+        lcdPageIndex = lcdPageIndex <= 1 ? lcdInformationPageCount() : lcdPageIndex - 1; lcdEnterNotice = false;
       } else if (key === 'down') {
-        lcdPageIndex = lcdPageIndex === 0 || lcdPageIndex >= lcdInformationPageCount ? 1 : lcdPageIndex + 1;
+        lcdPageIndex = lcdPageIndex === 0 || lcdPageIndex >= lcdInformationPageCount() ? 1 : lcdPageIndex + 1;
         lcdEnterNotice = false;
       } else {
         return;
