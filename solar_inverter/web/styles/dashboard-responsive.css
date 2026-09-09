@@ -93,9 +93,9 @@
         margin-bottom: 12px;
       }
       .toolbar > * { width: 100%; min-width: 0; margin: 0 }
-      .toolbar .chip { justify-content: space-between; padding-inline: 10px }
+      .toolbar .chip { justify-content: flex-start; padding-inline: 10px }
       .toolbar select { width: auto; min-width: 0; min-height: 36px; padding-inline: 7px }
-      #demo-button, #manage-values-button, #updated { grid-column: 1 / -1 }
+      #demo-button, #manage-values-button, #cycle, #site-visits, #updated { grid-column: 1 / -1 }
       .updated { margin-left: 0 }
       .gauges { gap: 8px; margin-bottom: 12px }
       .energy-flow-card {
@@ -468,6 +468,111 @@
       border-radius: 0 2px 2px 0; background: currentColor;
     }
 
+    /* Final normal-face guard. Settings and P-pages deliberately replace the
+       face; this applies only to the live manual diagram and keeps its nine
+       physical bays on the same 1.58:1 coordinate system at every width. */
+    .lcd-device-display.lcd-normal-live {
+      aspect-ratio:1.58 !important;
+      min-height:0 !important;
+      isolation:isolate;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-top { top:5% !important; left:22% !important; width:56% !important; height:27% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types { top:11% !important; left:29% !important; width:clamp(44px,6.8cqw,58px) !important; gap:2px !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span { height:clamp(14px,2.05cqw,20px) !important; padding:2px !important; font-size:clamp(9px,1.2cqw,13px) !important; line-height:1 !important; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages { top:7.7% !important; left:41.5% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-main { left:43% !important; bottom:11% !important; font-size:8.6cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-side { top:8% !important; left:63.5% !important; width:11% !important; font-size:3.25cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:35.5% !important; left:14% !important; width:72% !important; height:6.2% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path { top:44% !important; left:5% !important; width:90% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-ups-mode { top:48% !important; left:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column { top:50% !important; height:29% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-input { left:3% !important; width:26% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output { left:34% !important; width:32% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-pv { right:3% !important; width:26% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-ac2-region { top:81% !important; left:3% !important; width:26% !important; height:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-pv-channels { top:81% !important; right:4% !important; width:25% !important; height:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-period-selector { left:28% !important; bottom:3% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-time-display { left:40% !important; bottom:5% !important; width:19% !important; white-space:nowrap !important; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:24% !important; bottom:5% !important; width:13% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-fault-marker { right:5% !important; bottom:4% !important; width:15% !important; }
+
+    /* Final normal-live-only correction. Keep the manual's four battery
+       chemistry labels in their own column, clear of the battery icon. */
+    .lcd-device-display.lcd-normal-live .lcd-battery-types {
+      left:29% !important;
+      width:5.5cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span {
+      height:1.75cqw !important;
+      padding:.1cqw !important;
+    }
+    @media (max-width:640px) {
+      /* Final battery-type stack placement: the physical LCD orders the
+         battery icon, type labels, then the voltage digits. */
+      .lcd-device-display.lcd-normal-live .lcd-battery-types {
+        left:28% !important;
+        width:clamp(29px,8cqw,36px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types span {
+        height:clamp(11px,3cqw,14px) !important;
+        padding:1px !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-charge-stages { left:40% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon { width:2cqw !important; height:2cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-main { font-size:8.7cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { font-size:3.05cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { font-size:5.5cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.2cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.4cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:3.1cqw !important; }
+    }
+
+    /* Final cascade: retain the manual icon -> type stack -> voltage order.
+       This scope deliberately excludes settings and information pages. */
+    .lcd-device-display.lcd-normal-live .lcd-battery-types {
+      left:29% !important;
+      width:5.5cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span {
+      height:1.75cqw !important;
+      padding:.1cqw !important;
+    }
+    @media (max-width:640px) {
+      .lcd-device-display.lcd-normal-live .lcd-battery-types {
+        left:28% !important;
+        width:clamp(29px,8cqw,36px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types span {
+        height:clamp(11px,3cqw,14px) !important;
+        padding:1px !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-charge-stages { left:40% !important; }
+    }
+
+    /* Final cascade: retain the manual icon -> type stack -> voltage order.
+       This scope deliberately excludes settings and information pages. */
+    .lcd-device-display.lcd-normal-live .lcd-battery-types {
+      left:29% !important;
+      width:5.5cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span {
+      height:1.75cqw !important;
+      padding:.1cqw !important;
+    }
+    @media (max-width:640px) {
+      .lcd-device-display.lcd-normal-live .lcd-battery-types {
+        left:28% !important;
+        width:clamp(29px,8cqw,36px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types span {
+        height:clamp(11px,3cqw,14px) !important;
+        padding:1px !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-charge-stages { left:40% !important; }
+    }
+
+
     /* LCD uses a taller, stacked face on phones so every live measurement has
        a readable physical slot rather than being compressed or clipped. */
     @media (max-width: 640px) {
@@ -538,4 +643,303 @@
       .lcd-ups-mode { left: 6%; top: 57%; font-size: 2.4cqw }
       .lcd-column-output { top: 50%; bottom: 15%; left: 18%; width: 64%; padding: 2cqw 2.5cqw .5cqw }.lcd-column-output .lcd-output-heading { font-size: 3cqw }.lcd-column-output .lcd-output-primary { font-size: 14.5cqw }.lcd-column-output .lcd-output-frequency { font-size: 7.1cqw }
       .lcd-flow-marker { right: 8%; bottom: 14%; width: 8cqw; height: 7cqw }.lcd-day-energy { right: 7%; bottom: 4%; width: 34%; font-size: 6.4cqw }.lcd-day-energy > span:first-child { right: calc(100% + 5cqw); font-size: 1.8cqw }
+    }
+
+    /* The three legacy phone maps above are retained for the manual and
+       settings pages.  Their broad selectors must not remap the physical
+       live face: this restores its dedicated value-first geometry. */
+    @media (max-width: 640px) {
+      .lcd-device-display.lcd-normal-live { aspect-ratio:1.58 !important; min-height:0 !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-source { display:none !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-top { top:6% !important; left:15% !important; width:70% !important; height:31% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-main { left:27% !important; bottom:10% !important; padding:0 !important; font-size:10.6cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-tag { display:block !important; left:7% !important; bottom:10% !important; font-size:1.25cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types { display:none !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { top:11% !important; left:68% !important; width:13% !important; gap:.58cqw !important; font-size:4.8cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-state-caption { font-size:1.05cqw !important; white-space:nowrap !important; line-height:1 !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:39% !important; left:11% !important; width:78% !important; height:6% !important; grid-template-columns:repeat(4,1fr) 2.2cqw 2.2cqw 3.3cqw !important; gap:.32cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-ups-mode { top:48% !important; left:8% !important; font-size:1.6cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output { top:50% !important; bottom:auto !important; left:20% !important; width:60% !important; height:34% !important; padding:3.1cqw .6cqw .5cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-heading { font-size:2.25cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:12cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:5.7cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:4% !important; bottom:14% !important; width:7cqw !important; height:6cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy { right:11% !important; bottom:4% !important; width:27% !important; font-size:4cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { right:calc(100% + .8cqw) !important; font-size:1.05cqw !important; }
+    }
+
+    /* Final normal-live map.  This deliberately comes after the legacy phone
+       maps so the physical LCD keeps one collision-free set of coordinates at
+       every width.  Information and program pages use their own maps above. */
+    .lcd-device-display.lcd-normal-live .lcd-link-status {
+      top:5.5% !important; right:4% !important; z-index:5; display:flex !important;
+      align-items:center; gap:.42cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon,
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-wifi,
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-bluetooth,
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-usb {
+      display:block !important; width:2.2cqw !important; height:2.2cqw !important;
+      opacity:.3;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon.active { opacity:1; }
+    .lcd-device-display.lcd-normal-live .lcd-link-speaker { order:1; }
+    .lcd-device-display.lcd-normal-live .lcd-link-bluetooth { order:2; }
+    .lcd-device-display.lcd-normal-live .lcd-link-wifi { order:3; }
+    .lcd-device-display.lcd-normal-live .lcd-link-usb { order:4; }
+
+    .lcd-device-display.lcd-normal-live .lcd-mode-source {
+      top:5.5% !important; left:4% !important; z-index:5;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon {
+      display:block !important; width:2.2cqw !important; height:2.2cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-source {
+      top:20% !important; left:4% !important; z-index:4; display:flex !important;
+      width:15% !important; gap:.32cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-source .lcd-icon {
+      display:block !important; width:2.45cqw; height:2.45cqw;
+    }
+
+    /* Battery bay: type at 24–33%, voltage at 39–62%, side readings at 69–86%. */
+    .lcd-device-display.lcd-normal-live .lcd-battery-top {
+      top:14% !important; left:20% !important; width:68% !important; height:25% !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-tag {
+      display:block !important; left:5.9% !important; bottom:12% !important;
+      max-width:9%; overflow:hidden; font-size:1.05cqw !important; white-space:nowrap;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-main {
+      left:28% !important; bottom:14% !important; width:34% !important;
+      justify-content:flex-start; font-size:8.9cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-side {
+      top:17% !important; left:69% !important; width:17% !important;
+      gap:.42cqw !important; font-size:3.05cqw !important; text-align:right;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-state-caption {
+      font-size:.72cqw !important; line-height:1 !important; white-space:nowrap !important;
+    }
+
+    /* The capacity icon is a distinct element in the BATT/LOAD rail, below
+       the battery bay, so it cannot cover the type or the live voltage. */
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale {
+      top:43% !important; left:21% !important; width:66% !important; height:5.7% !important;
+      grid-template-columns:repeat(4,minmax(0,1fr)) 2.7cqw minmax(0,3.7fr) !important;
+      gap:.26cqw !important;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::before { left:24% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { right:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-level-icon {
+      display:block !important; width:2.7cqw !important; height:3.75cqw !important;
+      align-self:center; justify-self:center;
+    }
+
+    @media (max-width:640px) {
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon,
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-wifi,
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-bluetooth,
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-usb,
+      .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon { width:2cqw !important; height:2cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-top { top:14% !important; left:20% !important; width:68% !important; height:25% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-main { left:28% !important; bottom:14% !important; width:34% !important; font-size:8.9cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { top:17% !important; left:69% !important; width:17% !important; font-size:3.05cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:43% !important; left:21% !important; width:66% !important; height:5.7% !important; }
+    }
+
+    /* Authoritative 4.2.1 normal-screen map.  This comes last deliberately:
+       older photo-only rules hid manual bays on narrow screens. */
+    .lcd-device-display.lcd-normal-live {
+      --lcd-line:#92e5ff; --lcd-dim:rgba(146,229,255,.34); --lcd-amber:#ddc55e;
+      container-type:inline-size;
+    }
+    .lcd-device-display.lcd-normal-live .lcd-manual-readouts,
+    .lcd-device-display.lcd-normal-live .lcd-manual-context,
+    .lcd-device-display.lcd-normal-live .lcd-device-mode,
+    .lcd-device-display.lcd-normal-live .lcd-lead-capacity,
+    .lcd-device-display.lcd-normal-live .lcd-hidden-values,
+    .lcd-device-display.lcd-normal-live .lcd-output-reading-label,
+    .lcd-device-display.lcd-normal-live .lcd-output-voltage-source { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-indicators { display:grid !important; top:5% !important; left:3.5% !important; width:6% !important; grid-template-columns:repeat(2,1fr) !important; gap:.18cqw !important; font-size:.82cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source { display:flex !important; top:12% !important; left:3.5% !important; z-index:5 !important; gap:.3cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon { display:block !important; width:2.2cqw !important; height:2.2cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status { display:flex !important; top:6% !important; right:3.6% !important; z-index:6 !important; gap:.55cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon { display:block !important; width:2.65cqw !important; height:2.65cqw !important; opacity:.32 !important; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .active { opacity:1 !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-source { display:flex !important; top:20% !important; left:3.7% !important; width:13% !important; z-index:4 !important; gap:.25cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-source .lcd-icon { display:block !important; width:2.3cqw !important; height:2.3cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-top { display:block !important; top:5% !important; left:18% !important; width:62% !important; height:28% !important; border-width:.25cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-top-battery-icon { display:block !important; position:absolute !important; top:32% !important; left:5% !important; width:4.1cqw !important; height:5.6cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types { display:grid !important; top:12% !important; left:21% !important; width:5.2cqw !important; gap:.2cqw !important; z-index:7 !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span { height:1.8cqw !important; padding:.14cqw !important; font-size:.63cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages { display:flex !important; top:8% !important; left:34% !important; z-index:7 !important; gap:.2cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages span { font-size:.72cqw !important; padding:.2cqw .42cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-main { left:30% !important; bottom:10% !important; font-size:8.7cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-tag { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-side { top:10.5% !important; left:65.5% !important; width:12% !important; gap:.32cqw !important; font-size:3.15cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-state-caption { font-size:.68cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-max-ac-current { display:grid !important; top:22% !important; right:13% !important; width:8% !important; font-size:.58cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale { display:grid !important; top:37% !important; left:13% !important; width:74% !important; height:6% !important; grid-template-columns:repeat(4,1fr) 2.6cqw minmax(0,4.2fr) !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::before { left:28% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { right:11% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path { display:block !important; top:46% !important; left:4% !important; width:92% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-ups-mode { top:49% !important; left:5% !important; font-size:1.05cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column { display:flex !important; top:51% !important; height:25% !important; padding:1.2cqw .25cqw .2cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-input { left:2% !important; width:28% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output { left:34% !important; width:32% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-pv { display:flex !important; right:2% !important; width:28% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column strong,.lcd-device-display.lcd-normal-live .lcd-output-heading { font-size:.9cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { font-size:5.8cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.15cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.5cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:3.1cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-ac2-region { display:grid !important; top:78% !important; left:2% !important; width:28% !important; height:9% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-pv-channels { display:grid !important; top:78% !important; right:2% !important; width:28% !important; height:9% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-period-selector { display:grid !important; left:27% !important; bottom:3% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-time-display { display:block !important; left:39% !important; bottom:5% !important; width:22% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { display:flex !important; right:20% !important; bottom:4% !important; width:15% !important; font-size:2.2cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:block !important; right:32% !important; bottom:14% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-fault-marker { display:flex !important; right:3% !important; bottom:4% !important; width:15% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-manual-absent { opacity:.3 !important; }
+
+    /* Phone composition: the manual face is taller rather than uniformly
+       miniaturised.  Every physical bay remains present, but its support
+       telemetry has a usable minimum size at a 375px viewport. */
+    @media (max-width:640px) {
+      #lcd-view .lcd-device-display.lcd-normal-live {
+        aspect-ratio:1.12 !important;
+        min-height:300px !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-mode-indicators {
+        top:2.8% !important; left:3% !important; width:9% !important;
+        font-size:clamp(8px,2.15cqw,10px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-mode-source { top:9% !important; left:3% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon { width:clamp(11px,3.1cqw,15px) !important; height:clamp(11px,3.1cqw,15px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-link-status { top:3.5% !important; right:3% !important; gap:clamp(4px,1.2cqw,6px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon { width:clamp(15px,4cqw,19px) !important; height:clamp(15px,4cqw,19px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-source { top:18% !important; left:3% !important; width:14% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-source .lcd-icon { width:clamp(12px,3.3cqw,16px) !important; height:clamp(12px,3.3cqw,16px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-top { top:7% !important; left:17% !important; width:66% !important; height:25% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-top-battery-icon { width:clamp(18px,5cqw,24px) !important; height:clamp(26px,7cqw,32px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types { top:10% !important; left:19.5% !important; width:clamp(29px,8cqw,36px) !important; gap:2px !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types span { height:clamp(11px,3cqw,14px) !important; padding:1px !important; font-size:clamp(7px,1.9cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-charge-stages { top:8.5% !important; left:38% !important; gap:2px !important; }
+      .lcd-device-display.lcd-normal-live .lcd-charge-stages span { padding:2px 3px !important; font-size:clamp(7px,1.9cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-main { left:35% !important; bottom:13% !important; font-size:clamp(42px,11.5cqw,50px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { top:11% !important; left:67% !important; width:13% !important; gap:3px !important; font-size:clamp(17px,4.5cqw,21px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-state-caption { font-size:clamp(7px,1.85cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-max-ac-current { display:none !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:35% !important; left:7% !important; width:86% !important; height:5% !important; gap:2px !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale::before,.lcd-device-display.lcd-normal-live .lcd-battery-scale::after { top:-12px !important; font-size:clamp(9px,2.4cqw,11px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale > span { min-height:clamp(12px,3.4cqw,15px) !important; font-size:clamp(8px,2.05cqw,10px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-power-path { top:43% !important; height:3% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-ups-mode { top:46% !important; left:4% !important; font-size:clamp(9px,2.45cqw,11px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column { top:48% !important; height:22% !important; padding:clamp(6px,1.8cqw,8px) 2px 2px !important; gap:3px !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-input { left:2% !important; width:29% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output { left:35% !important; width:30% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-pv { right:2% !important; width:29% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column strong,.lcd-device-display.lcd-normal-live .lcd-output-heading { flex-basis:auto !important; height:auto !important; font-size:clamp(8px,2.2cqw,10px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { font-size:clamp(31px,8.4cqw,37px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:clamp(14px,3.8cqw,17px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:clamp(31px,8.2cqw,36px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:clamp(16px,4.1cqw,19px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region,.lcd-device-display.lcd-normal-live .lcd-pv-channels { top:72% !important; height:8% !important; padding:3px !important; font-size:clamp(7px,1.85cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region strong { font-size:clamp(7px,1.85cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region .lcd-measure,.lcd-device-display.lcd-normal-live .lcd-pv-channels span { font-size:clamp(11px,3cqw,14px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-period-selector { left:4% !important; bottom:4% !important; gap:2px !important; }
+      .lcd-device-display.lcd-normal-live .lcd-period-selector b { padding:2px 3px !important; font-size:clamp(7px,1.9cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-time-display { left:36% !important; bottom:5% !important; width:27% !important; font-size:clamp(9px,2.35cqw,11px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy { right:20% !important; bottom:4% !important; width:16% !important; font-size:clamp(16px,4.2cqw,19px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { font-size:clamp(7px,1.85cqw,9px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:37% !important; bottom:15% !important; width:clamp(22px,6.2cqw,28px) !important; height:clamp(19px,5.2cqw,24px) !important; }
+      .lcd-device-display.lcd-normal-live .lcd-fault-marker { right:3% !important; bottom:4% !important; width:15% !important; gap:2px !important; font-size:clamp(7px,1.9cqw,9px) !important; }
+
+      /* Bottom manual band uses two rows on phones: selector/time above,
+         live energy/fault below.  They no longer compete for one baseline. */
+      .lcd-device-display.lcd-normal-live .lcd-period-selector {
+        left:3% !important; bottom:12.5% !important; width:54% !important;
+        grid-template-columns:repeat(4,max-content) !important; gap:3px !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-period-selector b {
+        padding:3px 4px !important; font-size:clamp(8px,2.15cqw,10px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-time-display {
+        left:auto !important; right:3% !important; bottom:11.5% !important;
+        width:37% !important; max-height:2.45em !important; overflow:hidden !important;
+        white-space:normal !important; overflow-wrap:anywhere !important;
+        font-size:clamp(8px,2.15cqw,10px) !important; line-height:1.15 !important;
+        letter-spacing:-.05em !important; text-align:right !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy {
+        left:32% !important; right:auto !important; bottom:2.2% !important;
+        width:31% !important; font-size:clamp(18px,4.8cqw,22px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child {
+        right:calc(100% + 4px) !important; bottom:3px !important;
+        font-size:clamp(8px,2.1cqw,10px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-flow-marker {
+        right:31% !important; bottom:3% !important; width:clamp(19px,5.3cqw,23px) !important;
+        height:clamp(17px,4.7cqw,21px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-fault-marker {
+        right:3% !important; bottom:2.7% !important; width:20% !important;
+        font-size:clamp(8px,2.1cqw,10px) !important;
+      }
+
+      /* Support bays carry real telemetry, so they use the same practical
+         minimum as the lower status band instead of collapsing to ornament. */
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region,
+      .lcd-device-display.lcd-normal-live .lcd-pv-channels {
+        top:70.5% !important; height:9.5% !important; padding:4px !important;
+        gap:2px 4px !important; font-size:clamp(8px,2.15cqw,10px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region strong,
+      .lcd-device-display.lcd-normal-live .lcd-pv-channels b {
+        font-size:clamp(8px,2.15cqw,10px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region .lcd-measure,
+      .lcd-device-display.lcd-normal-live .lcd-pv-channels span {
+        font-size:clamp(13px,3.5cqw,16px) !important; line-height:1 !important;
+      }
+    }
+
+    /* Loaded last: restore the manual's common coordinate system after older
+       phone-only experiments. Normal live is one physical LCD, not a stacked
+       dashboard; settings and P pages are unaffected by this selector. */
+    .lcd-device-display.lcd-normal-live { aspect-ratio:1.58 !important; min-height:0 !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-top { top:5% !important; left:22% !important; width:56% !important; height:27% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types { top:11% !important; left:29% !important; width:clamp(44px,6.8cqw,58px) !important; gap:2px !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types span { height:clamp(14px,2.05cqw,20px) !important; padding:2px !important; font-size:clamp(9px,1.2cqw,13px) !important; line-height:1 !important; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages { top:7.7% !important; left:41.5% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-main { left:43% !important; bottom:11% !important; font-size:8.6cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-side { top:8% !important; left:63.5% !important; width:11% !important; font-size:3.25cqw !important; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:35.5% !important; left:14% !important; width:72% !important; height:6.2% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path { top:44% !important; left:5% !important; width:90% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-ups-mode { top:48% !important; left:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column { top:50% !important; height:29% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-input { left:3% !important; width:26% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output { left:34% !important; width:32% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-pv { right:3% !important; width:26% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-ac2-region { top:81% !important; left:3% !important; width:26% !important; height:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-pv-channels { top:81% !important; right:4% !important; width:25% !important; height:8% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-period-selector { left:28% !important; bottom:3% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-time-display { left:40% !important; bottom:5% !important; width:19% !important; white-space:nowrap !important; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:24% !important; bottom:5% !important; width:13% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:28% !important; bottom:14% !important; }
+    .lcd-device-display.lcd-normal-live .lcd-fault-marker { right:5% !important; bottom:4% !important; width:15% !important; }
+    @media (max-width:640px) {
+      .lcd-device-display.lcd-normal-live .lcd-top-battery-icon { left:1% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types { top:10% !important; left:28% !important; width:clamp(42px,11cqw,48px) !important; gap:2px !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-types span { height:clamp(14px,4cqw,16px) !important; padding:2px !important; font-size:clamp(10px,2.7cqw,11px) !important; line-height:1 !important; }
+      .lcd-device-display.lcd-normal-live .lcd-charge-stages { left:43% !important; }
+      .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon { width:2cqw !important; height:2cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-main { left:43% !important; font-size:8cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { font-size:3.05cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { font-size:5.5cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.2cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.4cqw !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:3.1cqw !important; }
     }

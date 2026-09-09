@@ -184,13 +184,13 @@
       border: 1px solid var(--ui-border); background: var(--control); transition: background .25s ease;
     }
     .theme-slider::after {
-      content: "â˜¾"; position: absolute; display: grid; place-items: center;
+      content: "\263D"; position: absolute; display: grid; place-items: center;
       width: 19px; height: 19px; left: 1px; top: 1px; border-radius: 50%;
       color: #fff; font-size: 12px; background: #475569; transition: transform .25s ease, background .25s ease;
     }
     .theme-switch input:checked + .theme-slider { background: rgba(251,191,36,.22) }
     .theme-switch input:checked + .theme-slider::after {
-      content: "â˜€"; transform: translateX(19px); color: #412b00; background: var(--amber);
+      content: "\2600"; transform: translateX(19px); color: #412b00; background: var(--amber);
     }
     .theme-switch input:focus-visible + .theme-slider { outline: 3px solid var(--focus-ring); outline-offset: 2px }
     .language-switch {
@@ -225,7 +225,41 @@
       background: linear-gradient(135deg, rgba(14,165,233,.18), rgba(34,211,238,.1));
       font-weight: 750;
     } */
-    .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px }
+    /* Keep live status readable: the toolbar intentionally gains rows before text is clipped. */
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .toolbar > * { min-width: 0; width: 100%; font-variant-numeric: tabular-nums; }
+    .toolbar button {
+      height: auto;
+      min-height: 40px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.3;
+      padding-block: 8px;
+    }
+    .toolbar .chip {
+      height: auto;
+      min-height: 40px;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.3;
+      padding-block: 8px;
+    }
+    #demo-button, #manage-values-button, #cycle, #site-visits { grid-column: auto; }
+    #updated { grid-column: 1 / -1; margin-left: 0; }
+    @media (min-width: 1280px) {
+      .toolbar {
+        grid-template-columns: minmax(230px, 270px) minmax(180px, 210px) minmax(240px, 1fr) minmax(180px, 210px) minmax(220px, 245px);
+      }
+      #updated { grid-column: auto; }
+    }
     .register-map-panel { padding: 20px; border: 1px solid var(--ui-border); border-radius: 16px; background: var(--panel); }
     .register-map-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
     .register-map-controls input:first-child { flex: 1 1 260px; }
@@ -253,7 +287,7 @@
     }
     button:disabled { cursor: not-allowed; opacity: .62 }
     button:disabled::after {
-      content: "âŠ˜"; display: inline-block; margin-inline-start: 6px;
+      content: "\2298"; display: inline-block; margin-inline-start: 6px;
       color: var(--red); font-weight: 950; line-height: 1;
     }
     #demo-button {
@@ -261,13 +295,13 @@
       background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(14,165,233,.14));
       font-weight: 750;
     }
-    #chart-demo-button {
+    #chart-demo-button, #lcd-demo-button {
       border-color: var(--flow-home-colour);
       background: linear-gradient(135deg, rgba(139,92,246,.2), rgba(14,165,233,.12));
       font-weight: 750;
     }
     @media (min-width: 641px) {
-      #demo-button, #chart-demo-button { min-width: 270px }
+      #demo-button, #chart-demo-button, #lcd-demo-button { min-width: 270px }
       #cycle { min-width: 140px }
       #site-visits { min-width: 180px }
       #updated { min-width: 150px }
@@ -871,7 +905,8 @@
     .lcd-device-display.lcd-normal-live .lcd-output-reading-label,
     .lcd-device-display.lcd-normal-live .lcd-output-voltage-source,
     .lcd-device-display.lcd-normal-live .lcd-output-arrow,
-    .lcd-device-display.lcd-normal-live .lcd-output-current-reading { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-output-current-reading,
+    .lcd-device-display.lcd-normal-live #lcd-grid-current-reading { display:none !important; }
 
     /* upper-left source and mode marks */
     .lcd-device-display.lcd-normal-live .lcd-mode-indicators { position:absolute; top:5%; left:4%; z-index:2; display:grid; grid-template-columns:repeat(2,1.2cqw); gap:.26cqw; width:5cqw; font:900 .82cqw/1 monospace; }
@@ -903,7 +938,7 @@
     .lcd-device-display.lcd-normal-live .lcd-max-ac-current b { font-size:1.1cqw; }
 
     /* centre capacity rail and power path */
-    .lcd-device-display.lcd-normal-live .lcd-battery-scale { position:absolute; top:35.5%; left:16%; z-index:3; display:grid; width:68%; height:5.5%; grid-template-columns:repeat(4,1fr) 2.4cqw 2.1cqw 3.5cqw; gap:.24cqw; align-items:center; color:#e0c663; text-align:center; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale { position:absolute; top:35.5%; left:14%; z-index:3; display:grid; width:72%; height:6.2%; grid-template-columns:repeat(4,1fr) 2.5cqw 2.3cqw 3.8cqw; gap:.3cqw; align-items:center; color:#e0c663; text-align:center; }
     .lcd-device-display.lcd-normal-live .lcd-battery-scale::before { content:"BATT"; position:absolute; top:-1.45cqw; left:29%; color:#9feaff; font:900 1cqw/1 monospace; }
     .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { content:"LOAD"; position:absolute; top:-1.45cqw; right:12%; color:#9feaff; font:900 1cqw/1 monospace; }
     .lcd-device-display.lcd-normal-live .lcd-battery-scale > span { display:block; min-height:1.45cqw; padding:.16cqw .05cqw; background:#d8bd60; color:#081b2c; clip-path:polygon(0 0,84% 0,100% 100%,14% 100%); font:900 .78cqw/1 monospace; opacity:.26; }
@@ -922,24 +957,25 @@
     .lcd-device-display.lcd-normal-live .lcd-ups-mode { position:absolute; top:48%; left:8%; z-index:3; font:900 1.05cqw/1 monospace; }
     .lcd-device-display.lcd-normal-live .lcd-column { position:absolute; top:50%; z-index:2; display:flex !important; height:29%; padding:1.35cqw .35cqw .25cqw; align-items:center; gap:.34cqw; overflow:hidden; color:#9feaff; text-align:center; }
     .lcd-device-display.lcd-normal-live .lcd-column::before { content:""; position:absolute; inset:0; border:.2cqw solid currentColor; border-bottom:0; clip-path:polygon(0 16%,12% 0,88% 0,100% 16%,100% 100%,0 100%); }.lcd-device-display.lcd-normal-live .lcd-column > * { position:relative; z-index:1; }
-    .lcd-device-display.lcd-normal-live .lcd-column-input { left:4%; width:25%; }.lcd-device-display.lcd-normal-live .lcd-column-output { left:35%; width:30%; }.lcd-device-display.lcd-normal-live .lcd-column-pv { right:4%; width:25%; }
-    .lcd-device-display.lcd-normal-live .lcd-column strong,.lcd-device-display.lcd-normal-live .lcd-output-heading { display:block; flex:0 0 1cqw; height:1cqw; margin:0; font:900 .78cqw/1 monospace; white-space:nowrap; }
-    .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { margin-top:.12cqw; font-size:5.3cqw; line-height:.75; text-shadow:0 0 .35cqw rgba(106,221,255,.7); }.lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.1cqw; line-height:.82; }.lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.45cqw; }.lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { margin-top:.15cqw; font-size:3cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-column-input { left:3%; width:26%; }.lcd-device-display.lcd-normal-live .lcd-column-output { left:34%; width:32%; }.lcd-device-display.lcd-normal-live .lcd-column-pv { right:3%; width:26%; }
+    .lcd-device-display.lcd-normal-live .lcd-column strong,.lcd-device-display.lcd-normal-live .lcd-output-heading { display:block; flex:0 0 1.3cqw; height:1.3cqw; margin:0; font:900 1.02cqw/1.3cqw monospace; white-space:nowrap; }
+    .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { margin-top:.18cqw; font-size:6cqw; line-height:.75; text-shadow:0 0 .35cqw rgba(106,221,255,.7); }.lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.45cqw; line-height:.82; }.lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:7.1cqw; }.lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { margin-top:.2cqw; font-size:3.35cqw; }
     .lcd-device-display.lcd-normal-live .lcd-column-icon,.lcd-device-display.lcd-normal-live .lcd-pv-sun { display:none; }
-    .lcd-device-display.lcd-normal-live .lcd-ac2-region { position:absolute; top:81%; left:4%; z-index:3; display:grid !important; width:25%; height:8%; padding:.2cqw; border-top:.14cqw solid currentColor; gap:.06cqw; font-size:.6cqw; }.lcd-device-display.lcd-normal-live .lcd-ac2-region .lcd-measure { font-size:1.4cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-ac2-region { position:absolute; top:81%; left:3%; z-index:3; display:grid !important; width:26%; height:8%; padding:.2cqw; border-top:.14cqw solid currentColor; gap:.06cqw; font-size:.6cqw; }.lcd-device-display.lcd-normal-live .lcd-ac2-region strong { font-size:.72cqw; }.lcd-device-display.lcd-normal-live .lcd-ac2-region .lcd-measure { font-size:1.4cqw; }
     .lcd-device-display.lcd-normal-live .lcd-pv-channels { position:absolute; top:81%; right:4%; z-index:3; display:grid !important; width:25%; height:8%; padding:.2cqw; border-top:.14cqw solid currentColor; grid-template-columns:auto 1fr; gap:.08cqw .3cqw; font:900 .6cqw/1 monospace; text-align:left; }.lcd-device-display.lcd-normal-live .lcd-pv-channels span { font-size:1cqw; }
 
     /* bottom parameter / energy / fault bays */
     .lcd-device-display.lcd-normal-live .lcd-period-selector { position:absolute; left:28%; bottom:3%; z-index:3; display:grid; grid-template-columns:repeat(4,max-content); gap:.14cqw; font:900 .6cqw/1 monospace; }.lcd-device-display.lcd-normal-live .lcd-period-selector b { padding:.12cqw .28cqw; border:.1cqw solid currentColor; }.lcd-device-display.lcd-normal-live .lcd-period-selector .lcd-period-active { color:#03162e; background:#9feaff; }
     .lcd-device-display.lcd-normal-live .lcd-time-display { position:absolute; left:40%; bottom:5%; z-index:3; width:19%; overflow:hidden; color:#9feaff; font:900 1.5cqw/1 monospace; letter-spacing:-.1em; white-space:nowrap; }
     .lcd-device-display.lcd-normal-live .lcd-day-energy { position:absolute; right:24%; bottom:5%; z-index:3; display:flex; width:13%; color:#dfc663; font-size:2.15cqw; }.lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { position:absolute; right:calc(100% + 1cqw); bottom:.2cqw; padding:.14cqw .36cqw; color:#03162e; background:#9feaff; font:900 .62cqw/1 monospace; }.lcd-device-display.lcd-normal-live .lcd-day-energy .lcd-unit { color:#dfc663; }
-    .lcd-device-display.lcd-normal-live .lcd-flow-marker { position:absolute; right:28%; bottom:14%; z-index:3; display:block; width:4.2cqw; height:3.8cqw; background:repeating-linear-gradient(135deg,transparent 0 .46cqw,#9feaff .5cqw .7cqw,transparent .74cqw 1.08cqw); }
+    /* The decorative flow hatch occupied the timestamp's lower LCD bay. */
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:none; }
     .lcd-device-display.lcd-normal-live .lcd-fault-marker { position:absolute; right:5%; bottom:4%; z-index:3; display:flex; width:15%; gap:.22cqw; font:900 .65cqw/1 monospace; opacity:.4; }.lcd-device-display.lcd-normal-live .lcd-fault-marker.active { opacity:1; }
 
     /* P1–P9 and 01–19 retain their dedicated simple physical pages. */
     .lcd-device-display.lcd-information-page > :not(.lcd-manual-readouts):not(.lcd-icon-definitions) { display:none !important; }
-    .lcd-device-display.lcd-information-page .lcd-manual-readouts { position:absolute; inset:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-content:start; gap:3%; padding:40% 18% 12%; text-align:center; }.lcd-device-display.lcd-information-page .lcd-manual-readouts::before { content:attr(data-lcd-page); position:absolute; top:12%; left:0; right:0; font:900 4.8cqw/1 monospace; }.lcd-device-display.lcd-information-page .lcd-manual-readouts::after { content:""; position:absolute; top:30%; left:23%; right:23%; height:.3cqw; background:currentColor; }.lcd-device-display.lcd-information-page .lcd-manual-reading span { font:900 min(6.4cqw,var(--lcd-manual-value-size,6.4cqw))/1 monospace; white-space:nowrap; }
-    .lcd-device-display.lcd-settings-active > :not(.lcd-icon-definitions):not(.lcd-settings-simulator) { display:none !important; }.lcd-device-display.lcd-settings-active .lcd-settings-simulator { position:absolute; inset:0; display:grid; place-items:center; align-content:center; gap:2.2cqw; padding:0; }.lcd-device-display.lcd-settings-active .lcd-settings-topline,.lcd-device-display.lcd-settings-active #lcd-settings-title,.lcd-device-display.lcd-settings-active .lcd-settings-local,.lcd-device-display.lcd-settings-active .lcd-settings-help,.lcd-device-display.lcd-settings-active .lcd-settings-readonly { display:none; }.lcd-device-display.lcd-settings-active .lcd-settings-title { display:block; font:900 4.6cqw/1 monospace; }.lcd-device-display.lcd-settings-active .lcd-settings-title::after { content:""; display:block; width:21cqw; margin:1cqw auto; border-top:.25cqw solid currentColor; }.lcd-device-display.lcd-settings-active .lcd-settings-value { min-width:0; padding:0; border:0; color:inherit; background:transparent; box-shadow:none; font:900 4cqw/1 monospace; }
+    .lcd-device-display.lcd-information-page .lcd-manual-readouts { position:absolute; inset:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-content:start; gap:2%; padding:34% 12% 8%; text-align:center; }.lcd-device-display.lcd-information-page .lcd-manual-readouts::before { content:attr(data-lcd-page); position:absolute; top:9%; left:0; right:0; font:900 6cqw/1 monospace; }.lcd-device-display.lcd-information-page .lcd-manual-readouts::after { content:""; position:absolute; top:25%; left:16%; right:16%; height:.34cqw; background:currentColor; }.lcd-device-display.lcd-information-page .lcd-manual-reading span { font:900 min(8cqw,var(--lcd-manual-value-size,8cqw))/1 monospace; white-space:nowrap; }
+    .lcd-device-display.lcd-settings-active > :not(.lcd-icon-definitions):not(.lcd-settings-simulator) { display:none !important; }.lcd-device-display.lcd-settings-active .lcd-settings-simulator { position:absolute; inset:0; display:grid; place-items:center; align-content:center; gap:1.3cqw; padding:0; }.lcd-device-display.lcd-settings-active .lcd-settings-topline,.lcd-device-display.lcd-settings-active #lcd-settings-title,.lcd-device-display.lcd-settings-active .lcd-settings-local,.lcd-device-display.lcd-settings-active .lcd-settings-help,.lcd-device-display.lcd-settings-active .lcd-settings-readonly { display:none; }.lcd-device-display.lcd-settings-active .lcd-settings-title { display:block; font:900 6.2cqw/1 monospace; }.lcd-device-display.lcd-settings-active .lcd-settings-title::after { content:""; display:block; width:28cqw; margin:.8cqw auto; border-top:.28cqw solid currentColor; }.lcd-device-display.lcd-settings-active .lcd-settings-value { min-width:0; padding:0; border:0; color:inherit; background:transparent; box-shadow:none; font:900 6cqw/1 monospace; }
 
     /* Hardware controls are external to the screen and always one row. */
     #lcd-view .lcd-page-panel,#lcd-view .lcd-status-lights,#lcd-view .lcd-controls-wrap.lcd-legacy-controls { display:none; }
@@ -950,5 +986,168 @@
     @media (max-width:640px) {
       #lcd-view .lcd-panel { padding:5px; }.lcd-screen { padding:4px; border-width:3px; }
       #lcd-view .lcd-device-display { width:100%; aspect-ratio:1.58; }
-      #lcd-view .lcd-controls-wrap { margin-top:7px; }.lcd-device-display.lcd-normal-live .lcd-time-display { font-size:1.35cqw; }
+      #lcd-view .lcd-controls-wrap { margin-top:7px; }
+      .lcd-device-display.lcd-normal-live .lcd-mode-indicators,
+      .lcd-device-display.lcd-normal-live .lcd-link-status,
+      .lcd-device-display.lcd-normal-live .lcd-period-selector,
+      .lcd-device-display.lcd-normal-live .lcd-time-display,
+      .lcd-device-display.lcd-normal-live .lcd-fault-marker,
+      .lcd-device-display.lcd-normal-live .lcd-ac2-region,
+      .lcd-device-display.lcd-normal-live .lcd-pv-channels { display:none !important; }
+      .lcd-device-display.lcd-normal-live .lcd-column { top:49%; height:36%; padding-top:1.7cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column strong,
+      .lcd-device-display.lcd-normal-live .lcd-output-heading { font-size:1.1cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure-large { font-size:7.1cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.8cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:8cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:3.8cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy { right:6%; bottom:5%; width:20%; font-size:3cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { font-size:.8cqw; }
+      .lcd-device-display.lcd-information-page .lcd-manual-readouts { padding:26% 6% 4%; }
+      .lcd-device-display.lcd-information-page .lcd-manual-readouts::before { top:6%; font-size:8.4cqw; }
+      .lcd-device-display.lcd-information-page .lcd-manual-readouts::after { top:23%; left:12%; right:12%; }
+      .lcd-device-display.lcd-information-page .lcd-manual-reading span { font-size:min(11cqw,var(--lcd-manual-value-size,11cqw)); }
+      .lcd-device-display.lcd-settings-active .lcd-settings-title { font-size:8cqw; }
+      .lcd-device-display.lcd-settings-active .lcd-settings-value { font-size:8.2cqw; }
+
+      /* LCD is an instrument page on small screens: leave just the tab row
+         above it, so the entire face and its physical keys are reachable. */
+      html.lcd-view-active .shell > header { min-height:48px; padding:4px 6px; }
+      html.lcd-view-active .brand,
+      html.lcd-view-active .header-actions > :not(.view-tabs),
+      html.lcd-view-active .view-tabs > :not(.view-tab) { display:none !important; }
+      html.lcd-view-active .header-actions,
+      html.lcd-view-active .view-tabs { display:flex; width:100%; min-width:0; height:40px; }
+      html.lcd-view-active .view-tab { flex:1 1 0; min-width:0; padding-inline:3px; font-size:11px; }
+    }
+
+    /* Physical inverter faceplate refinement.  This deliberately only changes
+       presentation: the existing LCD renderer remains the source of every
+       reading, page, local setting and key interaction. */
+    #lcd-view .lcd-screen {
+      padding:clamp(13px,2.1vw,22px) clamp(10px,1.6vw,18px) clamp(12px,1.8vw,18px);
+      border:0; border-radius:0; color:#d7dde0;
+      background:linear-gradient(112deg,#11171c 0%,#222a31 42%,#151a20 100%);
+      box-shadow:inset 0 1px rgba(255,255,255,.07),inset 0 -18px 35px rgba(0,0,0,.38),0 22px 65px rgba(0,0,0,.35);
+    }
+    #lcd-view .lcd-face-status { display:flex; align-items:center; justify-content:center; gap:clamp(18px,5.6vw,70px); min-height:42px; margin:0 auto clamp(9px,1.4vw,15px); color:#d8dde0; font-family:"Arial Narrow",Arial,sans-serif; }
+    #lcd-view .lcd-face-light { display:grid; grid-template-columns:18px auto; align-items:center; gap:7px; min-width:68px; opacity:.7; }
+    #lcd-view .lcd-face-light i { display:block; width:15px; height:15px; border:1px solid #05090c; border-radius:50%; background:radial-gradient(circle at 38% 34%,#a7b1b5 0 20%,#48535a 25%,#101519 62%); box-shadow:0 0 0 1px #596166,inset 0 0 5px rgba(0,0,0,.8); }
+    #lcd-view .lcd-face-light b { font:700 clamp(11px,1.25vw,15px)/1 Arial,sans-serif; letter-spacing:.11em; }
+    #lcd-view .lcd-face-light::before { content:""; display:none; }
+    #lcd-view .lcd-face-light.active { opacity:1; }
+    #lcd-view .lcd-face-light.active i { background:radial-gradient(circle at 42% 36%,#fffde1 0 16%,#ffe563 24%,#ff9c00 54%,#7b2600 100%); box-shadow:0 0 10px rgba(255,171,25,.95),0 0 22px rgba(255,129,0,.42); }
+    #lcd-view .lcd-face-light-fault.active i { background:radial-gradient(circle at 42% 36%,#ffd9d5 0 16%,#ff6a5e 29%,#a5101c 60%,#33040a 100%); box-shadow:0 0 10px rgba(248,57,67,.75); }
+    #lcd-view .lcd-face-light.lcd-light-flash i { animation:lcd-face-led-flash 900ms steps(2,end) infinite; }
+    @keyframes lcd-face-led-flash { 50% { filter:brightness(.28); box-shadow:none; } }
+    @media (prefers-reduced-motion:reduce) { #lcd-view .lcd-face-light.lcd-light-flash i { animation:none; } }
+
+    #lcd-view .lcd-device-display { border:0; border-radius:12px; color:#72deff; background:radial-gradient(ellipse at 52% 35%,#123f5d 0%,#08263f 42%,#041624 75%,#020b12 100%); box-shadow:inset 0 0 0 4px #192a35,inset 0 0 22px rgba(0,0,0,.7),0 5px 12px rgba(0,0,0,.55); }
+    #lcd-view .lcd-device-display::before { inset:2.1%; border-color:rgba(122,223,255,.12); border-radius:8px; box-shadow:inset 0 0 12px rgba(0,0,0,.28); }
+    .lcd-device-display.lcd-normal-live .lcd-mode-indicators { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source { top:7%; left:5.5%; gap:.55cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-icon { width:3.1cqw; height:3.1cqw; opacity:.52; filter:drop-shadow(0 0 .22cqw rgba(114,222,255,.65)); }
+    .lcd-device-display.lcd-normal-live .lcd-mode-source .lcd-mode-plus { font-size:1.6cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status { top:7%; right:5.5%; gap:.45cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-icon { width:3.4cqw; height:3.4cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-wifi,
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-bluetooth,
+    .lcd-device-display.lcd-normal-live .lcd-link-status .lcd-link-usb { display:none !important; }
+
+    .lcd-device-display.lcd-normal-live .lcd-battery-top { top:6%; left:17%; width:66%; height:29%; border-width:.34cqw; background:linear-gradient(135deg,rgba(8,37,57,.85),rgba(1,15,28,.48)); clip-path:polygon(3% 0,35% 0,37% 6%,92% 6%,100% 24%,100% 75%,93% 100%,7% 100%,0 75%,0 22%); }
+    .lcd-device-display.lcd-normal-live .lcd-battery-main { left:27%; bottom:10%; font-size:9.8cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-tag { display:block; left:7%; bottom:9%; padding:.24cqw .52cqw; font:900 1.05cqw/1 monospace; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-types { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-charge-stages { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-side { top:11%; left:68%; width:10%; gap:.58cqw; font-size:3.55cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-state-caption { font-size:.7cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-max-ac-current { display:none; }
+
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:38%; left:15%; width:70%; height:6%; grid-template-columns:repeat(4,1fr) 2.2cqw 2.2cqw 3.3cqw; gap:.32cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::before { left:33%; }
+    .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { right:10%; }
+    .lcd-device-display.lcd-normal-live .lcd-power-path { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-ups-mode { top:48%; left:8%; font-size:1.25cqw; text-shadow:0 0 .35cqw rgba(114,222,255,.5); }
+    .lcd-device-display.lcd-normal-live .lcd-column-input,
+    .lcd-device-display.lcd-normal-live .lcd-column-pv { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output { top:49%; left:25%; width:50%; height:32%; padding:2.7cqw .6cqw .5cqw; gap:.65cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output::before { border-width:.3cqw; clip-path:polygon(0 17%,12% 0,88% 0,100% 17%,100% 100%,0 100%); }
+    .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-heading { flex:0 0 auto; height:auto; font-size:1.75cqw; line-height:1; letter-spacing:.06em; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { margin-top:.1cqw; font-size:10.8cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { margin-top:.15cqw; font-size:5.1cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-period-selector,
+    .lcd-device-display.lcd-normal-live .lcd-time-display,
+    .lcd-device-display.lcd-normal-live .lcd-fault-marker { display:none; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:17%; bottom:5%; width:22%; font-size:3.4cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { right:calc(100% + .8cqw); font-size:.9cqw; }
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:8%; bottom:13%; width:7cqw; height:6cqw; opacity:.85; }
+
+    #lcd-view .lcd-controls-wrap { margin-top:clamp(12px,1.8vw,18px); }
+    #lcd-view .lcd-controls { gap:clamp(18px,5.2vw,62px); }
+    #lcd-view .lcd-demo-actions { display:flex; justify-content:center; margin-top:clamp(13px,2vw,20px); }
+    #lcd-view #lcd-demo-button { min-height:42px; }
+    #lcd-view .lcd-key { width:clamp(58px,7vw,82px); min-width:58px; min-height:clamp(58px,7vw,82px); height:clamp(58px,7vw,82px); border:2px solid #a9b1b4; outline:3px solid #11171b; outline-offset:3px; color:#e7ebec; background:radial-gradient(circle at 37% 30%,#57636a 0 8%,#293239 42%,#11171c 66%,#2f393e 70%,#101419 100%); box-shadow:inset 0 0 0 3px #182026,inset 0 -7px 10px rgba(0,0,0,.78),0 3px 0 #070a0c; font-size:10px; }
+    #lcd-view .lcd-key span { font:500 clamp(22px,2.8vw,32px)/.75 Arial,sans-serif; }
+    #lcd-view .lcd-key small { font:800 clamp(8px,.85vw,10px)/1 Arial,sans-serif; letter-spacing:.06em; }
+    #lcd-view .lcd-key:focus-visible { outline-color:#72deff; }
+    #lcd-view .lcd-key:hover { filter:brightness(1.16); }
+
+    @media (max-width:640px) {
+      #lcd-view .lcd-screen { padding:8px 6px 11px; }
+      #lcd-view .lcd-demo-actions { display:block; margin-top:12px; }
+      #lcd-view #lcd-demo-button { width:100%; min-width:0; }
+      #lcd-view .lcd-face-status { min-height:28px; gap:clamp(8px,3vw,18px); margin-bottom:7px; }
+      #lcd-view .lcd-face-light { grid-template-columns:10px auto; gap:4px; min-width:0; }
+      #lcd-view .lcd-face-light i { width:8px; height:8px; }
+      #lcd-view .lcd-face-light b { font-size:8px; }
+      .lcd-device-display.lcd-normal-live .lcd-mode-source { top:6%; }
+      .lcd-device-display.lcd-normal-live .lcd-link-status { top:6%; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-top { top:6%; left:15%; width:70%; height:31%; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-main { left:27%; font-size:10.6cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-tag { left:7%; bottom:10%; font-size:1.25cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { left:68%; width:11%; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale { top:39%; left:11%; width:78%; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output { top:50%; left:20%; width:60%; height:34%; padding-top:3.1cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-heading { font-size:2.25cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:12cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:5.7cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy { right:11%; bottom:4%; width:27%; font-size:4cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-flow-marker { right:4%; bottom:14%; }
+      #lcd-view .lcd-controls { gap:clamp(12px,5vw,26px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #lcd-view .lcd-device-display *, #lcd-view .lcd-key { animation:none !important; transition:none !important; }
+    }
+
+    /* Renderer-created seven-segment glyphs.  These are real CSS segments,
+       rather than a font dependency, so the LCD keeps its numeric hierarchy
+       even when the dashboard is used offline. */
+    #lcd-view .lcd-segmented-value { display:inline-flex; align-items:flex-end; height:.86em; gap:.055em; color:currentColor; letter-spacing:0; text-shadow:0 0 .055em currentColor,0 0 .22em rgba(67,205,255,.72); vertical-align:baseline; }
+    #lcd-view .lcd-segment-glyph { position:relative; display:inline-block; flex:0 0 .48em; width:.48em; height:.86em; }
+    #lcd-view .lcd-segment { position:absolute; display:block; border-radius:.06em; background:currentColor; box-shadow:0 0 .06em currentColor; }
+    #lcd-view .lcd-segment-a,#lcd-view .lcd-segment-g,#lcd-view .lcd-segment-d { left:.09em; width:.3em; height:.075em; }
+    #lcd-view .lcd-segment-a { top:0; } #lcd-view .lcd-segment-g { top:.392em; } #lcd-view .lcd-segment-d { bottom:0; }
+    #lcd-view .lcd-segment-b,#lcd-view .lcd-segment-c,#lcd-view .lcd-segment-f,#lcd-view .lcd-segment-e { width:.075em; height:.31em; }
+    #lcd-view .lcd-segment-b { top:.055em; right:0; } #lcd-view .lcd-segment-c { right:0; bottom:.055em; }
+    #lcd-view .lcd-segment-f { top:.055em; left:0; } #lcd-view .lcd-segment-e { bottom:.055em; left:0; }
+    #lcd-view .lcd-segment-dot { align-self:flex-end; flex:0 0 .12em; width:.095em; height:.095em; margin:0 .025em .01em -.01em; border-radius:50%; background:currentColor; box-shadow:0 0 .06em currentColor; }
+    #lcd-view .lcd-segment-minus { align-self:center; flex:0 0 .33em; width:.28em; height:.075em; margin-top:.03em; border-radius:.06em; background:currentColor; box-shadow:0 0 .06em currentColor; }
+    #lcd-view .lcd-segment-blank { flex:0 0 .2em; }
+    #lcd-view .lcd-battery-main .lcd-segmented-value { height:.82em; }
+    #lcd-view .lcd-output-primary .lcd-segmented-value { height:.84em; }
+    #lcd-view .lcd-output-frequency .lcd-segmented-value { height:.84em; }
+    #lcd-view .lcd-day-energy .lcd-segmented-value { height:.82em; color:#dfc663; text-shadow:0 0 .06em #dfc663; }
+
+    @media (max-width:640px) {
+      /* At phone width give the live values the glass, not decoration, so
+         the primary voltage/frequency stays readable at a glance. */
+      .lcd-device-display.lcd-normal-live .lcd-battery-side { top:11%; width:13%; font-size:4.8cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-state-caption,
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale::before,
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale::after { font-size:1.05cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale > span { font-size:1cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-battery-scale .lcd-load-block i { font-size:.8cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-ups-mode { font-size:1.6cqw; }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child { font-size:1.05cqw; }
     }

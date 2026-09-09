@@ -13,6 +13,7 @@
     // Poll rate and read mode are now in the modbus debug modal
     document.querySelector('#demo-button').addEventListener('click', fillChartExampleData);
     document.querySelector('#chart-demo-button').addEventListener('click', fillChartExampleData);
+    document.querySelector('#lcd-demo-button')?.addEventListener('click', fillChartExampleData);
     document.querySelector('#manage-values-button').addEventListener('click', openGaugePicker);
     document.querySelector('#register-log-start')?.addEventListener('click', () => updateRegisterLog('start'));
     document.querySelector('#register-log-stop')?.addEventListener('click', () => updateRegisterLog('stop'));
@@ -334,12 +335,12 @@
         loading.hidden = true;
       }
     }
-    document.querySelector('#updater-history-button').addEventListener('click', () => {
+  /*   document.querySelector('#updater-history-button').addEventListener('click', () => {
       const picker = document.querySelector('#updater-history-picker');
       void loadLocalUpdaterHistory();
       if (typeof picker.showModal === 'function') picker.showModal();
       else picker.setAttribute('open', '');
-    });
+    }); */
     document.querySelector('[data-close-updater-history-picker]').addEventListener('click', () =>
       document.querySelector('#updater-history-picker').close());
     document.querySelector('#updater-history-picker').addEventListener('click', event => {

@@ -691,7 +691,7 @@
       }
     }
 
-    function handleLcdKey(key) { if (window.handleLcdSimulatorKey?.(key)) { lcdPageIndex = 0; lcdEnterNotice = false; if (lastData) renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers); void recordDemoLcdKey(`local-${key}`); return; }
+    function handleLcdKey(key) { if (window.handleLcdSimulatorKey?.(key)) { lcdPageIndex = 0; lcdEnterNotice = false; const lcdData = lastData || {registers: [], updated_at: '', identifier: ''}; renderLcd(lcdData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lcdData.registers); void recordDemoLcdKey(`local-${key}`); return; }
       if (key === 'escape') {
         lcdPageIndex = 0; lcdEnterNotice = false;
       } else if (key === 'up') {
@@ -702,7 +702,11 @@
       } else {
         return;
       }
-      if (lastData) renderLcd(lastData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lastData.registers);
+      // LCD navigation must still switch the physical screen while the first
+      // Modbus poll is unavailable.  Render an empty instrument model rather
+      // than leaving the previous normal face on screen.
+      const lcdData = lastData || {registers: [], updated_at: '', identifier: ''};
+      renderLcd(lcdData, chartDemoRunning && demoRegisterRows ? demoRegisterRows : lcdData.registers);
       void recordDemoLcdKey(key);
     }
 

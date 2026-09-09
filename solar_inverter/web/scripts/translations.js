@@ -434,6 +434,25 @@
       lcdPvChargeShort: 'PV1 CHARGE', lcdChargerShort: 'CHARGER', lcdDcDischargeShort: 'DC DISCHG',
       lcdPvEnergyShort: 'PV ENERGY', lcdDayShort: 'DAY'
     });
+    Object.assign(UI_TRANSLATIONS.uk, {
+      lcdStatusIndicatorsAria: '\u0406\u043d\u0434\u0438\u043a\u0430\u0442\u043e\u0440\u0438 \u0441\u0442\u0430\u043d\u0443 \u0456\u043d\u0432\u0435\u0440\u0442\u043e\u0440\u0430',
+      lcdSettingsSimulatorAria: '\u041b\u043e\u043a\u0430\u043b\u044c\u043d\u0438\u0439 \u0441\u0438\u043c\u0443\u043b\u044f\u0442\u043e\u0440 \u043d\u0430\u043b\u0430\u0448\u0442\u0443\u0432\u0430\u043d\u044c LCD',
+      lcdUpsModeAria: '\u0420\u0435\u0436\u0438\u043c UPS', lcdCommunicationAria: '\u0421\u0442\u0430\u043d \u0437\u0432\u2019\u044f\u0437\u043a\u0443 \u0442\u0430 \u0437\u0432\u0443\u043a\u0443 LCD',
+      lcdBatteryTypeAria: '\u0422\u0438\u043f \u0431\u0430\u0442\u0430\u0440\u0435\u0457', lcdChargeStageAria: '\u0415\u0442\u0430\u043f \u0437\u0430\u0440\u044f\u0434\u0436\u0430\u043d\u043d\u044f \u0431\u0430\u0442\u0430\u0440\u0435\u0457',
+      lcdEnergyPeriodAria: '\u041f\u0435\u0440\u0456\u043e\u0434 \u0435\u043d\u0435\u0440\u0433\u0456\u0457 LCD', lcdFaultAria: '\u0406\u043d\u0434\u0438\u043a\u0430\u0442\u043e\u0440 \u043d\u0435\u0441\u043f\u0440\u0430\u0432\u043d\u043e\u0441\u0442\u0456', lcdNavigationAria: '\u041d\u0430\u0432\u0456\u0433\u0430\u0446\u0456\u044f \u0456\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0456\u0439\u043d\u0438\u043c\u0438 \u0441\u0442\u043e\u0440\u0456\u043d\u043a\u0430\u043c\u0438 LCD'
+    });
+    Object.assign(UI_TRANSLATIONS.ru, {
+      lcdStatusIndicatorsAria: '\u0418\u043d\u0434\u0438\u043a\u0430\u0442\u043e\u0440\u044b \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u044f \u0438\u043d\u0432\u0435\u0440\u0442\u043e\u0440\u0430',
+      lcdSettingsSimulatorAria: '\u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0439 \u0441\u0438\u043c\u0443\u043b\u044f\u0442\u043e\u0440 \u043d\u0430\u0441\u0442\u0440\u043e\u0435\u043a LCD',
+      lcdUpsModeAria: '\u0420\u0435\u0436\u0438\u043c UPS', lcdCommunicationAria: '\u0421\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u0441\u0432\u044f\u0437\u0438 \u0438 \u0437\u0432\u0443\u043a\u0430 LCD',
+      lcdBatteryTypeAria: '\u0422\u0438\u043f \u0431\u0430\u0442\u0430\u0440\u0435\u0438', lcdChargeStageAria: '\u042d\u0442\u0430\u043f \u0437\u0430\u0440\u044f\u0434\u043a\u0438 \u0431\u0430\u0442\u0430\u0440\u0435\u0438',
+      lcdEnergyPeriodAria: '\u041f\u0435\u0440\u0438\u043e\u0434 \u044d\u043d\u0435\u0440\u0433\u0438\u0438 LCD', lcdFaultAria: '\u0418\u043d\u0434\u0438\u043a\u0430\u0442\u043e\u0440 \u043d\u0435\u0438\u0441\u043f\u0440\u0430\u0432\u043d\u043e\u0441\u0442\u0438', lcdNavigationAria: '\u041d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044f \u043f\u043e \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u043c \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430\u043c LCD'
+    });
+    Object.assign(UI_TRANSLATIONS.en, {
+      lcdStatusIndicatorsAria: 'Inverter status indicators', lcdSettingsSimulatorAria: 'Local LCD settings simulator', lcdUpsModeAria: 'UPS mode',
+      lcdCommunicationAria: 'LCD communication and sound status', lcdBatteryTypeAria: 'Battery type', lcdChargeStageAria: 'Battery charging stage',
+      lcdEnergyPeriodAria: 'LCD energy period', lcdFaultAria: 'Fault indicator', lcdNavigationAria: 'LCD information navigation'
+    });
     const DATA_TRANSLATIONS = {
       'AC': {ru:'AC', en:'AC'},
       'BMS': {ru:'BMS', en:'BMS'},

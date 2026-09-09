@@ -371,11 +371,12 @@
       if (!document.querySelector('#charts-view').hidden) scheduleVisibleChartDraw();
     }
     function recordChartSamples(data) {
+      // Demo frames are owned by the demo loop, which updates existing chart
+      // histories and schedules a single in-place redraw.  Live polling still
+      // arrives while the demo is running; rebuilding definitions or drawing
+      // from here would compete with that loop and visibly remount the charts.
+      if (chartDemoRunning) return;
       updateChartDefinitions(data);
-      if (chartDemoRunning) {
-        if (!document.querySelector('#charts-view').hidden) drawAllCharts();
-        return;
-      }
       const now = Date.now();
       chartSelections.forEach(key => {
         const item = chartDefinitions.get(key);

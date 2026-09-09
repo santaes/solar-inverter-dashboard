@@ -27,6 +27,9 @@
     ];
     // Programs documented in supplied manual section 4.2.2. The physical LCD
     // codes are used verbatim; later supplied pages can extend this list.
+    // Values not quantified by the supplied pages deliberately remain a
+    // parameter label: inventing a range or a default would misrepresent the
+    // inverter firmware.
     const lcdSettingsPrograms = [
       {id:'01', title:'Output voltage', values:['OPU220', 'OPU230', 'OPU240'], index:1},
       {id:'02', title:'Output frequency', values:['OPF50', 'OPF60'], index:0},
@@ -42,23 +45,97 @@
       {id:'12', title:'Energy-saving mode', values:['PsuON', 'PsuOFF'], index:1},
       {id:'13', title:'Overload transfer to bypass', values:['OLCON', 'OLCOFF'], index:1},
       {id:'14', title:'Silent mode setting', values:['nuHON', 'nuHOFF'], index:1},
-      {id:'15', title:'Battery return to grid voltage point', values:stepped(44, 52, 1).map(value => `btG${Number(value).toFixed(1)}`), index:2},
-      {id:'16', title:'Switching back to battery mode voltage point', values:stepped(48, 58, 1).map(value => `btb${Number(value).toFixed(1)}`), index:4},
+      {id:'15', title:'Battery return to grid voltage point', values:[], index:0, dynamic:'returnGrid'},
+      {id:'16', title:'Switching back to battery mode voltage point', values:[], index:0, dynamic:'returnBattery'},
       {id:'17', title:'Battery type', values:['bAtAGM', 'bAtFLd', 'bAtLIb', 'bAtFEL', 'bAtCUS'], index:2},
-      {id:'18', title:'Battery low voltage point', values:stepped(41.2, 50, .2).map(value => `bAL${Number(value).toFixed(1)}`), index:32},
-      {id:'19', title:'Battery shutdown voltage point', values:stepped(40, 48, 1).map(value => `bAU${Number(value).toFixed(1)}`), index:6}
+      {id:'18', title:'Battery low voltage alarm', values:[], index:0, dynamic:'lowAlarm'},
+      {id:'19', title:'Battery shutdown voltage point', values:[], index:0, dynamic:'shutdown'},
+      {id:'20', title:'Constant voltage (CV) point', values:[], index:0, dynamic:'cv'},
+      {id:'21', title:'Floating charge voltage point', values:[], index:0, dynamic:'float'},
+      {id:'22', title:'Grid low voltage point', values:[], index:0, dynamic:'gridLow'},
+      {id:'23', title:'Grid high voltage point', values:[], index:0, dynamic:'gridHigh'},
+      {id:'24', title:'Auto turn-off backlight', values:['bLTON', 'bLTOFF'], index:0},
+      {id:'25', title:'Inverter soft start', values:['SStOFF', 'SStON'], index:0},
+      {id:'26', title:'Reset factory settings', values:['rStOFF', 'rStON'], index:0, note:'ON requests the local simulator reset only.'},
+      {id:'29', title:'Battery disconnect alarm', values:['bdtOFF', 'bdtON'], index:0},
+      {id:'31', title:'Equalization voltage', values:['EQU'], index:0, note:'Equalization voltage; range/default not stated in supplied manual.'},
+      {id:'32', title:'Equalization time', values:['EQU'], index:0, note:'Equalization time; range/default not stated in supplied manual.'},
+      {id:'33', title:'Equalization delay', values:['EQU'], index:0, note:'Equalization delay; range/default not stated in supplied manual.'},
+      {id:'34', title:'Equalization interval', values:['EQU'], index:0, note:'Equalization interval; range/default not stated in supplied manual.'},
+      {id:'35', title:'Equalization immediate activation', values:['EQU'], index:0, note:'Immediate equalization control; options not stated in supplied manual.'},
+      {id:'36', title:'Grid-tie function', values:['GtOFF', 'GtINT', 'GtMET'], index:0},
+      {id:'37', title:'Maximum grid-tie power', values:['Gt12.0kW'], index:0, note:'Range 0–12.0 kW; manual default 12.0 kW. Step size not stated.'},
+      {id:'38', title:'AC output 2 cutoff by voltage', values:['AC2V'], index:0, note:'Voltage cutoff parameter; range/default not stated in supplied manual.'},
+      {id:'39', title:'AC output 2 discharge duration', values:['AC2t'], index:0, note:'Discharge-duration parameter; range/default not stated in supplied manual.'},
+      {id:'40', title:'AC output 2 cutoff by SOC', values:['AC2SOC'], index:0, note:'SOC cutoff parameter; range/default not stated in supplied manual.'},
+      {id:'44', title:'BMS protocol', values:['bMSOFF', 'bMSCVT', 'bMSPYL', 'bMSGRO', 'bMSVOL', 'bMSIRO', 'bMSPAC'], index:0},
+      {id:'45', title:'BMS ID', values:['AtO', ...stepped(0, 15, 1).map(value => `Id${value}`)], index:0},
+      {id:'46', title:'Low SOC shutdown', values:['SOC20%'], index:0, note:'Range 5–50%; manual default 20%. Step size not stated.'},
+      {id:'47', title:'High SOC to battery', values:['SOC90%'], index:0, note:'Range 10–100%; manual default 90%. Step size not stated.'},
+      {id:'48', title:'Low SOC to grid', values:['SOC50%'], index:0, note:'Range 10–90%; manual default 50%. Step size not stated.'},
+      {id:'61', title:'Maximum discharge current', values:['OFF'], index:0, note:'OFF default; range 10–220 A. Step size not stated.'},
+      {id:'62', title:'PV parallel mode', values:['PArOFF', 'PArON'], index:0}
     ];
+    const fixed = (prefix, value) => [`${prefix}${Number(value).toFixed(1)}`];
+    const selectedSetting = id => lcdSettingsPrograms.find(program => program.id === id);
+    const dynamicSettingValues = (kind, batteryCode, inputCode) => {
+      const lead = batteryCode === 'bAtAGM' || batteryCode === 'bAtFLd';
+      const fel = batteryCode === 'bAtFEL';
+      switch (kind) {
+        // The manual gives ranges but not increment sizes. Keep an accurate
+        // current/default parameter instead of manufacturing selectable steps.
+        case 'returnGrid': return lead ? fixed('btG', 46) : fixed('btG', fel ? 49.6 : 47.6);
+        case 'returnBattery': return lead ? fixed('btb', 52) : fixed('btb', fel ? 53.2 : 54.4);
+        case 'lowAlarm': return lead ? fixed('bAL', 44) : fixed('bAL', fel ? 48 : 47.6);
+        case 'shutdown': return lead ? fixed('bAU', 42) : fixed('bAU', fel ? 42 : 46);
+        case 'cv': return batteryCode === 'bAtAGM' ? fixed('CV', 56.4) : batteryCode === 'bAtFLd' ? fixed('CV', 58) : fixed('CV', fel ? 55.2 : 56.4);
+        case 'float': return lead ? fixed('FLt', 54) : fixed('FLt', fel ? 54.4 : 55.2);
+        case 'gridLow': return inputCode === 'nOdUPS' ? fixed('GrL', 185) : fixed('GrL', 154);
+        case 'gridHigh': return fixed('GrH', 264);
+        default: return [];
+      }
+    };
+    const refreshDynamicSettingValues = () => {
+      const batteryCode = selectedSetting('17').values[selectedSetting('17').index];
+      const inputCode = selectedSetting('04').values[selectedSetting('04').index];
+      const lead = batteryCode === 'bAtAGM' || batteryCode === 'bAtFLd';
+      const fel = batteryCode === 'bAtFEL';
+      lcdSettingsPrograms.filter(program => program.dynamic).forEach(program => {
+        const previouslySelected = program.values[program.index];
+        program.values = dynamicSettingValues(program.dynamic, batteryCode, inputCode);
+        program.index = Math.max(0, Math.min(program.values.indexOf(previouslySelected), program.values.length - 1));
+        const notes = {
+          returnGrid: lead ? 'AGM/FLD: 44–52 V, default 46 V.' : fel ? 'FEL: 40–50 V, default 49.6 V.' : 'LIB/CUS: 40–50 V, default 47.6 V.',
+          returnBattery: lead ? 'AGM/FLD: 48–58 V, default 52 V.' : fel ? 'FEL: 46–58 V, default 53.2 V.' : 'LIB/CUS: 46–58 V, default 54.4 V.',
+          lowAlarm: lead ? 'AGM/FLD is fixed at 44 V.' : fel ? 'FEL: 41.2–50 V, default 48 V.' : 'LIB/CUS: 41.2–50 V, default 47.6 V.',
+          shutdown: lead ? 'AGM/FLD is fixed at 42 V.' : fel ? 'FEL: 40–48 V, default 42 V.' : 'LIB/CUS: 40–48 V, default 46 V.',
+          cv: batteryCode === 'bAtAGM' ? 'AGM fixed at 56.4 V.' : batteryCode === 'bAtFLd' ? 'FLD fixed at 58 V.' : fel ? 'FEL: 48–60 V, default 55.2 V.' : 'LIB/CUS: 48–60 V, default 56.4 V.',
+          float: lead ? 'AGM/FLD fixed at 54 V.' : fel ? 'FEL: 50–58 V, default 54.4 V.' : 'LIB/CUS range is model-dependent; supplied manual default 55.2 V.',
+          gridLow: inputCode === 'nOdUPS' ? 'UPS: 170–200 V, default 185 V.' : 'APP/GEN: 90–154 V, default 154 V.',
+          gridHigh: inputCode === 'nOdUPS' ? 'UPS fixed at 264 V.' : 'APP/GEN: 264–280 V, default 264 V.'
+        };
+        program.note = `${notes[program.dynamic]} Step size not stated in supplied manual.`;
+      });
+    };
+    refreshDynamicSettingValues();
     let lcdSettingsMode = 'normal';
     let lcdSettingsProgramIndex = 0;
     try {
       const stored = JSON.parse(window.localStorage?.getItem('lcdLocalSettingsSimulator') || 'null');
-      stored?.indices?.forEach((index, programIndex) => {
+      // v1 used positional indices (01–19); v2 stores a versioned ID map.
+      const indicesById = stored?.version >= 2 ? stored.indicesById : null;
+      Object.entries(indicesById || {}).forEach(([id, index]) => {
+        const program = selectedSetting(id);
+        if (program && Number.isInteger(index)) program.index = Math.max(0, Math.min(index, program.values.length - 1));
+      });
+      (!indicesById ? stored?.indices : [])?.forEach((index, programIndex) => {
         const program = lcdSettingsPrograms[programIndex];
         if (program && Number.isInteger(index)) program.index = Math.max(0, Math.min(index, program.values.length - 1));
       });
     } catch (_) { /* Browser storage is optional for the local simulator. */ }
+    refreshDynamicSettingValues();
     const persistLcdSettings = () => {
-      try { window.localStorage?.setItem('lcdLocalSettingsSimulator', JSON.stringify({indices:lcdSettingsPrograms.map(program => program.index)})); } catch (_) { /* no-op */ }
+      try { window.localStorage?.setItem('lcdLocalSettingsSimulator', JSON.stringify({version:2, indicesById:Object.fromEntries(lcdSettingsPrograms.map(program => [program.id, program.index]))})); } catch (_) { /* no-op */ }
     };
     window.lcdSettingsSimulator = () => ({active:lcdSettingsMode !== 'normal', mode:lcdSettingsMode, program:lcdSettingsPrograms[lcdSettingsProgramIndex]});
     window.handleLcdSimulatorKey = key => {
@@ -66,14 +143,29 @@
         if (key !== 'enter-hold') return false;
         lcdSettingsMode = 'select'; lcdSettingsProgramIndex = 0; return true;
       }
+      const program = lcdSettingsPrograms[lcdSettingsProgramIndex];
       if (key === 'escape') lcdSettingsMode = 'normal';
-      else if (key === 'enter') lcdSettingsMode = lcdSettingsMode === 'select' ? 'edit' : 'select';
+      else if (key === 'enter') {
+        if (lcdSettingsMode === 'edit' && program.id === '26' && program.values[program.index] === 'rStON') {
+          lcdSettingsPrograms.forEach(item => { item.index = 0; });
+          selectedSetting('01').index = 1; selectedSetting('06').index = 6; selectedSetting('07').index = 10;
+          selectedSetting('12').index = 1; selectedSetting('13').index = 1; selectedSetting('14').index = 1;
+          selectedSetting('17').index = 2; refreshDynamicSettingValues();
+        }
+        lcdSettingsMode = lcdSettingsMode === 'select' ? 'edit' : 'select';
+      }
       else if (key === 'up' || key === 'down') {
-        const program = lcdSettingsPrograms[lcdSettingsProgramIndex];
         if (lcdSettingsMode === 'select') lcdSettingsProgramIndex = (lcdSettingsProgramIndex + (key === 'up' ? -1 : 1) + lcdSettingsPrograms.length) % lcdSettingsPrograms.length;
-        else { program.index = (program.index + (key === 'up' ? 1 : -1) + program.values.length) % program.values.length; }
+        else { program.index = (program.index + (key === 'up' ? 1 : -1) + program.values.length) % program.values.length; if (program.id === '17' || program.id === '04') refreshDynamicSettingValues(); }
       } else return false;
-      if (key === 'enter' && lcdSettingsMode === 'select') persistLcdSettings();
+      if (key === 'enter' && lcdSettingsMode === 'select') {
+        if (program.id === '17') {
+          const panelBatteryTypes = {bAtAGM:'AGM', bAtFLd:'FLD', bAtLIb:'Li-ion', bAtFEL:'Li-ion', bAtCUS:'USER'};
+          window.lcdBatteryType = panelBatteryTypes[program.values[program.index]] || 'Li-ion';
+          try { window.localStorage?.setItem('lcdBatteryType', window.lcdBatteryType); } catch (_) { /* local simulator only */ }
+        }
+        persistLcdSettings();
+      }
       return true;
     };
 
@@ -101,8 +193,10 @@
           ? registerVersionDisplay(register, registers)
           : t('noData');
       };
+      // The physical LCD has no prose no-data state: unavailable registers
+      // are represented by one bounded dash in every instrument bay.
       const reading = (value, unit, digits = 1) =>
-        Number.isFinite(value) ? `${value.toFixed(digits)} ${unit}`.trim() : t('noData');
+        Number.isFinite(value) ? `${value.toFixed(digits)} ${unit}`.trim() : '—';
       const setText = (selector, value) => {
         const element = document.querySelector(selector);
         if (element) element.textContent = value;
@@ -591,12 +685,16 @@
 
       const active = (selector, enabled) =>
         document.querySelector(selector)?.classList.toggle('active', Boolean(enabled));
+      const flashing = (selector, enabled) =>
+        document.querySelector(selector)?.classList.toggle('lcd-light-flash', Boolean(enabled));
       const available = (selector, enabled) =>
         document.querySelector(selector)?.classList.toggle('lcd-manual-absent', !Boolean(enabled));
-      const inverterIndicatorActive = liveMeasurementsFresh
-        && !flowSuppressed
-        && outputConnected
-        && (Number.isFinite(outputVoltage) || Number.isFinite(loadPower));
+      // Physical LEDs: AC is steady only while actually in mains operation;
+      // a healthy grid outside mains operation flashes. INV is reserved for
+      // battery/PV output mode, not merely for any output telemetry.
+      const mainsOperation = gridFlowActive && !batteryDischarging;
+      const inverterIndicatorActive = liveMeasurementsFresh && !flowSuppressed
+        && outputConnected && (batteryDischarging || (pvFlowActive && !mainsOperation));
       active('#lcd-grid-node', gridConnected);
       active('#lcd-grid-arrow', gridFlowActive);
       active('#lcd-inverter-node', liveMeasurementsFresh && !flowSuppressed);
@@ -628,9 +726,15 @@
       // illuminate only the link that the dashboard can verify (live polling),
       // and illuminate the sound/fault mark only for an actual BMS fault.
       const hasBatteryFault = Number.isFinite(batteryFaultCode) && batteryFaultCode !== 0;
-      active('#lcd-status-ac', gridConnected);
-      active('#lcd-status-chg', batteryCharging);
+      active('#lcd-status-ac', gridNormal);
+      flashing('#lcd-status-ac', gridNormal && !mainsOperation);
+      active('#lcd-status-chg', chargingState === 'FLOAT' || chargingState === 'CV');
+      flashing('#lcd-status-chg', chargingState === 'CV');
       active('#lcd-status-fault', hasBatteryFault);
+      // The exposed BMS fault registers do not distinguish a warning from a
+      // fault. Show a verified non-zero condition as steady fault rather than
+      // inventing warning semantics.
+      flashing('#lcd-status-fault', false);
       active('#lcd-link-wifi', liveMeasurementsFresh);
       active('#lcd-link-speaker', hasBatteryFault);
       active('#lcd-fault-marker', hasBatteryFault);
@@ -678,10 +782,11 @@
       active('#lcd-mode-pv', pvConnected);
       active('#lcd-mode-ac', pvConnected && gridConnected);
       active('#lcd-mode-flow', chargePriority === 2 && pvConnected);
-      // Bluetooth/USB hardware state is not exposed by the supplied registers.
-      // Hide those marks instead of presenting inactive icons as measurements.
-      available('#lcd-link-bluetooth', false);
-      available('#lcd-link-usb', false);
+      // Bluetooth and USB state is not exposed by the supplied registers.
+      // They are nevertheless physical LCD marks (manual section 4.2.1), so
+      // retain them as dim indicators rather than removing them from the face.
+      available('#lcd-link-bluetooth', true);
+      available('#lcd-link-usb', true);
       if (!window.lcdBatteryTypeControlsBound) {
         document.querySelectorAll('[data-lcd-battery-type]').forEach(button => {
           button.addEventListener('click', () => {
