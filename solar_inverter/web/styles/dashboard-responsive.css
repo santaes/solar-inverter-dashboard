@@ -495,6 +495,8 @@
     .lcd-device-display.lcd-normal-live .lcd-time-display { left:40% !important; bottom:5% !important; width:19% !important; white-space:nowrap !important; }
     .lcd-device-display.lcd-normal-live .lcd-day-energy { right:24% !important; bottom:5% !important; width:13% !important; }
     .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:4% !important; bottom:14% !important; }
+
     .lcd-device-display.lcd-normal-live .lcd-fault-marker { right:5% !important; bottom:4% !important; width:15% !important; }
 
     /* Final normal-live-only correction. Keep the manual's four battery
@@ -527,6 +529,14 @@
       .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.4cqw !important; }
       .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:3.1cqw !important; }
     }
+
+    /* Final bottom-band layout: the amber day-energy value must not sit under
+       the timestamp.  These rules are intentionally last to beat legacy maps. */
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:4% !important; bottom:14% !important; }
+
+    /* Keep the lower timestamp bay clear in every responsive cascade. */
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:none !important; }
 
     /* Final cascade: retain the manual icon -> type stack -> voltage order.
        This scope deliberately excludes settings and information pages. */
@@ -942,4 +952,55 @@
       .lcd-device-display.lcd-normal-live .lcd-column .lcd-measure { font-size:2.2cqw !important; }
       .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-primary { font-size:6.4cqw !important; }
       .lcd-device-display.lcd-normal-live .lcd-column-output .lcd-output-frequency { font-size:3.1cqw !important; }
+    }
+
+    /* Final override: reserve the clock's lower LCD bay. */
+    .lcd-device-display.lcd-normal-live .lcd-flow-marker { display:none !important; }
+    .lcd-device-display.lcd-normal-live .lcd-day-energy { right:4% !important; bottom:14% !important; }
+
+    /* Phone-only bottom band: the clock owns the lower row while the live
+       energy readout moves into the clear upper-right bay.  Kept at the end
+       to supersede legacy handset maps that share these coordinates. */
+    @media (max-width:640px) {
+      .lcd-device-display.lcd-normal-live .lcd-flow-marker {
+        display:none !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-period-selector {
+        left:3% !important;
+        bottom:13.5% !important;
+        width:45% !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy {
+        left:auto !important;
+        right:3% !important;
+        bottom:13% !important;
+        width:27% !important;
+        font-size:clamp(14px,3.8cqw,18px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-day-energy > span:first-child {
+        right:calc(100% + 4px) !important;
+        bottom:2px !important;
+        font-size:clamp(8px,2.05cqw,10px) !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-time-display {
+        left:3% !important;
+        right:auto !important;
+        bottom:3% !important;
+        z-index:5 !important;
+        width:64% !important;
+        max-height:none !important;
+        overflow:visible !important;
+        white-space:nowrap !important;
+        overflow-wrap:normal !important;
+        font-size:clamp(10px,2.6cqw,12px) !important;
+        line-height:1 !important;
+        letter-spacing:-.07em !important;
+        text-align:left !important;
+      }
+      .lcd-device-display.lcd-normal-live .lcd-fault-marker {
+        right:3% !important;
+        bottom:3% !important;
+        width:22% !important;
+        font-size:clamp(8px,2.05cqw,10px) !important;
+      }
     }
